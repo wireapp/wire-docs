@@ -4,7 +4,7 @@ How to set up SSO integration with Centrify
 Preprequisites
 --------------
 
-- Centrify account, admin access to that account
+- http://centrify.com account, admin access to that account
 - Wire team, admin access to that team
 
 Steps

@@ -5,6 +5,6 @@ Single-sign-on how-tos
    :maxdepth: 1
    :glob:
 
-   Generic instructions (if you don't know or care what brand of IdP you are using) <./generic-setup.rst>
-   Instructions for http://okta.com/ <./okta/main.rst>
-   Instructions for http://centrify.com/ <./centrify/main.rst>
+   Generic instructions <./generic-setup.rst>
+   Instructions for Okta <./okta/main.rst>
+   Instructions for Centrify <./centrify/main.rst>

@@ -4,7 +4,7 @@ How to set up SSO integration with Okta
 Preprequisites
 --------------
 
-- Okta account, admin access to that account
+- http://okta.com/ account, admin access to that account
 - Wire team, admin access to that team
 - Linux or macOS machine with network access for one-time setup
 

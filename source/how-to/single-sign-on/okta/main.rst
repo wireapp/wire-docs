@@ -45,14 +45,20 @@ Okta setup
 
 - Add the following parameters in "Step 2" and continue
 
-|Paramenter label|Value|
-|----|-----|
-|Single Sign On URL|`https://prod-nginz-https.wire.com/sso/finalize-login`|
-|Use this for Recipient URL and Destination URL|checked ✅|
-|Audience URI (SP Entity ID)|`https://prod-nginz-https.wire.com/sso/finalize-login`|
-|Name ID format|`EmailAddress` (\*)|
-|Application Username|`Email` (\*)|
-
++-----------------------------+------------------------------------------------------------------------------+
++ Paramenter label            | Value                                                                        |
++=============================+==============================================================================+
+| Single Sign On URL          | `https://prod-nginz-https.wire.com/sso/finalize-login`                       |
++-----------------------------+------------------------------------------------------------------------------+
+| Use this for Recipient URL  | checked ✅                                                                   |
+| and Destination URL         |                                                                              |
++-----------------------------+------------------------------------------------------------------------------+
+| Audience URI (SP Entity ID) | `https://prod-nginz-https.wire.com/sso/finalize-login`                       |
++-----------------------------+------------------------------------------------------------------------------+
+| Name ID format              | `EmailAddress` (\*)                                                          |
++-----------------------------+------------------------------------------------------------------------------+
+| Application Username        | `Email` (\*)                                                                 |
++-----------------------------+------------------------------------------------------------------------------+
 
 **(\*) Note**: The application username **must be** unique in your team, and should be immutable once assigned. If more than one user has the same value for the field that you select here, those two users will log in as a single user on Wire. And if the value were to change, users will be re-assigned to a new account at the next login. Usually, `email` is a safe choice but you should evaluate it for your case.
 
@@ -62,9 +68,11 @@ Okta setup
 
 - Give the following answer in "Step 3" and continue
 
-|Paramenter label|Value|
-|----|-----|
-|Are you a customer or a partner?|I'm an Okta customer|
++-----------------------------------+------------------------------------------------------------------------+
++ Paramenter label                  | Value                                                                  |
++===================================+========================================================================+
+| Are you a customer or a partner?  | I'm an Okta customer                                                   |
++-----------------------------------+------------------------------------------------------------------------+
 
 .. image:: 006-add-application-step3.png
 

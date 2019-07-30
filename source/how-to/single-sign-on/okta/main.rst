@@ -6,7 +6,6 @@ Preprequisites
 
 - http://okta.com/ account, admin access to that account
 - Wire team, admin access to that team
-- Linux or macOS machine with network access for one-time setup
 
 Steps
 -----

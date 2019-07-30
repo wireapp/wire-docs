@@ -19,21 +19,18 @@ Centrify setup
 - Navigate to "Web Apps"
 - Click "Add Web Apps"
 
-.. Web Apps screen
 .. image:: 001.png
 
 ----
 
 - Create a new custom SAML application
 
-.. Add Web Apps screen
 .. image:: 002.png
 
 ----
 
 - Confirm...
 
-.. Add Web Apps screen (2)
 .. image:: 003.png
 
 ----
@@ -42,9 +39,7 @@ Centrify setup
 - Enter at least a name, plus any other information you want to keep about this new Web App.
 - Then click on `Save`.
 
-.. Add Web Apps screen
 .. image:: 004.png
-.. Add Web Apps screen
 .. image:: 005.png
 
 ----
@@ -55,7 +50,6 @@ Centrify setup
 - You can see the metadata appear in the form below the `Load` button.
 - Click on `Save`.
 
-.. Add Web Apps screen
 .. image:: 006.png
 
 ----
@@ -63,23 +57,18 @@ Centrify setup
 - Scroll down the `Trust` tab until you find the button to download the IdP metadata.
 - Store it in a file (eg. `my-wire-idp.xml`).  You will need this file to set up your wire team for SSO.
 
-.. Add Web Apps screen
 .. image:: 007.png
 
 ----
 
 - Move to the `Permissions` tab and add at least one user.
 
-.. Add Web Apps screen
 .. image:: 008.png
-.. Add Web Apps screen
 .. image:: 009.png
-.. Add Web Apps screen
 .. image:: 010.png
 
 ----
 
 - If you see the status `Deployed` in the header of the `Web App` setup page, your users are ready to login.
 
-.. Add Web Apps screen
 .. image:: 011.png

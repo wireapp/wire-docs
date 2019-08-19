@@ -30,6 +30,8 @@ How to inspect tables and data manually
 How to rolling-restart a cassandra cluster
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+For maintenance you may need to restart the cluster.
+
 On each server one by one:
 
 1. check your cluster is healthy: ``nodetool status``

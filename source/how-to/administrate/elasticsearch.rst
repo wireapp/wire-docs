@@ -17,6 +17,8 @@ See cluster health and cluster nodes
 How to rolling-restart an elasticsearch cluster
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+For maintenance you may need to restart the cluster.
+
 On each server one by one:
 
 1. check your cluster is healthy (see above)

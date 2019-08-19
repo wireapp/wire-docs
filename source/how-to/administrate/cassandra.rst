@@ -9,14 +9,16 @@ documentation <https://cassandra.apache.org/doc/latest/>`__
 How to see cluster health
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You want to see `UN` (`Up` & `Normal`) everywhere::
+You want to see ``UN`` (``Up`` & ``Normal``) everywhere:
+
+.. code:: sh
 
    nodetool status
 
 How to inspect tables and data manually
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-::
+.. code:: sh
 
    cqlsh
    # from the cqlsh shell

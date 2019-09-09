@@ -36,9 +36,9 @@ On each server one by one:
 
 1. check your cluster is healthy: ``nodetool status``
 2. ``nodetool drain`` (to stop accepting writes and flush data to disk)
-3. ``systemctl stop cassandra`` (to stop the process)
+3. Stop the cassandra daemon process: ``systemctl stop cassandra``
 4. do any operation you need, if any
-5. ``systemctl start cassandra``
+5. Start the cassandra daemon process: ``systemctl start cassandra``
 6. Wait for your cluster to be healthy again.
 7. Do the same on the next server.
 

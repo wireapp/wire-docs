@@ -29,9 +29,9 @@ On each server one by one:
     ES_IP=<the-ip-of-the-elasticsearch-node-to-stop>
     curl -sSf -XPUT http://localhost:9200/_cluster/settings -d "{ \"transient\" : {\"cluster.routing.allocation.exclude._ip\": \"$ES_IP\" }}"
 
-3. ``systemctl stop elasticsearch`` (to stop the process)
+3. Stop the elasticsearch daemon process: ``systemctl stop elasticsearch``
 4. do any operation you need, if any
-5. ``systemctl start elasticsearch``
+5. Start the elasticsearch daemon process: ``systemctl start elasticsearch``
 6. re-enable shard allocation:
 
 .. code:: sh

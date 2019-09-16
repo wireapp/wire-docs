@@ -10,6 +10,8 @@ Please note that there is no way to migrate data from a demo
 installation to a production installation - it is really meant as a way
 to try things out.
 
+Please note your data will be in-memory only and may disappear at any given moment!
+
 What you need:
 
 -  a way to create DNS records for your domain name (e.g.
@@ -22,9 +24,14 @@ What you need:
       kubernetes cluster these days). If you already have a kubernetes cluster, your next step will be :ref:`helm`
    -  One single virtual machine running ubuntu 16.04 or 18.04 with at least 20 GB of disk, 8 GB of memory, and 8 CPU cores. If you wish to proceed with a demo installation, your next step will be :ref:`ansible-kubernetes`
 
+A demo installation will look a bit like this:
 
-Production installation
----------------------------
+.. figure:: img/architecture-demo.png
+
+    Demo installation (1 VM)
+
+Production installation (persistent data, high-availability)
+--------------------------------------------------------------
 
 What you need:
 
@@ -65,3 +72,6 @@ Ensure that your VMs have IP addresses that do not change.
 
 If you wish to proceed with a production installation, your next step will be :ref:`ansible-kubernetes-prod`
 
+.. figure:: img/architecture-prod.png
+
+    Production installation

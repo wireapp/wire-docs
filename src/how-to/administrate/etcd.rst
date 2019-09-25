@@ -119,12 +119,12 @@ Now from a healthy node remove the broken node
    Member e767162297c84b1e removed from cluster 432c10551aa096af
 
 
-
-Now the other nodes  know this member is indeed dead. and the nodes will forget
-about the fact that it existed.  We can now safely remove the data directory
-and restart it The cluster should now be 'healthy' albeit a bit less
-fault-tolerant. Note that the third member is not listed here anymore, like
-before.
+By removing the member from the cluster, you signal the other nodes to not
+expect it to come back with the right state. It will be considered dead and
+removed from the peers.  This will allow the node to come up with an empty data
+directory and it not getting kicked out of the cluster. The cluster should now
+be healthy, but only have 2 members, and so it is not to resistent to crashes
+at the moment!
 
 .. code:: sh
    root@node0:~# etcd-health.sh 
@@ -135,7 +135,7 @@ before.
    cluster is healthy
 
 Now from a healthy node, re-add the node you just removed, it should now be in the list as "unstarted",
-instead of it not being healthy.
+instead of it not being healthy. 
 
 .. code:: sh
    root@node0:~# etcdctl3.sh member add etcd_2 --peer-urls https://10.10.1.12:2380

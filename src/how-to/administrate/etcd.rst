@@ -56,6 +56,15 @@ On each server one by one:
 6. Do the same on the next server.
 
 
+Backing up and restoring
+~~~~~~~~~~~~~~~~~~~~~~~~~
+Though as long as quorum is maintained in etcd there will be no dataloss, it is still good to prepare 
+for the worst. If a disaster takes out all nodes, then you might want to restore from an old backup.
+
+Luckily, etcd can take periodic snapshots of your cluster and these can be used in cases of disaster recovery.
+
+
+
 Troubleshooting
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -80,8 +89,83 @@ Logs from the crashing etcd::
     Sep 25 09:27:05 node2 etcd[20288]: goroutine 90 [running]:
     (...)
 
-To remediate the situation, do the following:
+
+Etcd will kick out nodes that run too far behind. So if you recover from an old disk snapshot, then it's write-ahead log number will likely be behind to what the rest of the cluster has already commited. If this happens, the node will be refused access to the cluster. To recover from such a scenario
+
+
+From the docs I quote https://github.com/etcd-io/etcd/blob/master/Documentation/v2/admin_guide.md
+
+> If a member’s data directory is ever lost or corrupted then the user should remove the etcd member from the cluster using etcdctl tool.
+> A user should avoid restarting an etcd member with a data directory from an out-of-date backup. Using an out-of-date data directory can lead to inconsistency as the member had agreed to store information via raft then re-joins saying it needs that information again. For maximum safety, if an etcd member suffers any sort of data corruption or loss, it must be removed from the cluster. Once removed the member can be re-added with an empty data directory.
+
+So lets first remove the node from the cluster.
+
+These are the etcdv2 docs though so I don't trust them. But I also found a link to etcd3 docs with similar instructions:
+https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/runtime-configuration.md#replace-a-failed-machine
+
+The procedure to remove and add a member is documented here:
+https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/runtime-configuration.md#remove-a-member
+
+First lets make sure our broken member is stopped:
+.. code:: sh
+
+   root@node2:~# systemctl stop etcd
+
+Now from a healthy node remove the broken node 
 
 .. code:: sh
 
-    TODO
+   root@node0:~# etcdctl3.sh  member remove e767162297c84b1e
+   Member e767162297c84b1e removed from cluster 432c10551aa096af
+
+
+
+Now the other nodes  know this member is indeed dead. and the nodes will forget
+about the fact that it existed.  We can now safely remove the data directory
+and restart it The cluster should now be 'healthy' albeit a bit less
+fault-tolerant. Note that the third member is not listed here anymore, like
+before.
+
+.. code:: sh
+   root@node0:~# etcd-health.sh 
+   Cluster-Endpoints: https://127.0.0.1:2379
+   cURL Command: curl -X GET https://127.0.0.1:2379/v2/members
+   member 7c37f7dc10558fae is healthy: got healthy result from https://10.10.1.11:2379
+   member cca4e6f315097b3b is healthy: got healthy result from https://10.10.1.10:2379
+   cluster is healthy
+
+Now from a healthy node, re-add the node you just removed, it should now be in the list as "unstarted",
+instead of it not being healthy.
+
+.. code:: sh
+   root@node0:~# etcdctl3.sh member add etcd_2 --peer-urls https://10.10.1.12:2380
+   Member e13b1d076b2f9344 added to cluster 432c10551aa096af
+
+   ETCD_NAME="etcd_2"
+   ETCD_INITIAL_CLUSTER="etcd_1=https://10.10.1.11:2380,etcd_0=https://10.10.1.10:2380,etcd_2=https://10.10.1.12:2380"
+   ETCD_INITIAL_CLUSTER_STATE="existing"
+   root@node0:~# etcdctl3.sh member list
+   7c37f7dc10558fae, started, etcd_1, https://10.10.1.11:2380, https://10.10.1.11:2379
+   cca4e6f315097b3b, started, etcd_0, https://10.10.1.10:2380, https://10.10.1.10:2379
+   e13b1d076b2f9344, unstarted, , https://10.10.1.12:2380, 
+
+
+Now on the broken node, remove the on-disk state, which was corrupted, and start etcd
+.. code:: sh
+
+   root@node2:~# mv /var/lib/etcd /var/lib/etcd.bak
+   root@node2:~# sudo systemctl start etcd
+
+And now the cluster is healthy again!
+
+.. code:: sh
+   root@node2:~# etcd-health.sh
+   Cluster-Endpoints: https://127.0.0.1:2379
+   cURL Command: curl -X GET https://127.0.0.1:2379/v2/members
+   member 7c37f7dc10558fae is healthy: got healthy result from https://10.10.1.11:2379
+   member cca4e6f315097b3b is healthy: got healthy result from https://10.10.1.10:2379
+   member e13b1d076b2f9344 is healthy: got healthy result from https://10.10.1.12:2379
+   cluster is healthy
+
+
+       

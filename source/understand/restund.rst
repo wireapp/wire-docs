@@ -83,7 +83,8 @@ balancer were to end up at ``restund server 2``, would get dropped, as
 the second server doesn't know the source address.
 
 High-availability is nevertheless ensured by having and advertising more
-than one restund server.
+than one restund server.  Instead of the load balancer, the clients will
+switch their server if it fails.
 
 Discovery and establishing a call
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -87,8 +87,8 @@ Now to perform a rolling restart of the cluster, do the following steps:
 Backing up and restoring
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 Though as long as quorum is maintained in etcd there will be no dataloss, it is
-still good to prepare for the worst. If a disaster takes out all nodes, then
-you might want to restore from an old backup.
+still good to prepare for the worst. If a disaster takes out too many nodes, then
+you might have to restore from an old backup.
 
 Luckily, etcd can take periodic snapshots of your cluster and these can be used
 in cases of disaster recovery. Information about how to do snapshots and

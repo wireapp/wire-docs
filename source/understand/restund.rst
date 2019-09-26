@@ -63,8 +63,8 @@ firewall rules) for example ports ``80`` and ``443`` (requires to run
 restund as root) or do a redirect from a load balancer (if using one) to
 redirect ``443 -> 5349`` and ``80 -> 3478``.
 
-Amount of users and filedescriptors
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Amount of users and file descriptors
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Each allocation (active connection by one participant) requires 1 or 2
 file descriptors, so ensure you increase your file descriptor limits in

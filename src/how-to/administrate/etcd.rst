@@ -47,20 +47,24 @@ How to rolling-restart an etcd cluster
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Etcd is a consistent and partition tolerant key-value store.  This means that
-Etcd nodes can be restarted with no impact to the consistency of data, but
-there might a small time in which the database can not process writes. Etcd has a designated
-leader which decides ordering of events (and thus writes) in the cluster. When the leader
-crashes, a leadership election takes place.  During the leadership election,
-the cluster might be briefly unavailable for writes.  Writes during this period
-are queued up until a new leader is elected.  Any writes that were happening during
-the crash of the leader that were not acknowledged by the leader and the
-followers yet will be 'lost'.  The client that performed this write will
-experience this as a write timeout. (Source: https://etcd.io/docs/v3.4.0/op-guide/failures/)
+Etcd nodes can be restarted (one by one) with no impact to the consistency of
+data, but there might a small time in which the database can not process
+writes. Etcd has a designated leader which decides ordering of events (and thus
+writes) in the cluster. When the leader crashes, a leadership election takes
+place.  During the leadership election, the cluster might be briefly
+unavailable for writes.  Writes during this period are queued up until a new
+leader is elected.  Any writes that were happening during the crash of the
+leader that were not acknowledged by the leader and the followers yet will be
+'lost'.  The client that performed this write will experience this as a write
+timeout. (Source: https://etcd.io/docs/v3.4.0/op-guide/failures/).  Client
+applications (like kubernetes) are expected to deal with this failure scenario
+gracefully.
 
-Etcd can be restarted in a rolling fashion, by taking cleanly shutting down and
-starting up  etcd servers one by one.  In Etcd 3.1, when the leader is cleanly
-shut down, it will hand over leadership gracefully to another node, which will
-minimize the impact of write-availability. (Source :
+Etcd can be restarted in a rolling fashion, by cleanly shutting down and
+starting up  etcd servers one by one.  In Etcd 3.1 and up, when the leader is
+cleanly shut down, it will hand over leadership gracefully to another node,
+which will minimize the impact of write-availability as election time is
+reduced. (Source :
 https://kubernetes.io/blog/2018/12/11/etcd-current-status-and-future-roadmap/)
 Restarting follower nodes has no impact to availability.
 
@@ -69,6 +73,7 @@ if a server you were talking to is being restarted, etcd will transparently
 redirect the request to another server. It's is thus safe to shut them down at
 any point.
 
+Now to perform a rolling restart of the cluster, do the following steps:
 
 1. Check your cluster is healthy (see above)
 2. Stop the process with ``systemctl stop etcd`` (this should be safe since etcd clients retry their operation if one endpoint becomes unavailable, see `this page <https://etcd.io/docs/v3.3.12/learning/client-architecture/>`__)

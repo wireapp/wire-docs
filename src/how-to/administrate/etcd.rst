@@ -48,7 +48,7 @@ How to rolling-restart an etcd cluster
 
 Etcd is a consistent and partition tolerant key-value store.  This means that
 Etcd nodes can be restarted with no impact to the consistency of data, but
-might have a small time in which the database can not process writes. Etcd has a designated
+there might a small time in which the database can not process writes. Etcd has a designated
 leader which decides ordering of events (and thus writes) in the cluster. When the leader
 crashes, a leadership election takes place.  During the leadership election,
 the cluster might be briefly unavailable for writes.  Writes during this period
@@ -59,8 +59,8 @@ experience this as a write timeout. (Source: https://etcd.io/docs/v3.4.0/op-guid
 
 Etcd can be restarted in a rolling fashion, by taking cleanly shutting down and
 starting up  etcd servers one by one.  In Etcd 3.1, when the leader is cleanly
-shut down, it will hand over leadership gracefully to another node, with
-minimal impact to availability.  (Source :
+shut down, it will hand over leadership gracefully to another node, which will
+minimize the impact of write-availability. (Source :
 https://kubernetes.io/blog/2018/12/11/etcd-current-status-and-future-roadmap/)
 Restarting follower nodes has no impact to availability.
 
@@ -153,6 +153,9 @@ https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/runtime-confi
 
 The procedure to remove and add a member is documented here:
 https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/runtime-configuration.md#remove-a-member
+
+It is also documented in the kubernetes documentation:
+https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#replacing-a-failed-etcd-member
 
 So following the above guides step by step, we can recover our cluster to be
 healthy again.

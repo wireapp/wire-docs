@@ -65,3 +65,14 @@ Ensure that your VMs have IP addresses that do not change.
 
 If you wish to proceed with a production installation, your next step will be :ref:`ansible-kubernetes-prod`
 
+Next steps
+-----------
+
+Demo:
+
+See :ref:`ansible-kubernetes-prod` to proceed with a production
+installation.
+
+For demo installations: See :ref:`ansible-kubernetes`
+(if you need to set up a cluster), and :ref:`helm` (if you have a
+cluster running, and want to start using it).

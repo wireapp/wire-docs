@@ -71,7 +71,7 @@ In your second terminal, first install databases:
 
    helm upgrade --install databases-ephemeral wire/databases-ephemeral --wait
 
-You should see some pods being created in your first terminal as the above command completes. When you're done, ins
+You should see some pods being created in your first terminal as the above command completes.
 
 Next, install aws service mocks:
 

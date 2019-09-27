@@ -63,6 +63,8 @@ On your machine you need to have the `docker` binary available. See `how to inst
    cd /mnt/wire-server-deploy && git pull
    cd /mnt/wire-server-deploy-networkless && git pull
 
+(The name of the docker image contains ``networkless`` because it was originally constructed for high-security installations without connection to the public internet.  Since then it has grown to be our recommended general-purpose installation platform.)
+
 Now exit the docker container.  On subsequent times:
 
 ::

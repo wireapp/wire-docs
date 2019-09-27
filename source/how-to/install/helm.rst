@@ -159,10 +159,10 @@ Inside the ``nginx-lb-ingress`` directory, open ``values.yaml`` and replace ``ex
 Next, open ``secrets.yaml`` and add a TLS wildcard certificate and private key matching your domain. For ``example.com``, you need a certficate for ``*.example.com``. The easiest and cheapest options are:
 
 1. use `Let's Encrypt <https://letsencrypt.org/getting-started/>`__
-2. create a self-signed certificate, eg.: ``openssl req -x509 -newkey
-   rsa:2048 -keyout key.pem -nodes -out cert.pem -days 365``, and set
-   the common name to ``*.example.com``.  Note that this certificate
-   is deliberately weak.  Do not use these settings in production!
+2. create a self-signed certificate, eg.:
+   ``openssl req -x509 -newkey rsa:2048 -keyout key.pem -nodes -out cert.pem -days 365 -subj '/CN=*.example.com'``.
+   Note that this certificate is deliberately
+   weak.  Do not use these settings in production!
 
 Install the nodeport nginx ingress:
 

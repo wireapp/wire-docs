@@ -211,4 +211,4 @@ As long as nobody is using your cluster yet, you can safely delete and re-create
 It doesn't work, but my problem isn't listed here. Help!
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Feel free to open a github issue or pull request `here <https://github.com/wireapp/wire-docs>` and we'll try to improve the documentation.
+Feel free to open a github issue or pull request `here <https://github.com/wireapp/wire-docs>`_ and we'll try to improve the documentation.

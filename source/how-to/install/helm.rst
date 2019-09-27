@@ -123,8 +123,8 @@ There are a few options available. The easiest option is to use an ingress with 
    # (assuming you're in the wire-server directory from the subsection above)
    cd ..
    mkdir -p nginx-lb-ingress && cd nginx-lb-ingress
-   curl -sSL https://raw.githubusercontent.com/wireapp/wire-server-deploy/master/values/nginx-lb-ingress/demo-secrets.example.yaml > secrets.yaml
-   curl -sSL https://raw.githubusercontent.com/wireapp/wire-server-deploy/master/values/nginx-lb-ingress/demo-values.example.yaml > values.yaml
+   curl -sSL https://raw.githubusercontent.com/wireapp/wire-server-deploy/master/values/nginx-ingress-services/demo-secrets.example.yaml > secrets.yaml
+   curl -sSL https://raw.githubusercontent.com/wireapp/wire-server-deploy/master/values/nginx-ingress-services/demo-values.example.yaml > values.yaml
 
 You should now have the following directory structure:
 

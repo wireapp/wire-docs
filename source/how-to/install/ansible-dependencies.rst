@@ -56,8 +56,12 @@ On your machine you need to have the `docker` binary available. See `how to inst
    ssh root@<server> cat \>\> .ssh/authorized_keys < ../dot_ssh/id_ed25519.pub
 
    docker run -it --network=host -v $(pwd):/mnt -v $(pwd)/../dot_ssh:/root/.ssh -v $(pwd)/../dot_kube:/root/.kube quay.io/wire/networkless-admin
-   # inside the container:
+   # inside the container, copy everything to the mounted host file system:
    cp -a /src/* /mnt
+   # and make sure the git repos are up to date:
+   cd /mnt/wire-server && git pull
+   cd /mnt/wire-server-deploy && git pull
+   cd /mnt/wire-server-deploy-networkless && git pull
 
 Now exit the docker container.  On subsequent times:
 

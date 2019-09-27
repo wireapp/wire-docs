@@ -85,7 +85,15 @@ sequentially after database-ephemeral installation has succeeded.
 How to install wire-server itself
 ---------------------------------------
 
-Download example demo values and secrets:
+Change back to the wire-server-deploy directory.  Copy example demo values and secrets:
+
+.. code:: shell
+
+   mkdir -p wire-server && cd wire-server
+   cp ../values/wire-server/demo-secrets.example.yaml secrets.yaml
+   cp ../values/wire-server/demo-values.example.yaml values.yaml
+
+Or, if you are not in wire-server-deploy any more:
 
 .. code:: shell
 
@@ -123,6 +131,14 @@ There are a few options available. The easiest option is to use an ingress with 
    # (assuming you're in the wire-server directory from the subsection above)
    cd ..
    mkdir -p nginx-lb-ingress && cd nginx-lb-ingress
+   cp ../values/nginx-ingress-services/demo-secrets.example.yaml secrets.yaml
+   cp ../values/nginx-ingress-services/demo-values.example.yaml values.yaml
+
+Or, the online version again, as above:
+
+.. code:: shell
+
+   ...
    curl -sSL https://raw.githubusercontent.com/wireapp/wire-server-deploy/master/values/nginx-ingress-services/demo-secrets.example.yaml > secrets.yaml
    curl -sSL https://raw.githubusercontent.com/wireapp/wire-server-deploy/master/values/nginx-ingress-services/demo-values.example.yaml > values.yaml
 

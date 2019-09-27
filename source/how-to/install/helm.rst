@@ -95,7 +95,7 @@ Download example demo values and secrets:
 
 Open ``values.yaml`` and replace ``example.com`` and other domains and subdomains with domains of your choosing. Look for the ``# change this`` comments. You can try using ``sed -i 's/example.com/<your-domain>/g' values.yaml``.
 
-Generate some secrets:
+Generate some secrets (if you are using the docker image from :ref:`ansible-deps-option-2`, you should do open a shell on the host system for this):
 
 .. code:: shell
 

@@ -49,8 +49,13 @@ On your machine you need to have the `docker` binary available. See `how to inst
    mkdir -p ../admin_work_dir && cd ../admin_work_dir
    mkdir -p ../dot_ssh
    mkdir -p ../dot_kube
-   # copy ssh key
+   # copy ssh key (the easy way, if you want to use your main ssh key pair)
    cp ~/.ssh/id_rsa ../dot_ssh/
+   # alternatively: create a key pair exclusively for this installation
+   ssh-keygen -t ed25519 -a 100 -f ../dot_ssh/id_ed25519
+   ssh-add ../dot_ssh/id_ed25519
+   # make sure the server accepts your ssh key for user root
+   ssh root@<server> cat \>\> .ssh/authorized_keys < ../dot_ssh/id_ed25519.pub
 
    docker run -it --network=host -v $(pwd):/mnt -v $(pwd)/../dot_ssh:/root/.ssh -v $(pwd)/../dot_kube:/root/.kube quay.io/wire/networkless-admin
    # inside the container:

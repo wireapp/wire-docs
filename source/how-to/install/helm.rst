@@ -73,16 +73,13 @@ In your second terminal, first install databases:
 
 You should see some pods being created in your first terminal as the above command completes.
 
-Next, install aws service mocks:
+You can do the following two steps (mock aws services and demo smtp
+server) in parallel with the above in two more terminals, or
+sequentially after database-ephemeral installation has succeeded.
 
 .. code:: shell
 
    helm upgrade --install fake-aws wire/fake-aws --wait
-
-Next, install an smtp server:
-
-.. code:: shell
-
    helm upgrade --install smtp wire/demo-smtp --wait
 
 How to install wire-server itself

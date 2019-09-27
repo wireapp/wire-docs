@@ -156,7 +156,13 @@ You should now have the following directory structure:
 
 Inside the ``nginx-lb-ingress`` directory, open ``values.yaml`` and replace ``example.com`` with a domain of your choosing. You can try using ``sed -i 's/example.com/<your-domain>/g' values.yaml``.
 
-Next, open ``secrets.yaml`` and add a TLS wildcard certificate and private key matching your domain. For ``example.com``, you need a certficate for ``*.example.com``. The easiest and cheapest option is to use `Let's Encrypt <https://letsencrypt.org/getting-started/>`__
+Next, open ``secrets.yaml`` and add a TLS wildcard certificate and private key matching your domain. For ``example.com``, you need a certficate for ``*.example.com``. The easiest and cheapest options are:
+
+1. use `Let's Encrypt <https://letsencrypt.org/getting-started/>`__
+2. create a self-signed certificate, eg.: ``openssl req -x509 -newkey
+   rsa:2048 -keyout key.pem -nodes -out cert.pem -days 365``, and set
+   the common name to ``*.example.com``.  Note that this certificate
+   is deliberately weak.  Do not use these settings in production!
 
 Install the nodeport nginx ingress:
 
@@ -182,6 +188,12 @@ You need to set up DNS records (A records) such that the following domain names 
 * account.<domain>
 
 (Yes, they all need to point to the same IP address - this is necessary for the nginx ingress to know how to do internal routing based on virtual hosting)
+
+You may be happy with skipping the DNS setup and just make sure that the ``/etc/hosts`` on all machines involved point all the above names to the right IP address:
+
+::
+
+   1.2.3.4  example.com nginz-https.example.com nginz-ssl.example.com webapp.example.com s3.example.com team.example.com account.example.com
 
 
 Trying things out

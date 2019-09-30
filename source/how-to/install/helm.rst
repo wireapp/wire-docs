@@ -130,7 +130,7 @@ There are a few options available. The easiest option is to use an ingress with 
 
    # (assuming you're in the wire-server directory from the subsection above)
    cd ..
-   mkdir -p nginx-lb-ingress && cd nginx-lb-ingress
+   mkdir -p nginx-ingress-services && cd nginx-ingress-services
    cp ../values/nginx-ingress-services/demo-secrets.example.yaml secrets.yaml
    cp ../values/nginx-ingress-services/demo-values.example.yaml values.yaml
 
@@ -147,14 +147,14 @@ You should now have the following directory structure:
 ::
 
   .
-  ├── nginx-lb-ingress
+  ├── nginx-ingress-services
   │   ├── secrets.yaml
   │   └── values.yaml
   └── wire-server
       ├── secrets.yaml
       └── values.yaml
 
-Inside the ``nginx-lb-ingress`` directory, open ``values.yaml`` and replace ``example.com`` with a domain of your choosing. You can try using ``sed -i 's/example.com/<your-domain>/g' values.yaml``.
+Inside the ``nginx-ingress-services`` directory, open ``values.yaml`` and replace ``example.com`` with a domain of your choosing. You can try using ``sed -i 's/example.com/<your-domain>/g' values.yaml``.
 
 Next, open ``secrets.yaml`` and add a TLS wildcard certificate and private key matching your domain. For ``example.com``, you need a certficate for ``*.example.com``. The easiest and cheapest options are:
 
@@ -168,7 +168,8 @@ Install the nodeport nginx ingress:
 
 .. code:: shell
 
-   helm upgrade --install nginx-lb-ingress wire/nginx-lb-ingress -f values.yaml -f secrets.yaml --wait
+   helm upgrade --install nginx-ingress-controller wire/nginx-ingress-controller --wait
+   helm upgrade --install nginx-ingress-services wire/nginx-ingress-services -f values.yaml -f secrets.yaml --wait
 
 Next, we want to redirect port 443 for https to the port the nginx https ingress nodeport is listening on (31773), and port 80 to the nginz http port (31772). To do that, you have two options:
 

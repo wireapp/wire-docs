@@ -179,28 +179,33 @@ Next, we want to redirect port 443 for https to the port the nginx https ingress
 How to set up DNS records
 ----------------------------
 
-You need to set up DNS records (A records) such that the following domain names are pointing to the IP address of your kubernetes node (assuming you only have one):
+An installation needs 5 or 6 domain names (5 without audio/video support, 6 with audio/video support):
+
+You need
+
+* two dns names for the so-called "nginz" component of wire-server (the main REST API entry point), these are usually called `nginz-https.<domain>` (or `wire-https.<domain>`) and `nginz-ssl.<domain>` (or `wire-https.<domain>`).
+* one dns name for the asset store (images, audio files etc. that your users are sharing); usually `s3.<domain>`.
+* one dns name for the webapp (equivalent of https://app.wire.com, i.e. the javascript app running in the browser), usually called `webapp.<domain>`.
+* one dns name for the account pages (hosts some html/javascript pages for e.g. password reset), usually called `account.<domain>`.
+* (optional) one dns name for team settings (to manage team membership if using PRO accounts), usually called `teams.<domain>`
+* (optional) one dns name for a audio/video calling server, usually called `restund01.<domain>`.
+
+If you are on the most recent charts from wire-server-deploy, this will be how things are called:
 
 * bare-https.<domain>
 * bare-ssl.<domain>
-* bare-s3.<domain>
 * bare-webapp.<domain>
+* bare-s3.<domain>
 * bare-team.<domain> (optional)
 * bare-account.<domain> (optional)
-* nginz-https.<domain>
-* nginz-ssl.<domain>
-* webapp.<domain>
-* s3.<domain>
-* team.<domain>
-* account.<domain>
 
-(Yes, they all need to point to the same IP address - this is necessary for the nginx ingress to know how to do internal routing based on virtual hosting)
+(Yes, they all need to point to the same IP address - this is necessary for the nginx ingress to know how to do internal routing based on virtual hosting.)
 
-You may be happy with skipping the DNS setup and just make sure that the ``/etc/hosts`` on all machines involved point all the above names to the right IP address:
+You may be happy with skipping the DNS setup and just make sure that the ``/etc/hosts`` on your client machine points all the above names to the right IP address:
 
 ::
 
-   1.2.3.4  example.com nginz-https.example.com nginz-ssl.example.com webapp.example.com s3.example.com team.example.com account.example.com
+   1.2.3.4  bare-https.<domain> bare-ssl.<domain> bare-s3.<domain> bare-webapp.<domain> bare-team.<domain> bare-account.<domain>
 
 
 Trying things out

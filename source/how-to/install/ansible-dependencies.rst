@@ -57,7 +57,7 @@ On your machine you need to have the `docker` binary available. See `how to inst
    ssh-keygen -t ed25519 -a 100 -f ../dot_ssh/id_ed25519
    ssh-add ../dot_ssh/id_ed25519
    # make sure the server accepts your ssh key for user root
-   ssh root@<server> cat \>\> .ssh/authorized_keys < ../dot_ssh/id_ed25519.pub
+   ssh-copy-id -i ../dot_ssh/id_ed25519.pub root@<server>
 
    docker run -it --network=host -v $(pwd):/mnt -v $(pwd)/../dot_ssh:/root/.ssh -v $(pwd)/../dot_kube:/root/.kube quay.io/wire/networkless-admin
    # inside the container, copy everything to the mounted host file system:

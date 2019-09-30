@@ -1,8 +1,6 @@
 Authentication
 ^^^^^^^^^^^^^^^^^
 
-You will be accessing the server machine with the user ``root``.
-
 If, instead of using ssh keys to ssh to a remote machine, you want to use passwords::
 
    sudo apt install sshpass

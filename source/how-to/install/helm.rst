@@ -184,20 +184,20 @@ An installation needs 5 or 6 domain names (5 without audio/video support, 6 with
 You need
 
 * two dns names for the so-called "nginz" component of wire-server (the main REST API entry point), these are usually called `nginz-https.<domain>` (or `wire-https.<domain>`) and `nginz-ssl.<domain>` (or `wire-https.<domain>`).
-* one dns name for the asset store (images, audio files etc. that your users are sharing); usually `s3.<domain>`.
+* one dns name for the asset store (images, audio files etc. that your users are sharing); usually `assets.<domain>` or `s3.<domain>`.
 * one dns name for the webapp (equivalent of https://app.wire.com, i.e. the javascript app running in the browser), usually called `webapp.<domain>`.
 * one dns name for the account pages (hosts some html/javascript pages for e.g. password reset), usually called `account.<domain>`.
 * (optional) one dns name for team settings (to manage team membership if using PRO accounts), usually called `teams.<domain>`
 * (optional) one dns name for a audio/video calling server, usually called `restund01.<domain>`.
 
-If you are on the most recent charts from wire-server-deploy, this will be how things are called:
+If you are on the most recent charts from wire-server-deploy, these are your names:
 
-* bare-https.<domain>
-* bare-ssl.<domain>
-* bare-webapp.<domain>
-* bare-s3.<domain>
-* bare-team.<domain> (optional)
-* bare-account.<domain> (optional)
+* nginz-https.<domain>
+* nginz-ssl.<domain>
+* webapp.<domain>
+* assets.<domain>
+* account.<domain>
+* teams.<domain>
 
 (Yes, they all need to point to the same IP address - this is necessary for the nginx ingress to know how to do internal routing based on virtual hosting.)
 

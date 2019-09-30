@@ -16,7 +16,7 @@ From ``wire-server-deploy/ansible``:
 
   cp hosts.example-demo.ini hosts.ini
 
-Open hosts.ini and replace `X.X.X.X` with the IP address of your virtual machine that you use for ssh access. Remove `ip=Y.Y.Y.Y` or set that to the private IP address of the machine.  You can try using ``sed -i 's/X.X.X.X/1.2.3.4/g' hosts.ini && sed -i 's/ip=Y.Y.Y.Y//g' hosts.ini``.
+Open hosts.ini and replace `X.X.X.X` with the IP address of your virtual machine that you use for ssh access.  You can try using ``sed -i 's/X.X.X.X/1.2.3.4/g' hosts.ini``.
 
 
 .. include:: ansible-authentication.rst

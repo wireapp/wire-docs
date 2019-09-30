@@ -181,6 +181,13 @@ How to set up DNS records
 
 You need to set up DNS records (A records) such that the following domain names are pointing to the IP address of your kubernetes node (assuming you only have one):
 
+* bare-https.<domain>
+* bare-https.<domain>
+* bare-ssl.<domain>
+* bare-s3.<domain>
+* bare-webapp.<domain>
+* bare-team.<domain> (optional)
+* bare-account.<domain> (optional)
 * nginz-https.<domain>
 * nginz-ssl.<domain>
 * webapp.<domain>

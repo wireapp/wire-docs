@@ -205,7 +205,7 @@ You may be happy with skipping the DNS setup and just make sure that the ``/etc/
 
 ::
 
-   1.2.3.4  bare-https.<domain> bare-ssl.<domain> bare-s3.<domain> bare-webapp.<domain> bare-team.<domain> bare-account.<domain>
+   1.2.3.4 nginz-https.<domain> nginz-ssl.<domain> assets.<domain> webapp.<domain> teams.<domain> account.<domain>
 
 
 Trying things out

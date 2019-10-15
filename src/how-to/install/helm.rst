@@ -32,9 +32,7 @@ What will be installed?
 What will not be installed?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
--  notifications over native
-  `FCM <https://firebase.google.com/docs/cloud-messaging/>`__/`APNS <https://developer.apple.com/notifications/>`__
-  push notifications
+-  notifications over native push notifications via `FCM <https://firebase.google.com/docs/cloud-messaging/>`__/`APNS <https://developer.apple.com/notifications/>`__
 -  audio/video calling servers using :ref:`understand-restund`)
 -  team-settings page
 

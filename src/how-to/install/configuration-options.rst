@@ -3,9 +3,10 @@
 Part 3 - configuration options in a production setup
 ====================================================================
 
-This contains instructions towards a more production-ready setup.
+This contains instructions to improve production setup depending on your needs.
+
 Depending on your use-case and requirements, you may only need to
-configure a subset of the following sections.
+configure none, or only a subset of the following sections.
 
 .. warning::
 

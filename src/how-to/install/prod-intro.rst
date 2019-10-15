@@ -38,9 +38,7 @@ What will be installed by following these parts?
 What will not be installed?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
--  notifications over native
-  `FCM <https://firebase.google.com/docs/cloud-messaging/>`__/`APNS <https://developer.apple.com/notifications/>`__
-  push notifications
+-  notifications over native push notification via `FCM <https://firebase.google.com/docs/cloud-messaging/>`__/`APNS <https://developer.apple.com/notifications/>`__
 
 What will not be installed by default?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

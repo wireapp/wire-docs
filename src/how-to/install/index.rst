@@ -8,8 +8,9 @@ Installing wire-server
     How to plan an installation <planning.rst>
     (demo) How to install kubernetes <kubernetes.rst>
     (demo) How to install wire-server using Helm <helm.rst>
-    (production) How to install kubernetes <kubernetes-prod.rst>
+    (production) How to install kubernetes and databases <ansible-VMs.rst>
     (production) How to install wire-server using Helm <helm-prod.rst>
     (production) How to monitoring wire-server <monitoring.rst>
     (production) How to see centralized logs for wire-server <logging.rst>
+    Managing authentication with ansible <ansible-authentication.rst>
     Troubleshooting during installation <troubleshooting.rst>

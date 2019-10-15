@@ -23,12 +23,23 @@ machine, VM on a cloud provider, real physical machines, etc.)
 Preparing to run ansible
 ------------------------
 
+.. include:: ansible-dependencies.rst
+
 .. _adding-ips-to-hostsini:
+
+.. TODO: section header unifications/change
 
 Adding IPs to hosts.ini
 ~~~~~~~~~~~~~~~~~~~~~~~
 
+Go to your checked-out wire-server-deploy/ansible folder::
+
+  cd wire-server-deploy/ansible
+
 Copy the example hosts file:
+
+.. code::
+
 
 ``cp hosts.example.ini hosts.ini``
 
@@ -42,87 +53,32 @@ Copy the example hosts file:
 
 There are more settings in this file that we will set in later steps.
 
-WARNING: host re-use
-^^^^^^^^^^^^^^^^^^^^
+.. TODO: remove this warning, and remove the hostname run from the cassandra playbook, or find another way to deal with it.
 
-Some of these playbooks mess with the hostnames of their targets. You
-MUST pick different hosts for playbooks that rename the host. If you
-e.g. attempt to run Cassandra and k8s on the same 3 machines, the
-hostnames will be overwritten by the second installation playbook,
-breaking the first.
+.. warning::
 
-At the least, we know that the cassandra and kubernetes playbooks are
-both guilty of hostname manipulation.
+    Some of these playbooks mess with the hostnames of their targets. You
+    MUST pick different hosts for playbooks that rename the host. If you
+    e.g. attempt to run Cassandra and k8s on the same 3 machines, the
+    hostnames will be overwritten by the second installation playbook,
+    breaking the first.
+
+    At the least, we know that the cassandra and kubernetes playbooks are
+    both guilty of hostname manipulation.
 
 Authentication
-^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~
 
-Password authentication
-'''''''''''''''''''''''
+If you use key-based authentication, and the user you login with is either `root` or can elevate to `root` without a password, you don't need to do anything further to use ansible. If, however, you use password authentication for ssh access, and/or your login user needs a password to become root, see :ref:`ansible-authentication`.
 
--  if you want to use passwords both for ansible authenticating to a
-   machine, and for ansible to gain root priveledges:
+Running ansible to install software on your machines
+-----------------------------------------------------
 
-::
+You can install kubernetes, cassandra, restund, etc in any order.
 
-   sudo apt install sshpass
+.. note::
 
--  in hosts.ini, uncomment the 'ansible_user = ...' line, and change
-   '...' to the user you want to login as.
--  in hosts.ini, uncomment the 'ansible_ssh_pass = ...' line, and change
-   '...' to the password for the user you are logging in as.
--  in hosts.ini, uncomment the 'ansible_become_pass = ...' line, and
-   change the ... to the password you'd enter to sudo.
-
-Configuring SSH keys
-''''''''''''''''''''
-
-(from https://linoxide.com/how-tos/ssh-login-with-public-key/) If you
-want a bit higher security, you can copy SSH keys between the machine
-you are administrating with, and the machines you are managing with
-ansible.
-
--  Create an SSH key.
-
-::
-
-   ssh-keygen -t rsa
-
--  Install your SSH key on each of the machines you are managing with
-   ansible, so that you can SSH into them without a password:
-
-::
-
-   ssh-copy-id -i ~/.ssh/id_rsa.pub $USERNAME@$IP
-
-Replace ``$USERNAME`` with the username of the account you set up when
-you installed the machine.
-
-Sudo without password
-'''''''''''''''''''''
-
-Ansible can be configured to use a password for switching from the
-unpriviledged $USERNAME to the root user. This involves having the
-password lying about, so has security problems. If you want ansible to
-not be prompted for any administrative command (a different security
-problem!):
-
--  As root on each of the nodes, add the following line at the end of
-   the /etc/sudoers file:
-
-::
-
-   <ANSIBLE_LOGIN_USERNAME>     ALL=(ALL) NOPASSWD:ALL
-
-Replace ``<ANSIBLE_LOGIN_USERNAME>`` with the username of the account
-you set up when you installed the machine.
-
-Ansible pre-kubernetes
-^^^^^^^^^^^^^^^^^^^^^^
-
-Now that you have a working hosts.ini, and you can access the host, run
-any ansible scripts you need, in order for the nodes to have internet
-(proxy config, ssl certificates, etc).
+   In case you only have a single network interface with public IPs but wish to protect inter-database communication, you may use the ``tinc.yml`` playbook to create a private network interface. In this case, ensure tinc is setup BEFORE running any other playbook. See :ref:`tinc`
 
 Installing kubernetes
 ~~~~~~~~~~~~~~~~~~~~~
@@ -254,7 +210,7 @@ Install restund:
 Installing helm charts - prerequisites
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``helm_external.yml`` playbook can be used to write the IPs of the
+The ``helm_external.yml`` playbook can be used locally to write or update the IPs of the
 databases into the ``values/cassandra-external/values.yaml`` file, and
 thus make them available for helm and the ``...-external`` charts (e.g.
 ``cassandra-external``).
@@ -278,12 +234,17 @@ Now you can install the helm charts.
 tinc
 ~~~~
 
-Installing `tinc mesh vpn <http://tinc-vpn.org/>`__ is **optional and
-experimental**. It allows having a private network interface ``vpn0`` on
+Installing `tinc mesh vpn <http://tinc-vpn.org/>`__ is *optional and
+experimental*. It allows having a private network interface ``vpn0`` on
 the target VMs.
 
-*Note: Ensure to run the tinc.yml playbook first if you use tinc, before
-other playbooks.*
+.. warning::
+   We currently only use tinc for test clusters and have not made sure if the default settings it comes with provide adequate security to protect your data. If using tinc and the following tinc.yml playbook, make your own checks first!
+
+.. note::
+
+   Ensure to run the tinc.yml playbook first if you use tinc, before
+   other playbooks.
 
 -  Add a ``vpn_ip=Z.Z.Z.Z`` item to each entry in the hosts file with a
    (fresh) IP range if you wish to use tinc.
@@ -304,10 +265,19 @@ other playbooks.*
    cassandra
    # add other server groups here as necessary
 
+Also ensure subsequent playbooks make use of the newly-created interface by setting:
+
+.. code:: ini
+
+   [all:vars]
+   minio_network_interface = vpn0
+   cassandra_network_interface = vpn0
+   elasticsearch_network_interface = vpn0
+   redis_network_interface = vpn0
+
 Configure the physical network interface inside tinc.yml if it is not
 ``eth0``. Then:
 
 ::
 
    poetry run ansible-playbook -i hosts.ini tinc.yml -vv
-

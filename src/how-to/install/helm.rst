@@ -17,17 +17,12 @@ What will be installed?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 -  wire-server (API)
-   -  [x] user accounts, authentication, conversations
-   -  [x] assets handling (images, files, ...)
-   -  [x] notifications over websocket
+   -  user accounts, authentication, conversations
+   -  assets handling (images, files, ...)
+   -  notifications over websocket
 
--  wire-webapp
-
-   -  [x] fully functioning web client (like ``https://app.wire.com``)
-
--  wire-account-pages
-
-   -  [x] user account management (a few pages relating to e.g. password reset)
+-  wire-webapp, a fully functioning web client (like ``https://app.wire.com``)
+-  wire-account-pages, user account management (a few pages relating to e.g. password reset)
 
 What will not be installed?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -133,7 +128,7 @@ Or, if you are not in wire-server-deploy, download example demo values and secre
 
 Open ``values.yaml`` and replace ``example.com`` and other domains and subdomains with domains of your choosing. Look for the ``# change this`` comments. You can try using ``sed -i 's/example.com/<your-domain>/g' values.yaml``.
 
-Generate some secrets (if you are using the docker image from :ref:`ansible-deps-option-2`, you should do open a shell on the host system for this):
+Generate some secrets (if you are using the docker image from :ref:`ansible-kubernetes`, you should open a shell on the host system for this):
 
 .. code:: shell
 

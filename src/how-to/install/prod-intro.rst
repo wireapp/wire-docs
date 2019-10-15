@@ -45,3 +45,13 @@ What will not be installed by default?
 
 - 3rd party proxying - requires accounts with third-party providers
 - team-settings page for team management (including invitations, requires access to a private repository - get in touch with us for access)
+
+Getting support
+^^^^^^^^^^^^^^^^
+
+`Get in touch <https://wire.com/pricing/>`__.
+
+Next steps for high-available production installation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Your next step will be part 2, :ref:`ansible_vms`

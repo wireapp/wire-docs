@@ -228,8 +228,55 @@ Can you access the webapp? Open https://webapp.<your-domain> in your browser (Fi
 Troubleshooting
 --------------------
 
+Which version am I on?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+There are multiple artifacts which combine to form a running wire-server
+deployment; these include:
+
+-  docker images for each service
+-  kubernetes configs for each deployment (from helm charts)
+-  configuration maps for each deployment (from helm charts)
+
+If you wish to get some information regarding the code currently running
+on your cluster you can run the following from ``wire-server-deploy`` (if you don't have wire-server-deploy, ``git clone https://github.com/wireapp/wire-server-deploy && cd wire-server-deploy`` first)::
+
+   ./bin/deployment-info.sh <namespace> <deployment-name (e.g. brig)>
+
+Example run:
+
+::
+
+   ./deployment-info.sh demo brig
+   docker_image:               quay.io/wire/brig:2.50.319
+   chart_version:              wire-server-0.24.9
+   wire_server_commit:         8ec8b7ce2e5a184233aa9361efa86351c109c134
+   wire_server_link:           https://github.com/wireapp/wire-server/releases/tag/image/2.50.319
+   wire_server_deploy_commit:  01e0f261ca8163e63860f8b2af6d4ae329a32c14
+   wire_server_deploy_link:    https://github.com/wireapp/wire-server-deploy/releases/tag/chart/wire-server-0.24.9
+
+Note you'll need ``kubectl``, ``git`` and ``helm`` installed
+
+It will output the running docker image; the corresponding wire-server
+commit hash (and link) and the wire-server helm chart version which is
+running. This will be helpful for any support requests.
+
 Helm install / upgrade failed
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Usually, you want to run::
+
+    kubectl get pods --all-namespaces
+
+And look for any pods that are not ``Running``. Then you can::
+
+    kubectl --namespace <namespace> logs <name-of-pod>
+
+and/or::
+
+    kubectl --namespace <namespace> describe <name-of-pod>
+
+to know more.
 
 As long as nobody is using your cluster yet, you can safely delete and re-create a specific helm release (list releases with ``helm list --all``). Example delete the ``wire-server`` helm release:
 

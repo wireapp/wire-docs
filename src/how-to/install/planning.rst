@@ -70,4 +70,4 @@ Ensure that your VMs have IP addresses that do not change.
 Next steps for high-available production installation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Your next step will be :ref:`ansible-kubernetes-prod`
+Your next step will be :ref:`ansible_vms`

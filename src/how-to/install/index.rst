@@ -13,4 +13,5 @@ Installing wire-server
     (production) How to monitoring wire-server <monitoring.rst>
     (production) How to see centralized logs for wire-server <logging.rst>
     Managing authentication with ansible <ansible-authentication.rst>
+    Using tinc <ansible-tinc.rst>
     Troubleshooting during installation <troubleshooting.rst>

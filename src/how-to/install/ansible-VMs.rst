@@ -1,3 +1,7 @@
+.. _ansible_vms:
+
+Installing kubernetes and databases on VMs with ansible
+=======================================================
 
 Introduction
 ------------
@@ -30,7 +34,7 @@ Preparing to run ansible
 .. TODO: section header unifications/change
 
 Adding IPs to hosts.ini
-~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Go to your checked-out wire-server-deploy/ansible folder::
 
@@ -64,7 +68,7 @@ There are more settings in this file that we will set in later steps.
     both guilty of hostname manipulation.
 
 Authentication
-~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. include:: includes/ansible-authentication-blob.rst
 
@@ -78,7 +82,7 @@ You can install kubernetes, cassandra, restund, etc in any order.
    In case you only have a single network interface with public IPs but wish to protect inter-database communication, you may use the ``tinc.yml`` playbook to create a private network interface. In this case, ensure tinc is setup BEFORE running any other playbook. See :ref:`tinc`
 
 Installing kubernetes
-~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Kubernetes is installed via ansible. To install kubernetes:
 
@@ -101,7 +105,7 @@ should give output similar to this::
   Server Version: version.Info{Major:"1", Minor:"14", GitVersion:"v1.14.2", GitCommit:"66049e3b21efe110454d67df4fa62b08ea79a19b", GitTreeState:"clean", BuildDate:"2019-05-16T16:14:56Z", GoVersion:"go1.12.5", Compiler:"gc", Platform:"linux/amd64"}
 
 Cassandra
-~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 -  Set variables in the hosts.ini file under ``[cassandra:vars]``. Most
    defaults should be fine, except maybe for the cluster name and the
@@ -129,7 +133,7 @@ Install cassandra:
    poetry run ansible-playbook -i hosts.ini cassandra.yml -vv
 
 ElasticSearch
-~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 -  In your 'hosts.ini' file, in the ``[elasticsearch:vars]`` section,
    set 'elasticsearch_network_interface' to the name of the interface
@@ -148,7 +152,7 @@ ElasticSearch
    poetry run ansible-playbook -i hosts.ini elasticsearch.yml -vv
 
 Minio
-~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 -  In your 'hosts.ini' file, in the ``[all:vars]`` section, make sure
    you set the 'minio_network_interface' to the name of the interface
@@ -171,7 +175,7 @@ Minio
    poetry run ansible-playbook -i hosts.ini minio.yml -vv
 
 Restund
-~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Set other variables in the hosts.ini file under ``[restund:vars]``. Most
 defaults should be fine, except for the network interfaces to use:
@@ -217,7 +221,7 @@ Install restund:
    poetry run ansible-playbook -i hosts.ini restund.yml -vv
 
 Installing helm charts - prerequisites
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The ``helm_external.yml`` playbook can be used locally to write or update the IPs of the
 databases into the ``values/cassandra-external/values.yaml`` file, and
@@ -240,53 +244,3 @@ Ensure to define the following in your hosts.ini under ``[all:vars]``:
 
 Now you can install the helm charts.
 
-tinc
-~~~~
-
-Installing `tinc mesh vpn <http://tinc-vpn.org/>`__ is *optional and
-experimental*. It allows having a private network interface ``vpn0`` on
-the target VMs.
-
-.. warning::
-   We currently only use tinc for test clusters and have not made sure if the default settings it comes with provide adequate security to protect your data. If using tinc and the following tinc.yml playbook, make your own checks first!
-
-.. note::
-
-   Ensure to run the tinc.yml playbook first if you use tinc, before
-   other playbooks.
-
--  Add a ``vpn_ip=Z.Z.Z.Z`` item to each entry in the hosts file with a
-   (fresh) IP range if you wish to use tinc.
--  Add a group ``vpn``:
-
-.. code:: ini
-
-   # this is a minimal example
-   [all]
-   server1 ansible_host=X.X.X.X vpn_ip=10.10.1.XXX
-   server2 ansible_host=X.X.X.X vpn_ip=10.10.1.YYY
-
-   [cassandra]
-   server1
-   server2
-
-   [vpn:children]
-   cassandra
-   # add other server groups here as necessary
-
-Also ensure subsequent playbooks make use of the newly-created interface by setting:
-
-.. code:: ini
-
-   [all:vars]
-   minio_network_interface = vpn0
-   cassandra_network_interface = vpn0
-   elasticsearch_network_interface = vpn0
-   redis_network_interface = vpn0
-
-Configure the physical network interface inside tinc.yml if it is not
-``eth0``. Then:
-
-::
-
-   poetry run ansible-playbook -i hosts.ini tinc.yml -vv

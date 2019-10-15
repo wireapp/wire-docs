@@ -35,6 +35,8 @@ Next steps for demo installation
 
 If you already have a kubernetes cluster, your next step will be :ref:`helm`, otherwise, your next step will be :ref:`ansible-kubernetes`
 
+.. _planning_prod:
+
 Production installation (persistent data, high-availability)
 --------------------------------------------------------------
 

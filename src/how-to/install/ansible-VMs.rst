@@ -244,3 +244,7 @@ Ensure to define the following in your hosts.ini under ``[all:vars]``:
 
 Now you can install the helm charts.
 
+Next steps for high-available production installation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Your next step will be :ref:`helm_prod`

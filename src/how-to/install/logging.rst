@@ -19,7 +19,7 @@ Prerequisites
 You need to have wire-server installed, see either of
 
 * :ref:`helm`
-* :ref:`helm-prod`.
+* :ref:`helm_prod`.
 
 
 Installing required helm charts

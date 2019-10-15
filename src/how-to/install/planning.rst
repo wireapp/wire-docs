@@ -49,21 +49,7 @@ A recommended installation of Wire-server in any regular data centre,
 configured with high-availability will require the following virtual
 servers:
 
-+---------------+--------+-----+--------+--------+
-| Name          | Amount | CPU | memory | disk   |
-+===============+========+=====+========+========+
-| cassandra     | 3      | 2   | 4 GB   | 80 GB  |
-+---------------+--------+-----+--------+--------+
-| minio         | 3      | 1   | 2 GB   | 100 GB |
-+---------------+--------+-----+--------+--------+
-| elasticsearch | 3      | 1   | 2 GB   | 10 GB  |
-+---------------+--------+-----+--------+--------+
-| redis         | 3      | 1   | 2 GB   | 10 GB  |
-+---------------+--------+-----+--------+--------+
-| kubernetes    | 3      | 4   | 8 GB   | 20 GB  |
-+---------------+--------+-----+--------+--------+
-| restund       | 2      | 1   | 2 GB   | 10 GB  |
-+---------------+--------+-----+--------+--------+
+.. include:: includes/vm-table.rst
 
 A production installation will look a bit like this:
 

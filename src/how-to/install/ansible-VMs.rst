@@ -1,113 +1,24 @@
-ansible-based configuration
-===========================
+
+Introduction
+------------
 
 In a production environment, some parts of the wire-server
 infrastructure (such as e.g. cassandra databases) are best configured
 outside kubernetes. Additionally, kubernetes can be rapidly set up with
-kubespray, via ansible. The documentation and code under this folder is
-meant to help with that.
-
-Status
-------
-
-work-in-progress
-
--  [ ] document networking setup
--  [ ] diagram
--  [ ] other assumptions?
--  [x] install kubernetes with kubespray
--  [x] install cassandra
--  [x] install elasticsearch
--  [x] install minio
--  [ ] install redis
--  [x] install restund servers
--  [ ] polish
+kubespray, via ansible. This section covers installing VMs with ansible.
 
 Assumptions
 -----------
 
-This document assumes
+- A bare-metal setup (no cloud provider)
+- All machines run ubuntu 16.04 or ubuntu 18.04
+- All machines have static IP addresses
+- You have the following virtual machines:
 
--  a bare-metal setup (no cloud provider)
--  a production SLA where 30 minutes of downtime is unacceptable
--  about 1000 active users
--  all machines run ubuntu 16.04 or ubuntu 18.04
+.. include:: includes/vm-table.rst
 
-Dependencies
-------------
-
-Poetry
-~~~~~~
-
-First, we're going to install `Poetry <https://poetry.eustace.io/>`__.
-We'll be using it to run ansible playbooks later. These directions
-assume you're using python 2.7 (if you only have python3 available, you
-may need to find some workarounds):
-
-To install poetry:
-
-::
-
-   sudo apt install -y python2.7 python-pip
-   curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py > get-poetry.py
-   python2.7 get-poetry.py
-   source $HOME/.poetry/env
-   ln -s /usr/bin/python2.7 $HOME/.poetry/bin/python
-
-During the installation, answer 'Y' to allow the Path variable for this
-user to be modified.
-
-Ansible
-~~~~~~~
-
--  Install the python dependencies to run ansible.
-
-::
-
-   git clone https://github.com/wireapp/wire-server-deploy.git
-   cd wire-server-deploy/ansible
-   ## (optional) if you need ca certificates other than the default ones:
-   # export CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
-   poetry install
-
-Note: the 'make download-cli-binaries' part of 'make download' requires
-either that you have run this all as root, or that the user you are
-running these scripts can 'sudo' without being prompted for a password.
-I run 'sudo ls', get prompted for a password, THEN run 'make download'.
-
--  Download the ansible roles necessary to install databases and
-   kubernetes:
-
-::
-
-   make download
-
-Provisioning machines
----------------------
-
-Create the following:
-
-+---------------+--------+-----+--------+--------+
-| Name          | Amount | CPU | memory | disk   |
-+===============+========+=====+========+========+
-| cassandra     | 3      | 2   | 4 GB   | 80 GB  |
-+---------------+--------+-----+--------+--------+
-| minio         | 3      | 1   | 2 GB   | 100 GB |
-+---------------+--------+-----+--------+--------+
-| elasticsearch | 3      | 1   | 2 GB   | 10 GB  |
-+---------------+--------+-----+--------+--------+
-| redis         | 3      | 1   | 2 GB   | 10 GB  |
-+---------------+--------+-----+--------+--------+
-| kubernetes    | 3      | 4   | 8 GB   | 20 GB  |
-+---------------+--------+-----+--------+--------+
-| turn          | 2      | 1   | 2 GB   | 10 GB  |
-+---------------+--------+-----+--------+--------+
-
-It's up to you how you create these machines - kvm on a bare metal
-machine, VM on a cloud provider, a real physical machine, etc. Make sure
-they run ubuntu 16.04/18.04.
-
-Ensure that the machines have IP addresses that do not change.
+(It's up to you how you create these machines - kvm on a bare metal
+machine, VM on a cloud provider, real physical machines, etc.)
 
 Preparing to run ansible
 ------------------------

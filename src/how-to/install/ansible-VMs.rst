@@ -34,14 +34,11 @@ Adding IPs to hosts.ini
 
 Go to your checked-out wire-server-deploy/ansible folder::
 
-  cd wire-server-deploy/ansible
+   cd wire-server-deploy/ansible
 
-Copy the example hosts file:
+Copy the example hosts file::
 
-.. code::
-
-
-``cp hosts.example.ini hosts.ini``
+   cp hosts.example.ini hosts.ini
 
 -  Edit the hosts.ini, setting the permanent IPs of the hosts you are
    setting up wire on.
@@ -69,7 +66,7 @@ There are more settings in this file that we will set in later steps.
 Authentication
 ~~~~~~~~~~~~~~~~~~~~~
 
-If you use key-based authentication, and the user you login with is either `root` or can elevate to `root` without a password, you don't need to do anything further to use ansible. If, however, you use password authentication for ssh access, and/or your login user needs a password to become root, see :ref:`ansible-authentication`.
+.. include:: includes/ansible-authentication-blob.rst
 
 Running ansible to install software on your machines
 -----------------------------------------------------
@@ -83,13 +80,25 @@ You can install kubernetes, cassandra, restund, etc in any order.
 Installing kubernetes
 ~~~~~~~~~~~~~~~~~~~~~
 
-Kubernetes is installed via ansible.
+Kubernetes is installed via ansible. To install kubernetes:
 
--  To deploy kubernetes:
-
-::
+From ``wire-server-deploy/ansible``::
 
    poetry run ansible-playbook -i hosts.ini kubernetes.yml -vv
+
+When the playbook finishes correctly (which can take up to 20 minutes), you should have a folder ``artifacts`` containing a file ``admin.conf``. Copy this file::
+
+  mkdir -p ~/.kube
+  cp artifacts/admin.conf ~/.kube/config
+
+Make sure you can reach the server::
+
+  kubectl version
+
+should give output similar to this::
+
+  Client Version: version.Info{Major:"1", Minor:"14", GitVersion:"v1.14.2", GitCommit:"66049e3b21efe110454d67df4fa62b08ea79a19b", GitTreeState:"clean", BuildDate:"2019-05-16T16:23:09Z", GoVersion:"go1.12.5", Compiler:"gc", Platform:"linux/amd64"}
+  Server Version: version.Info{Major:"1", Minor:"14", GitVersion:"v1.14.2", GitCommit:"66049e3b21efe110454d67df4fa62b08ea79a19b", GitTreeState:"clean", BuildDate:"2019-05-16T16:14:56Z", GoVersion:"go1.12.5", Compiler:"gc", Platform:"linux/amd64"}
 
 Cassandra
 ~~~~~~~~~

@@ -18,7 +18,8 @@ From ``wire-server-deploy/ansible``:
 
 Open hosts.ini and replace `X.X.X.X` with the IP address of your virtual machine that you use for ssh access. Remove `ip=Y.Y.Y.Y` or set that to the private IP address of the machine.
 
-.. include:: ansible-authentication.rst
+
+.. include:: includes/ansible-authentication-blob.rst
 
 How to install kubernetes
 --------------------------

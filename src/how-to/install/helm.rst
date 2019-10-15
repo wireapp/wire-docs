@@ -13,6 +13,31 @@ Demo version means
 * easy setup - only one single machine with kubernetes is needed (make sure you have at least 4 CPU cores and 8 GB of memory available)
 * no data persistence (everything stored in memory, will be lost)
 
+What will be installed?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+-  wire-server (API)
+   -  [x] user accounts, authentication, conversations
+   -  [x] assets handling (images, files, ...)
+   -  [x] notifications over websocket
+
+-  wire-webapp
+
+   -  [x] fully functioning web client (like ``https://app.wire.com``)
+
+-  wire-account-pages
+
+   -  [x] user account management (a few pages relating to e.g. password reset)
+
+What will not be installed?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+-  notifications over native
+  `FCM <https://firebase.google.com/docs/cloud-messaging/>`__/`APNS <https://developer.apple.com/notifications/>`__
+  push notifications
+-  audio/video calling servers using :ref:`understand-restund`)
+-  team-settings page
+
 Prerequisites
 --------------------------------
 
@@ -49,7 +74,9 @@ new versions as time passes, you may need to run ``helm repo update``)
 
 Great! Now you can start installing.
 
-Note: all commands below can also take an extra ``--namespace <your-namespace>`` if you don't want to install into the default kubernetes namespace.
+.. note::
+
+    all commands below can also take an extra ``--namespace <your-namespace>`` if you don't want to install into the default kubernetes namespace.
 
 Watching changes as they happen
 --------------------------------------------------
@@ -88,7 +115,9 @@ Next, install an smtp server:
 How to install wire-server itself
 ---------------------------------------
 
-*Note: the following makes use of overrides for helm charts. You may wish to read :ref:`understand-helm-overrides` first.*
+.. note::
+
+    the following makes use of overrides for helm charts. You may wish to read :ref:`understand-helm-overrides` first.*
 
 Download example demo values and secrets:
 

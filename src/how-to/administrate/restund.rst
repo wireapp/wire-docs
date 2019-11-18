@@ -8,7 +8,7 @@ Restund (TURN)
 How to see how many people are currently connected to the restund server
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can see the amount of currently ongoing calls (also called "allocations"):
+You can see the count of currently ongoing calls (also called "allocations"):
 
 .. code:: sh
 

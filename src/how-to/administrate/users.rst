@@ -17,6 +17,16 @@ Terminal two: Search for your user by email:
    # or, for nicer formatting
    curl -v -G localhost:9999/i/users --data-urlencode email=$EMAIL | json_pp
 
+You can also search by ``handle`` (unique username) or by phone:
+
+.. code:: sh
+
+   HANDLE=user123
+   curl -v -G localhost:9999/i/users --data-urlencode handles=$HANDLE; echo
+
+   PHONE=+490000000000000 # phone numbers must have the +country prefix and no spaces
+   curl -v -G localhost:9999/i/users --data-urlencode phone=$PHONE; echo
+
 
 Which should give you output like:
 

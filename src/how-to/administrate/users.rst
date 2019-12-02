@@ -88,6 +88,38 @@ Terminal two: Search for your user by name or handle or a prefix of that handle 
 
 .. code:: sh
 
-   NAMEORPREFIX=user123
+   NAMEORPREFIX=test7
    UUID=$(cat /proc/sys/kernel/random/uuid)
-   curl -H "Z-User:$UUID" "http://localhost:9999/search/contacts?q=$NAMEORPREFIX"
+   curl -H "Z-User:$UUID" "http://localhost:9999/search/contacts?q=$NAMEORPREFIX"; echo
+   # or, for pretty output:
+   curl -H "Z-User:$UUID" "http://localhost:9999/search/contacts?q=$NAMEORPREFIX" | json_pp
+
+If no match is found, expect a query like this:
+
+.. code:: json
+
+   {"took":91,"found":0,"documents":[],"returned":0}
+
+If matches are found, the result should look like this:
+
+.. code:: json
+
+   {
+      "found" : 2,
+      "documents" : [
+         {
+            "id" : "dbdbf370-48b3-4e1e-b377-76d7d4cbb4f2",
+            "name" : "Test",
+            "handle" : "test7",
+            "accent_id" : 7
+         },
+         {
+            "name" : "Test",
+            "accent_id" : 0,
+            "handle" : "test7476",
+            "id" : "a93240b0-ba89-441e-b8ee-ff4403808f93"
+         }
+      ],
+      "returned" : 2,
+      "took" : 4
+   }

@@ -1,7 +1,6 @@
 
-Manual user deletion for users which are not team users
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+Manually searching for users in cassandra
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Terminal one:
 
 .. code:: sh
@@ -60,6 +59,9 @@ Which should give you output like:
 
 The interesting part is the ``id`` (in the example case ``9122e5de-b4fb-40fa-99ad-1b5d7d07bae5``):
 
+Deleting a user which is not a team user
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 You can now delete that user by double-checking that the user you wish to delete is really the correct user:
 
 .. code:: sh
@@ -67,6 +69,25 @@ You can now delete that user by double-checking that the user you wish to delete
    # replace the id with the id of the user you want to delete
    curl -v localhost:9999/i/users/9122e5de-b4fb-40fa-99ad-1b5d7d07bae5 -XDELETE
 
-Afterwards, the previous command (to search for a user) should return an empty list (``[]``).
+Afterwards, the previous command (to search for a user in cassandra) should return an empty list (``[]``).
 
-Now on terminal 1, ctrl+c to cancel the port-forwarding.
+When done, on terminal 1, ctrl+c to cancel the port-forwarding.
+
+Manual search on elasticsearch
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This should only be necessary in the case of some (suspected) data inconsistency between cassandra and elasticsearch.
+
+Terminal one:
+
+.. code:: sh
+
+   kubectl port-forward svc/brig 9999:8080
+
+Terminal two: Search for your user by name or handle or a prefix of that handle or name:
+
+.. code:: sh
+
+   NAMEORPREFIX=user123
+   UUID=$(cat /proc/sys/kernel/random/uuid)
+   curl -H "Z-User:$UUID" "http://localhost:9999/search/contacts?q=$NAMEORPREFIX"

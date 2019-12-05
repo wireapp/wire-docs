@@ -1,6 +1,15 @@
+Investigative tasks (e.g. searching for users as server admin)
+---------------------------------------------------------------
+
+This page requires that you have root access to the machines where kubernetes runs on, or have kubernetes permissions allowing you to port-forward arbitrary pods and services.
+
+If you have the `backoffice` pod installed, see also the `backoffice README <https://github.com/wireapp/wire-server-deploy/tree/develop/charts/backoffice>`__.
+
+If you don't have `backoffice`, see below for some options:
 
 Manually searching for users in cassandra
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Terminal one:
 
 .. code:: sh

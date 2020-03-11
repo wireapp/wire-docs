@@ -220,6 +220,20 @@ Install restund:
 
    poetry run ansible-playbook -i hosts.ini restund.yml -vv
 
+IMPORTANT checks
+^^^^^^^^^^^^^^^^
+
+Ensure that NTP is properly set up on all nodes. Particularly for Cassandra _DO NOT_ use anything else other than ntp. Here are some helpful blogs that explain why:
+
+ * https://blog.rapid7.com/2014/03/14/synchronizing-clocks-in-a-cassandra-cluster-pt-1-the-problem/
+ * https://www.digitalocean.com/community/tutorials/how-to-set-up-time-synchronization-on-ubuntu-16-04
+
+How can I ensure that I have correctly setup NTP on my machine(s)? Have a look at [this ansible playbook] or run the following playbook
+
+::
+
+   poetry run ansible-playbook -i hosts.ini check-ntp.yml -vv
+
 Installing helm charts - prerequisites
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

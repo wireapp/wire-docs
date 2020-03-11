@@ -223,12 +223,12 @@ Install restund:
 IMPORTANT checks
 ^^^^^^^^^^^^^^^^
 
-Ensure that NTP is properly set up on all nodes. Particularly for Cassandra _DO NOT_ use anything else other than ntp. Here are some helpful blogs that explain why:
+Ensure that NTP is properly set up on all nodes. Particularly for Cassandra **DO NOT** use anything else other than ntp. Here are some helpful blogs that explain why:
 
  * https://blog.rapid7.com/2014/03/14/synchronizing-clocks-in-a-cassandra-cluster-pt-1-the-problem/
  * https://www.digitalocean.com/community/tutorials/how-to-set-up-time-synchronization-on-ubuntu-16-04
 
-How can I ensure that I have correctly setup NTP on my machine(s)? Have a look at [this ansible playbook] or run the following playbook
+How can I ensure that I have correctly setup NTP on my machine(s)? Have a look at `this ansible playbook <https://github.com/wireapp/wire-server-deploy/blob/verify-ntp/ansible/cassandra-verify-ntp.yml>`_ or run the following playbook:
 
 ::
 

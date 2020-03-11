@@ -54,7 +54,7 @@ If your target machine only has python 3 (not python 2.7), you can tell ansible 
 Flaky issues with Cassandra (failed QUORUMs, etc.)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Cassandra is _very_ picky about time! Ensure that NTP is properly set up on all nodes. Particularly for Cassandra _DO NOT_ use anything else other than ntp. Here are some helpful blogs that explain why:
+Cassandra is *very* picky about time! Ensure that NTP is properly set up on all nodes. Particularly for Cassandra *DO NOT* use anything else other than ntp. Here are some helpful blogs that explain why:
 
  * https://blog.rapid7.com/2014/03/14/synchronizing-clocks-in-a-cassandra-cluster-pt-1-the-problem/
  * https://blog.rapid7.com/2014/03/17/synchronizing-clocks-in-a-cassandra-cluster-pt-2-solutions/

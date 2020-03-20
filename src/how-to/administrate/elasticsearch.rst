@@ -57,3 +57,14 @@ How to manually look into what is stored in elasticsearch
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 See also the elasticsearch sections in :ref:`investigative_tasks`.
+
+Troubleshooting
+~~~~~~~~~~~~~~~
+
+Description:
+**ES nodes ran out of disk space** and error message says: ``"blocked by: [FORBIDDEN/12/index read-only / allow delete (api)];"``
+
+Solution:
+* clean up disk (e.g. ``apt autoremove`` on all nodes) & restart nodes a/o ES process
+* get ES out of *read-only* mode: ``curl -X PUT -H 'Content-Type: application/json' https://${ES_HOST}:${ES_PORT}/_all/_settings -d '{"index.blocks.read_only_allow_delete": null}'``
+* trigger reindexing: ``curl -v -X POST $BRIG_IP:8080/i/index/reindex``

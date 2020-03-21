@@ -223,16 +223,11 @@ Install restund:
 IMPORTANT checks
 ^^^^^^^^^^^^^^^^
 
-Ensure that NTP is properly set up on all nodes. Particularly for Cassandra **DO NOT** use anything else other than ntp. Here are some helpful blogs that explain why:
-
- * https://blog.rapid7.com/2014/03/14/synchronizing-clocks-in-a-cassandra-cluster-pt-1-the-problem/
- * https://www.digitalocean.com/community/tutorials/how-to-set-up-time-synchronization-on-ubuntu-16-04
-
-How can I ensure that I have correctly setup NTP on my machine(s)? Have a look at `this ansible playbook <https://github.com/wireapp/wire-server-deploy/blob/verify-ntp/ansible/cassandra-verify-ntp.yml>`_ or run the following playbook:
+ After running the above playbooks, it is important to ensure that everything is setup correctly. Please have a look at the post install checks in the section :ref:`checks`
 
 ::
 
-   poetry run ansible-playbook -i hosts.ini check-ntp.yml -vv
+   poetry run ansible-playbook -i hosts.ini cassandra-verify-ntp.yml -vv
 
 Installing helm charts - prerequisites
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -1,5 +1,13 @@
 .. _ntp-check:
 
+NTP Checks
+==========
+
+Ensure that NTP is properly set up on all nodes. Particularly for Cassandra **DO NOT** use anything else other than ntp. Here are some helpful blogs that explain why:
+
+ * https://blog.rapid7.com/2014/03/14/synchronizing-clocks-in-a-cassandra-cluster-pt-1-the-problem/
+ * https://www.digitalocean.com/community/tutorials/how-to-set-up-time-synchronization-on-ubuntu-16-04
+
 How can I see if NTP is correctly set up?
 -----------------------------------------
 

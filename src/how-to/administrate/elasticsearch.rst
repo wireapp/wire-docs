@@ -65,6 +65,6 @@ Description:
 **ES nodes ran out of disk space** and error message says: ``"blocked by: [FORBIDDEN/12/index read-only / allow delete (api)];"``
 
 Solution:
-* clean up disk (e.g. ``apt autoremove`` on all nodes) & restart nodes a/o ES process
+* clean up disk (e.g. ``apt autoremove`` on all nodes), then restart machines and/or the elasticsearch process
 * get the elastichsearch cluster out of *read-only* mode: SSH to one elasticsearch machine, then run ``curl -X PUT -H 'Content-Type: application/json' http://localhost:9200/_all/_settings -d '{"index.blocks.read_only_allow_delete": null}'``
 * trigger reindexing: ``curl -v -X POST $BRIG_IP:8080/i/index/reindex``

@@ -1,15 +1,20 @@
-Scenario 1
-~~~~~~~~~~
+How to renew certificates on kubernetes 1.14.x
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Kubernetes-internal certificates by default (see assumptions) expire after one year. Without renewal, your installation will cease to function.
+This page explains how to renew certificates.
 
 Assumptions
 -----------
 
 -  Kubernetes version 1.14.x
--  installed with the help of Kubespray
--  setup: 3 schedules nodes, each hosting master (control plane) +
+-  installed with the help of `Kubespray <https://github.com/kubernetes-sigs/kubespray>`__
+
+   - This page was tested using kubespray release 2.10 branch from 2019-05-20, i.e. commit ``e2f5a9748e4dbfe2fdba7931198b0b5f1f4bdc7e``.
+-  setup: 3 scheduled nodes, each hosting master (control plane) +
    worker (kubelet) + etcd (cluster state, key-value database)
 
-*NOTE: sue to Kubernetes being installed with Kubespray, the Kubernetes
+*NOTE: due to Kubernetes being installed with Kubespray, the Kubernetes
 CAs (expire after 10yr) as well as certificates involved in etcd
 communication (expire after 100yr) are not required to be renewed (any
 time soon).*

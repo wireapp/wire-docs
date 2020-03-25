@@ -17,6 +17,7 @@ Assumptions
 - A bare-metal setup (no cloud provider)
 - All machines run ubuntu 16.04 or ubuntu 18.04
 - All machines have static IP addresses
+- Time on all machines is being kept in sync
 - You have the following virtual machines:
 
 .. include:: includes/vm-table.rst
@@ -126,7 +127,26 @@ Cassandra
 `defaults/main.yml <https://github.com/wireapp/ansible-cassandra/blob/master/defaults/main.yml>`__
 for a full list of variables to change if necessary)
 
-Install cassandra:
+-  If you are installing Cassandra on Ubuntu 18.04, you will need to
+   specify to use an earlier version of java. In hosts.ini, in the
+   place where you configured your ansible hosts, append
+   ``java_packages='["openjdk-8-jdk"]'`` to the host definitions for
+   Cassandra hosts. For example, change:
+
+.. code:: ini
+
+   cassandra01       ansible_host=172.17.0.110
+   cassandra02       ansible_host=172.17.2.183
+   cassandra03       ansible_host=172.17.0.172
+
+   to:
+.. code:: ini
+
+   cassandra01       ansible_host=172.17.0.110 java_packages='["openjdk-8-jdk"]'
+   cassandra02       ansible_host=172.17.2.183 java_packages='["openjdk-8-jdk"]'
+   cassandra03       ansible_host=172.17.0.172 java_packages='["openjdk-8-jdk"]'
+
+- Use poetry to run ansible, and deploy Cassandra:
 
 ::
 
@@ -135,15 +155,43 @@ Install cassandra:
 ElasticSearch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
--  In your 'hosts.ini' file, in the ``[elasticsearch:vars]`` section,
-   set 'elasticsearch_network_interface' to the name of the interface
-   you want elasticsearch nodes to talk to each other on. For example:
+-  In your 'hosts.ini' file, in the ``[all:vars]`` section, set
+   'elasticsearch_network_interface' to the name of the interface you
+   want elasticsearch nodes to talk to each other on. For example:
 
 .. code:: ini
 
    [all:vars]
    # default first interface on ubuntu on kvm:
    elasticsearch_network_interface=ens3
+
+-  If you are installing elasticsearch on Ubuntu 18.04, you will need
+   to specify to use an earlier version of java.  In hosts.ini, in the
+   place where you configured your ansible hosts, append
+   ``java_packages='["openjdk-8-jdk"]'`` to the host definitions for
+   ElasticSearch hosts. For example, change:
+
+.. code:: ini
+
+   elasticsearch01   ansible_host=172.17.1.249
+   elasticsearch02   ansible_host=172.17.2.14
+   elasticsearch03   ansible_host=172.17.3.68
+
+   to:
+.. code:: ini
+   elasticsearch01   ansible_host=172.17.1.249 java_packages='["openjdk-8-jdk"]'
+   elasticsearch02   ansible_host=172.17.2.14 java_packages='["openjdk-8-jdk"]'
+   elasticsearch03   ansible_host=172.17.3.68 java_packages='["openjdk-8-jdk"]'
+
+-  If you are performing an offline install, or for some other reason
+   are using an APT mirror to retrieve elasticsearch-oss packages from,
+   you need to specify that mirror. In the 'ELASTICSEARCH' section of
+   hosts.ini, add two lines forcing elasticsearch to use a given APT
+   mirror, with a given GPG key.
+
+.. code:: ini
+   es_apt_key = "https://<mymirror>/linux/ubuntu/gpg"
+   es_apt_url = "deb [trusted=yes] https://<mymirror>/apt bionic stable"
 
 -  Use poetry to run ansible, and deploy ElasticSearch:
 

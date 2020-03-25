@@ -20,6 +20,8 @@ This assumes you're using python 2.7 (if you only have python3 available, you ma
    source $HOME/.poetry/env
    ln -s /usr/bin/python2.7 $HOME/.poetry/bin/python
 
+During the installation, answer 'Y' to allow the Path variable for this user to be modified.
+
 Install the python dependencies to run ansible.
 
 ::

@@ -16,7 +16,7 @@ This is an important part of your setup, particularly for your Cassandra nodes. 
 I used your ansible scripts and prefer to have automated checks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Then the easiest way is to use `this ansible playbook <https://github.com/wireapp/wire-server-deploy/blob/verify-ntp/ansible/cassandra-verify-ntp.yml>`_
+Then the easiest way is to use `this ansible playbook <https://github.com/wireapp/wire-server-deploy/blob/develop/ansible/cassandra-verify-ntp.yml>`_
 
 I am not using ansible and like to SSH into hosts and checking things manually
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

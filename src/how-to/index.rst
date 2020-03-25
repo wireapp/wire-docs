@@ -10,3 +10,4 @@ server components.
 
     How to install wire-server <install/index.rst>
     How to administrate servers after successful installation <administrate/index.rst>
+    API client documentation <api-client-perspective/index.rst>

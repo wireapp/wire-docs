@@ -163,7 +163,8 @@ c) Remove old certificates and configuration
 
 ::
 
-   rm -rf /var/lib/kubelet/pki/*
+   mv /var/lib/kubelet/pki{,old}
+   mkdir /var/lib/kubelet/pki
 
 d) Generate new kubeconfig file for the kubelet
 
@@ -191,15 +192,33 @@ g) Allow workload to be scheduled again on the node
 
 7. Copy certificates over to all the other nodes
 
+Option A - you can ssh from one kubernetes node to another
+
 .. code:: bash
+
+   # set the ip or hostname:
+   export NODE2=root@ip-or-hostname
+   export NODE3=
 
    scp ./ssl/apiserver.* root@kubenode02:/etc/kubernetes/ssl/
    scp ./ssl/apiserver.* root@kubenode03:/etc/kubernetes/ssl/
 
-   scp ./ssl/apiserver-kubelet-client.* root@kubenode02:/etc/kubernetes/ssl/
-   scp ./ssl/apiserver-kubelet-client.* root@kubenode03:/etc/kubernetes/ssl/
-
    scp ./ssl/front-proxy-client.* root@kubenode02:/etc/kubernetes/ssl/
    scp ./ssl/front-proxy-client.* root@kubenode03:/etc/kubernetes/ssl/
+
+Option B - copy via local administrator's machine
+
+.. code:: bash
+
+   # set the ip or hostname:
+   export NODE1=root@ip-or-hostname
+   export NODE2=
+   export NODE3=
+
+   scp -3 "${NODE1}:/etc/kubernetes/ssl/apiserver.*" "${NODE2}:/etc/kubernetes/ssl/"
+   scp -3 "${NODE1}:/etc/kubernetes/ssl/apiserver.*" "${NODE3}:/etc/kubernetes/ssl/"
+
+   scp -3 "${NODE1}:/etc/kubernetes/ssl/front-proxy-client.*" "${NODE2}:/etc/kubernetes/ssl/"
+   scp -3 "${NODE1}:/etc/kubernetes/ssl/front-proxy-client.*" "${NODE3}:/etc/kubernetes/ssl/"
 
 8. Continue again with (4) for each node that is left

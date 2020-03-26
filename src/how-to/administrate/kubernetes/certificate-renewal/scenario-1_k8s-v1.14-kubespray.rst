@@ -126,9 +126,9 @@ renewed. This can be confirmed, by executing parts of (1).*
 
 .. code:: bash
 
-   kubeadm alpha kubeconfig user --org system:masters --client-name kubernetes-admin  > admin.conf
-   kubeadm alpha kubeconfig user --client-name system:kube-controller-manager > controller-manager.conf
-   kubeadm alpha kubeconfig user --client-name system:kube-scheduler > scheduler.conf
+   kubeadm alpha kubeconfig user --org system:masters --client-name kubernetes-admin  > /etc/kubernetes/admin.conf
+   kubeadm alpha kubeconfig user --client-name system:kube-controller-manager > /etc/kubernetes/controller-manager.conf
+   kubeadm alpha kubeconfig user --client-name system:kube-scheduler > /etc/kubernetes/scheduler.conf
 
 *Again, check if ownership and permission for these files are the same
 as all the others around them.*
@@ -170,7 +170,7 @@ d) Generate new kubeconfig file for the kubelet
 
 ::
 
-   kubeadm alpha kubeconfig user --org system:nodes --client-name system:node:$(hostname) > kubelet.conf
+   kubeadm alpha kubeconfig user --org system:nodes --client-name system:node:$(hostname) > /etc/kubernetes/kubelet.conf
 
 e) Start kubelet again
 
@@ -203,6 +203,9 @@ Option A - you can ssh from one kubernetes node to another
    scp ./ssl/apiserver.* root@kubenode02:/etc/kubernetes/ssl/
    scp ./ssl/apiserver.* root@kubenode03:/etc/kubernetes/ssl/
 
+   scp ./ssl/apiserver-kubelet-client.* root@kubenode02:/etc/kubernetes/ssl/
+   scp ./ssl/apiserver-kubelet-client.* root@kubenode03:/etc/kubernetes/ssl/
+
    scp ./ssl/front-proxy-client.* root@kubenode02:/etc/kubernetes/ssl/
    scp ./ssl/front-proxy-client.* root@kubenode03:/etc/kubernetes/ssl/
 
@@ -217,6 +220,9 @@ Option B - copy via local administrator's machine
 
    scp -3 "${NODE1}:/etc/kubernetes/ssl/apiserver.*" "${NODE2}:/etc/kubernetes/ssl/"
    scp -3 "${NODE1}:/etc/kubernetes/ssl/apiserver.*" "${NODE3}:/etc/kubernetes/ssl/"
+
+   scp -3 "${NODE1}:/etc/kubernetes/ssl/apiserver-kubelet-client.*" "${NODE2}:/etc/kubernetes/ssl/"
+   scp -3 "${NODE1}:/etc/kubernetes/ssl/apiserver-kubelet-client.*" "${NODE3}:/etc/kubernetes/ssl/"
 
    scp -3 "${NODE1}:/etc/kubernetes/ssl/front-proxy-client.*" "${NODE2}:/etc/kubernetes/ssl/"
    scp -3 "${NODE1}:/etc/kubernetes/ssl/front-proxy-client.*" "${NODE3}:/etc/kubernetes/ssl/"

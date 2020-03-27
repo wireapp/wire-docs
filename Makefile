@@ -19,14 +19,18 @@ VENV_DIR = $(MKFILE_DIR)/.venv
 VENV_BIN = $(VENV_DIR)/bin
 
 
+.PHONY: Makefile
+
+
+.DEFAULT: docs
 .PHONY: docs
 docs:
-	docker run --rm -v $(MKFILE_DIR):/mnt $(DOCKER_USER)/$(DOCKER_IMAGE):$(DOCKER_TAG) make html
+	docker run --rm -v $$(pwd):/mnt $(DOCKER_USER)/$(DOCKER_IMAGE):$(DOCKER_TAG) make clean html
 
 # Only build part of the documentation
 # See 'exclude_patterns' in source/conf.py
 docs-administrate:
-	docker run --rm -e SPHINXOPTS='-t administrate' -v $(MKFILE_DIR):/mnt $(DOCKER_USER)/$(DOCKER_IMAGE):$(DOCKER_TAG) make html
+	docker run --rm -e SPHINXOPTS='-t administrate' -v $$(pwd):/mnt $(DOCKER_USER)/$(DOCKER_IMAGE):$(DOCKER_TAG) make clean html
 	cd build && zip -r administration-wire-$$(date +"%Y-%m-%d").zip html
 
 .PHONY: exec
@@ -57,13 +61,17 @@ dev-run:
 		$(SPHINXOPTS) \
 		"$(SOURCEDIR)" "$(BUILDDIR)"
 
+.PHONY: dev-build
+dev-build: export PATH := $(VENV_BIN):$(PATH)
+dev-build:
+	make clean html
+
 .PHONY: help
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-# Catch-all target: route all unknown targets to Sphinx using the new
-# "make mode" option. This "converts" unknown targets into sub-commands of
-# the $(SPHINXBUILD) CLI. $(O) is meant as a shortcut for $(SPHINXOPTS).
-.PHONY: Makefile
-%: Makefile
+# Catch-all target: route all unknown targets to Sphinx. This "converts" unknown targets into sub-commands (or more precicly
+# into `buildername`) of the $(SPHINXBUILD) CLI (see https://www.gnu.org/software/make/manual/html_node/Last-Resort.html).
+# $(O) is meant as a shortcut for $(SPHINXOPTS).
+%:
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)

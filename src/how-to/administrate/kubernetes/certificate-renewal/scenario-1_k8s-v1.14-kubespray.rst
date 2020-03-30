@@ -198,16 +198,16 @@ Option A - you can ssh from one kubernetes node to another
 
    # set the ip or hostname:
    export NODE2=root@ip-or-hostname
-   export NODE3=
+   export NODE3=...
 
-   scp ./ssl/apiserver.* root@kubenode02:/etc/kubernetes/ssl/
-   scp ./ssl/apiserver.* root@kubenode03:/etc/kubernetes/ssl/
+   scp ./ssl/apiserver.* "${NODE2}:/etc/kubernetes/ssl/"
+   scp ./ssl/apiserver.* "${NODE3}:/etc/kubernetes/ssl/"
 
-   scp ./ssl/apiserver-kubelet-client.* root@kubenode02:/etc/kubernetes/ssl/
-   scp ./ssl/apiserver-kubelet-client.* root@kubenode03:/etc/kubernetes/ssl/
+   scp ./ssl/apiserver-kubelet-client.* "${NODE2}:/etc/kubernetes/ssl/"
+   scp ./ssl/apiserver-kubelet-client.* "${NODE3}:/etc/kubernetes/ssl/"
 
-   scp ./ssl/front-proxy-client.* root@kubenode02:/etc/kubernetes/ssl/
-   scp ./ssl/front-proxy-client.* root@kubenode03:/etc/kubernetes/ssl/
+   scp ./ssl/front-proxy-client.* "${NODE2}:/etc/kubernetes/ssl/"
+   scp ./ssl/front-proxy-client.* "${NODE3}:/etc/kubernetes/ssl/"
 
 Option B - copy via local administrator's machine
 

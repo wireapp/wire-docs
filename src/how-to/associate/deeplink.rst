@@ -58,7 +58,7 @@ You now need to get a link to that file to your users, prepended with 'wire://ac
    <html>
      <head></head>
      <body>
-       <a href="wire://access?config=https://example.com/wire.json">link</a>
+       <a href="wire://access/?config=https://example.com/wire.json">link</a>
      </body>
    </html>
 

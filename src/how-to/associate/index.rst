@@ -1,4 +1,4 @@
-Installing wire-server
+Connecting Wire Clients
 =======================
 
 .. toctree::

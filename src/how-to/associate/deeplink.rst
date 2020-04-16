@@ -51,7 +51,7 @@ You need to create a .json file, and host it somewhere users can get to. This .j
 
 There is no requirement for these hosts to be consistent, e.g. the REST endpoint could be `wireapp.pineapple.com` and the team setting `teams.banana.com`.
 
-You now need to get a link to that file to your users, prepended with 'wire://access?config='. For example, you can save the above .json file as ``https://example.com/wire.json``, and save the following HTML content as ``https://example.com/wire.html``:
+You now need to get a link to that file to your users, prepended with 'wire://access/?config='. For example, you can save the above .json file as ``https://example.com/wire.json``, and save the following HTML content as ``https://example.com/wire.html``:
 
 .. code:: html
 

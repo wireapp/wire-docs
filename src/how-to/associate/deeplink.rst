@@ -4,14 +4,21 @@ Using a Deep Link to connect an App to a Custom Backend
 Introduction
 ------------
 
-Once you have wire-server set up and configured, you may want to use a client other than the web interface. There are a few ways to accomplish this:
-- Using a Deep Link
-- Registering the backend with Wire for re-direction.
+Once you have your own wire-server set up and configured, you may want to use a client other than the web interface (webapp). There are a few ways to accomplish this:
+
+- **Using a Deep Link** (which this page is all about)
+- Registering your backend instance with the hosted SaaS backend for re-direction. For which you might need to to the folks @ Wire (the company).
 
 Assumptions:
+
 - You have wire-server installed and working
 - You have a familiarity with JSON files
 - You can place a JSON file on an HTTPS supporting web server somewhere your users can reach.
+
+Supported client apps:
+
+- iOS
+- Android
 
 In order to connect to a custom backend:
 
@@ -23,17 +30,17 @@ A deep link is a special link a user can click on after installing wire, but bef
 From a user's perspective:
 --------------------------
 
-- First, a user installs the app from the store
-- The user clicks on a deep link, which is formatted similar to: ``wire://access/?config=https://eu-north2.mycustomdomain.de/configs/backend1.json``
-- The app will ask the user to confirm that they want to connect to a custom backend. If the user cancels, the app exits.
-- Assuming the user did not cancel, the app will download the file ``eu-north2.mycustomdomain.de/configs/backend1.json`` via HTTPS. If it can't download the file or the file doesn't match the expected structure, the wire client will display an error message (Invalid link).
-- The app will memorize the various hosts (REST, websocket, team settings, website, support) specified in the JSON and use those when talking to your backend. 
-- In the welcome page of the app, a "pill" (header) is shown at the top, to remind the user that they are now on a custom backend. A button "Show more" shows the URL of where the configuration was fetched from.
+1. First, a user installs the app from the store
+2. The user clicks on a deep link, which is formatted similar to: ``wire://access/?config=https://eu-north2.mycustomdomain.de/configs/backend1.json`` (notice the protocol prefix: ``wire://``)
+3. The app will ask the user to confirm that they want to connect to a custom backend. If the user cancels, the app exits.
+4. Assuming the user did not cancel, the app will download the file ``eu-north2.mycustomdomain.de/configs/backend1.json`` via HTTPS. If it can't download the file or the file doesn't match the expected structure, the wire client will display an error message (*'sInvalid link'*).
+5. The app will memorize the various hosts (REST, websocket, team settings, website, support) specified in the JSON and use those when talking to your backend.
+6. In the welcome page of the app, a "pill" (header) is shown at the top, to remind the user that they are now on a custom backend. A button "Show more" shows the URL of where the configuration was fetched from.
 
-From your perspective:
-----------------------
+From the administrator's (your) perspective:
+--------------------------------------------
 
-You need to create a .json file, and host it somewhere users can get to. This .json file needs to specify the URLs of your backend. For the production wire server that we host, the json file would look like:
+You need to create a ``.json`` file, and host it somewhere users can get to. This ``.json`` file needs to specify the URLs of your backend. For the production wire server that we host, the JSON would look like:
 
 .. code:: json
 
@@ -51,7 +58,7 @@ You need to create a .json file, and host it somewhere users can get to. This .j
 
 There is no requirement for these hosts to be consistent, e.g. the REST endpoint could be `wireapp.pineapple.com` and the team setting `teams.banana.com`.
 
-You now need to get a link to that file to your users, prepended with 'wire://access/?config='. For example, you can save the above .json file as ``https://example.com/wire.json``, and save the following HTML content as ``https://example.com/wire.html``:
+You now need to get a link referring to that ``..json`` file to your users, prepended with ``wire://access/?config=``. For example, you can save the above ``.json`` file as ``https://example.com/wire.json``, and save the following HTML content as ``https://example.com/wire.html``:
 
 .. code:: html
 
@@ -62,5 +69,4 @@ You now need to get a link to that file to your users, prepended with 'wire://ac
      </body>
    </html>
 
-Now, you can email a link to ``https://example.com/wire.html`` to your users, and they can follow the above procedure.
-
+Now, you can email a link to ``https://example.com/wire.html`` to your users, and they can follow the above procedure, by clicking on ``link``.

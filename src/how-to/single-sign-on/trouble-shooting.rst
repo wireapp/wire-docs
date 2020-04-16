@@ -48,8 +48,8 @@ still have a way to authenticate in order to do that.)
 
 There is a good workaround, though: you can create a team with user A
 and use A for registering the IdP.  All the users for everyday use and
-maintenance of the team, including admins and owners, can then created
-via SSO (either IdP or SCIM).  The original user A is only every used
+maintenance of the team, including admins and owners, can then be created
+via SSO (either IdP or SCIM).  The original user A is only ever used
 for IdP registration and upgrade of IdP-authenticated owners / admins.
 
 In practice, user A and some owner authenticated via IdP would then be

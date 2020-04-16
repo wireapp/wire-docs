@@ -20,8 +20,6 @@ Supported client apps:
 - iOS
 - Android
 
-In order to connect to a custom backend:
-
 Connecting to a custom backend utilizing a Deep Link
 ----------------------------------------------------
 

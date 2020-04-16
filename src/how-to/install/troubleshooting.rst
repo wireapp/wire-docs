@@ -1,8 +1,6 @@
 Troubleshooting during installation
 -------------------------------------
 
-.. _cors-scp-troubleshooting:
-
 Problems with CORS on the webapp
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -29,7 +27,6 @@ In the file that you use as override when running ``helm install/update -f <over
         CSP_EXTRA_STYLE_SRC: "https://*.example.com"
         CSP_EXTRA_WORKER_SRC: "https://*.example.com"
 
-See also example production overrides for `webapp <https://github.com/wireapp/wire-server-deploy/blob/develop/values/wire-server/prod-values.example.yaml#L193-L204>`__ (`account-pages <https://github.com/wireapp/wire-server-deploy/blob/develop/values/wire-server/prod-values.example.yaml#L258-L269>`__, `team-settings <https://github.com/wireapp/wire-server-deploy/blob/develop/values/wire-server/prod-values.example.yaml#L226-L237>`__) and `the full list of webapp environment variables <https://github.com/wireapp/wire-web-config-default/blob/master/wire-webapp/.env.defaults>`__
 
 Problems with ansible and python versions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

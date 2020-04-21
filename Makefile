@@ -1,5 +1,3 @@
-SHELL = bash
-
 .DEFAULT_GOAL := docs
 
 MKFILE_DIR = $(abspath $(dir $(abspath $(lastword $(MAKEFILE_LIST)))))

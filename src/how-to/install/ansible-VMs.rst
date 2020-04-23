@@ -102,11 +102,6 @@ Installing kubernetes
 
 Kubernetes is installed via ansible.
 
- - If you intend to use helm 3 then in ``hosts.ini``, in the
-   ``[k8s-cluster:vars]`` section, comment out the line that starts
-   with ``helm-enabled``.
- 
-
 To install kubernetes:
 
 From ``wire-server-deploy/ansible``::

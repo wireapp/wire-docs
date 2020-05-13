@@ -204,9 +204,7 @@ You should now have the following directory structure:
 
 Inside the ``nginx-ingress-services`` directory, open ``values.yaml`` and replace ``example.com`` with a domain of your choosing. You can try using ``sed -i 's/example.com/<your-domain>/g' values.yaml``.
 
-Next, open ``secrets.yaml`` and add a TLS wildcard certificate and private key matching your domain. For ``example.com``, you need a certficate for ``*.example.com``. The easiest and cheapest options are:
-
-1. use `Let's Encrypt <https://letsencrypt.org/getting-started/>`__
+Next, open ``secrets.yaml`` and add a TLS wildcard certificate and private key matching your domain. For ``example.com``, you need a certficate for ``*.example.com``. The easiest and cheapest option is `Let's Encrypt <https://letsencrypt.org/getting-started/>`__
 
 Install the nodeport nginx ingress:
 

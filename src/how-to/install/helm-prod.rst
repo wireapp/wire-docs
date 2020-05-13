@@ -130,7 +130,7 @@ Open a terminal and run:
 
 You should see some pods being created in your first terminal as the above command completes.
 
-How to install fake SMTP(email) services
+How to install fake SMTP (email) services
 ----------------------------------------
 
 .. code:: shell

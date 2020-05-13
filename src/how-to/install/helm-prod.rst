@@ -17,10 +17,9 @@ What will be installed?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 -  wire-server (API)
-   -  user accounts, authentication, conversations
-   -  assets handling (images, files, ...)
-   -  notifications over websocket
-
+    -  user accounts, authentication, conversations
+    -  assets handling (images, files, ...)
+    -  notifications over websocket
 -  wire-webapp, a fully functioning web client (like ``https://app.wire.com``)
 -  wire-account-pages, user account management (a few pages relating to e.g. password reset)
 

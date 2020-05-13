@@ -100,4 +100,4 @@ I deployed the ``demo-smtp`` but I'm not receiving any verification emails
       secrets:
         smtpPassword: dummyPassword
 
-(Don't forget to apply the changes with ``helm upgrade helm upgrade wire-server wire/wire-server -f values.yaml -f secrets.yaml``)
+(Don't forget to apply the changes with ``helm upgrade wire-server wire/wire-server -f values.yaml -f secrets.yaml``)

@@ -119,7 +119,7 @@ This will block your terminal and show some things happening as you proceed thro
 
 How to install charts that provide access to external databases
 ---------------------------------------------------------------
---------------------------------------------------------------------------------
+
 Before you can deploy the helm charts that tell wire where external services
 are, you need the 'values' and 'secrets' files for those charts to be
 configured. Values and secrets YAML files provide helm charts with the settings

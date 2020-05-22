@@ -187,6 +187,7 @@ ElasticSearch
 
 Minio
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Minio is used for asset storage, in the case that you are not
 running on AWS infrastructure, or feel uncomfortable storing assets
 in S3 in encrypted form. If you are using S3 instead of Minio, skip

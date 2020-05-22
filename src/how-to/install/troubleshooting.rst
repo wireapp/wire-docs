@@ -66,7 +66,7 @@ How can I ensure that I have correctly setup NTP on my machine(s)? Have a look a
 I deployed the ``demo-smtp`` but I'm not receiving any verification emails
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-1. Check whether brig deployed successfully or not (brig pod(s) should be in state *Running* ::
+1. Check whether brig deployed successfully (brig pod(s) should be in state *Running*) ::
 
     kubectl get pods -o wide
 

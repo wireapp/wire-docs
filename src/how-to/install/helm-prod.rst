@@ -1,20 +1,24 @@
 .. _helm_prod:
 
-Installing wire-server (production) components using helm
-==============================================================
+Installing wire-server (production) components using helm, without AWS
+======================================================================
 
 .. note::
 
-   Code in this repository should be considered *beta*. As of 2019, we do not (yet)
+   Code in this repository should be considered *beta*. As of 2020, we do not (yet)
    run our production infrastructure on kubernetes (but plan to do so soon).
 
 Introduction
 -----------------
 
-The following will install a version of all the wire-server components. This setup is not recommended in production but will get you started.
+The following will install a version of all the wire-server components. These instructions are for reference, and may not set up what you would consider a production environment, due to the fact that there are varying definitions of 'production ready'. These instructions will cover what we consider to be a useful overlap of our users' production needs. They do not cover load balancing/distributing, using multiple datacenters, federating wire, or other forms of intercontinental/interplanetary distribution of the wire service infrastructure. If you deviate from these directions and need to contact us for support, please provide the deviations you made to fit your production environment along with your support request.
+
+During the instructions here, we will present you with two options: No AWS, and minimal AWS usage. The 'No AWS' instructions will not require any AWS infrastructure, but will have a reduced feature set.
+
+Please read, and ensure you understand :ref:
 
 What will be installed?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^
 
 -  wire-server (API)
     -  user accounts, authentication, conversations
@@ -24,38 +28,42 @@ What will be installed?
 -  wire-account-pages, user account management (a few pages relating to e.g. password reset)
 
 What will not be installed?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
--  notifications over native push notifications via `FCM <https://firebase.google.com/docs/cloud-messaging/>`__/`APNS <https://developer.apple.com/notifications/>`__
--  audio/video calling servers using :ref:`understand-restund`)
 -  team-settings page
 
+Additionally, if you opt to do the 'No AWS' route, you will not get:
+-  notifications over native push notifications via `FCM <https://firebase.google.com/docs/cloud-messaging/>`__/`APNS <https://developer.apple.com/notifications/>`__
+
 Prerequisites
---------------------------------
+-------------
 
 You need to have access to a kubernetes cluster, and the ``helm`` local binary on your PATH.
 Your kubernetes cluster needs to have internal dns services, so that wire-server can find it's databases.
 You need to have docker on the machine you are using to perform this installation with, or a secure data path to a machine that runs docker. You will be using docker to generate security credentials for your wire installation.
+If you want calling services, you need to have 
 
 * If you don't have a kubernetes cluster, you have two options:
 
   * You can get access to a managed kubernetes cluster with the cloud provider of your choice.
   * You can install one if you have ssh access to a virtual machine, see :ref:`ansible-kubernetes`
 
+
 * If you don't have ``helm`` yet, see `Installing helm <https://helm.sh/docs/using_helm/#installing-helm>`__.
 
-Type ``helm version``, you should, if everything is configured correctly, see a result like this:
+Type ``helm version``, you should, if everything is configured correctly, see a result similar this:
 
 ::
 
     Client: &version.Version{SemVer:"v2.13.1", GitCommit:"618447cbf203d147601b4b9bd7f8c37a5d39fbb4", GitTreeState:"clean"}
     Server: &version.Version{SemVer:"v2.13.1", GitCommit:"618447cbf203d147601b4b9bd7f8c37a5d39fbb4", GitTreeState:"clean"}
 
-
-In case ``kubectl version`` shows both Client and Server versions, but ``helm version`` does not show a Server version, you may need to run ``helm init``. The exact version (assuming `v2.X.X` - at the time of writing v3 is not yet supported) matters less as long as both Client and Server versions match (or are very close).
+In case ``kubectl version`` shows both Client and Server versions, but ``helm version`` does not show a Server version, you may need to run ``helm init``. The exact version matters less as long as both Client and Server versions match (or are very close).
 
 Upgrading from Helm2 to Helm3
 -----------------------------
+Because of it's better support of offline environments, we prefer to use Helm3. This step is optional, but recommended for offline deployments.
+
 Download and install the newest version of Helm 3 from get.helm.sh.
 
 .. code:: shell
@@ -64,20 +72,24 @@ Download and install the newest version of Helm 3 from get.helm.sh.
    tar -xzf helm-v3.1.0-linux-amd64.tar.gz --strip=1 --wildcards */helm
    sudo cp helm /usr/local/bin/
 
-How to download charts in the Offline environment
---------------------------------------------------
+How to download charts for Helm 3 in an offline environment
+-----------------------------------------------------------
+If you are using the approach of the offline environment described in wire-server-deploy-networkless/vpc/README.md, with an 'assethost', that assethost will have a copy of the charts available from helm.<domainname>. to download them on the admin host, and prepare them for installation:
 
 .. code:: shell
 
    cd wire-server-deploy/
-   wget -r -l 10 https://helm.wire.com/charts/
-   mv helm.wire.com/charts/ ./wire
+   wget -r -l 10 https://helm.internal.vpc/charts/
+   mv helm.internal.vpc/charts/ ./wire
    rm $(find wire/ -name index*)
 
-How to start installing charts from wire (Helm 2)
---------------------------------------------------
+where 'internal.vpc' needs to be replaced with the domain you're using in your offline environment.
 
-Enable the wire charts helm repository:
+Preparing to install charts from wire with Helm 2
+--------------------------------------------------
+If your environment is online, and you wish to use helm2, you need to add the remote wire helm repository, to download wire charts.
+
+To enable the wire charts helm repository:
 
 .. code:: shell
 
@@ -92,7 +104,7 @@ Great! Now you can start installing.
 
     all commands below can also take an extra ``--namespace <your-namespace>`` if you don't want to install into the default kubernetes namespace.
 
-There is a shell script for doing this with helm 2. cat bin/prod-setup.sh 
+There is a shell script for doing the following procedure with helm 2, for reference. examine wire-server-deploy/bin/prod-setup.sh .
 
 Watching changes as they happen
 -------------------------------
@@ -101,32 +113,75 @@ Open a terminal and run:
 
 .. code:: shell
 
-    kubectl get pods -w
+   kubectl get pods -w
 
 This will block your terminal and show some things happening as you proceed through this guide. Keep this terminal open and open a second terminal.
 
 How to install charts that provide access to external databases
 ---------------------------------------------------------------
+--------------------------------------------------------------------------------
+Before you can deploy the helm charts that tell wire where external services
+are, you need the 'values' and 'secrets' files for those charts to be
+configured. Values and secrets YAML files provide helm charts with the settings
+that are installed in kubernetes.
 
-Open a terminal and run:
+Assuming you have followed the procedures in the previous document, the values
+and secrets files for cassandra, elasticsearch, and minio(if you are using it)
+will have been filled in automatically. If not, examine the
+'prod-values.example.yaml' files for each of these services in
+values/<servicename>/, copy them to 'values.yaml', and then edit them.
+
+Once the values and secrets files for your databases have been configured, you
+have to write a 'values/databases-ephemeral/values.yaml' file to tell
+databases-ephemeral what external database services you are using, and what
+services you want databases-ephemeral to configure. We recommend you use the
+'redis' component from this only, as the contents of redis are in fact
+ephemeral. Look at the 'values/databases-ephemeral/prod-values.example.yaml'
+file
+
+Once you have values and secrets for your environment, open a terminal and run:
 
 .. code:: shell
 
-   helm install cassandra-external wire/cassandra-external/ -f values/cassandra-external/values.yaml --wait
-   helm install elasticsearch-external wire/elasticsearch-external/ -f values/elasticsearch-external/values.yaml --wait
-   helm install minio-external wire/minio-external/ -f values/minio-external/values.yaml --wait
-   cp values/databases-ephemeral/prod-values.example.yaml values/databases-ephemeral/values.yaml
-   helm install databases-ephemeral wire/databases-ephemeral -f values/databases-ephemeral/values.yaml --wait
+   helm upgrade --install cassandra-external wire/cassandra-external -f values/cassandra-external/values.yaml --wait
+   helm upgrade --install elasticsearch-external wire/elasticsearch-external -f values/elasticsearch-external/values.yaml --wait
+   helm upgrade --install databases-ephemeral wire/databases-ephemeral -f values/databases-ephemeral/values.yaml --wait
 
-How to install fake AWS services
+If you are using minio, run:
+
+.. code:: shell
+
+   helm upgrade --install minio-external wire/minio-external -f values/minio-external/values.yaml --wait
+   
+How to attach real AWS services for SNS / DynamoDB
+--------------------------------------------------------
+AWS SNS and dynamoDB are required to send notification events to clients via `FCM <https://firebase.google.com/docs/cloud-messaging/>`__/`APNS <https://developer.apple.com/notifications/>`__ . These notification channels are useable only for clients that are connected from the public internet. Using these vendor provided communication channels allows client devices (phones) running a wire client to save a considerable amount of battery life, compared to the websockets approach.
+
+FIXME: detail this step.
+
+How to attach real AWS services for SES / SQS
+---------------------------------------------
+AWS SES and SQS are used for delivering emails to clients, and for receiving notifications of bounced emails.
+
+FIXME: detail this step.
+
+How to attach real AWS services for S3
+--------------------------------------
+FIXME: detail this step.
+
+
+How to install fake AWS services for SNS / SQS / DynamoDB
 --------------------------------
+AWS SNS is required to send notifications to clients. If you use the fake-aws version, clients will use the websocket method to receive notifications, which keeps connections to the servers open, draining battery.
+AWS SES and SQS are used for mail delivery, and reception, respectively. 
+
 
 Open a terminal and run:
 
 .. code:: shell
 
    cp values/fake-aws/prod-values.example.yaml values/fake-aws/values.yaml
-   helm install fake-aws wire/fake-aws -f values/fake-aws/values.yaml --wait
+   helm upgrade --install fake-aws wire/fake-aws -f values/fake-aws/values.yaml --wait
 
 You should see some pods being created in your first terminal as the above command completes.
 

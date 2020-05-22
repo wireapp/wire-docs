@@ -187,6 +187,11 @@ ElasticSearch
 
 Minio
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Minio is used for asset storage, in the case that you are not
+running on AWS infrastructure, or feel uncomfortable storing assets
+in S3 in encrypted form. If you are using S3 instead of Minio, skip
+this step.
+
 
 -  In your 'hosts.ini' file, in the ``[all:vars]`` section, make sure
    you set the 'minio_network_interface' to the name of the interface

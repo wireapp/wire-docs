@@ -104,7 +104,7 @@ Great! Now you can start installing.
 
     all commands below can also take an extra ``--namespace <your-namespace>`` if you don't want to install into the default kubernetes namespace.
 
-There is a shell script for doing the following procedure with helm 2, for reference. examine wire-server-deploy/bin/prod-setup.sh .
+There is a shell script for doing the following procedure with helm 2. For reference, examine `prod-setup.sh <https://github.com/wireapp/wire-server-deploy/blob/develop/bin/prod-setup.sh>`__.
 
 Watching changes as they happen
 -------------------------------

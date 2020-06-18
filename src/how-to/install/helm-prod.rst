@@ -274,9 +274,11 @@ Install the nodeport nginx ingress:
    helm upgrade --install nginx-ingress-controller wire/nginx-ingress-controller --wait
    helm upgrade --install nginx-ingress-services wire/nginx-ingress-services -f values.yaml -f secrets.yaml --wait
 
-Next, we want to redirect port 443 for https to the port the nginx https ingress nodeport is listening on (31773), and port 80 to the nginz http port (31772). To do that, you have two options:
+Next, we want to redirect port 443 to the port the nginx https ingress nodeport is listening on (31773), and, redirect port 80 to the nginz http port (31772) (for redirects only). To do that, you have two options:
 
-* Option 1: ssh into your kubernetes node, then execute: ``iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-port 31773``
+* Option 1: ssh into your kubernetes node, then execute:
+  * ``iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-port 31773``
+  * ``iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 31772``
 * Option 2: Use ansible to do that, run the `iptables playbook <https://github.com/wireapp/wire-server-deploy/blob/master/ansible/iptables.yml>`__
 
 How to set up DNS records

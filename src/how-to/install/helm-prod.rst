@@ -106,7 +106,7 @@ Great! Now you can start installing.
 
     all commands below can also take an extra ``--namespace <your-namespace>`` if you don't want to install into the default Kubernetes namespace.
 
-There is a shell script for doing a version of the following procedure with Helm 2. For reference, examine `prod-setup.sh <https://github.com/wireapp/wire-server-deploy/blob/develop/bin/prod-setup.sh>`__.
+There is a shell script for doing a version of the following procedure with Helm 22. For reference, examine `prod-setup.sh <https://github.com/wireapp/wire-server-deploy/blob/develop/bin/prod-setup.sh>`__.
 
 Watching changes as they happen
 -------------------------------
@@ -128,17 +128,17 @@ configured. Values and secrets YAML files provide helm charts with the settings
 that are installed in Kubernetes.
 
 Assuming you have followed the procedures in the previous document, the values
-and secrets files for cassandra, elasticsearch, and minio(if you are using it)
+and secrets files for cassandra, elasticsearch, and minio (if you are using it)
 will have been filled in automatically. If not, examine the
-'prod-values.example.yaml' files for each of these services in
-values/<servicename>/, copy them to 'values.yaml', and then edit them.
+``prod-values.example.yaml`` files for each of these services in
+values/<servicename>/, copy them to ``values.yaml``, and then edit them.
 
 Once the values and secrets files for your databases have been configured, you
-have to write a 'values/databases-ephemeral/values.yaml' file to tell
+have to write a ``values/databases-ephemeral/values.yaml`` file to tell
 databases-ephemeral what external database services you are using, and what
 services you want databases-ephemeral to configure. We recommend you use the
 'redis' component from this only, as the contents of redis are in fact
-ephemeral. Look at the 'values/databases-ephemeral/prod-values.example.yaml'
+ephemeral. Look at the ``values/databases-ephemeral/prod-values.example.yaml``
 file
 
 Once you have values and secrets for your environment, open a terminal and run:

@@ -253,6 +253,11 @@ Restund
 `defaults/main.yml <https://github.com/wireapp/ansible-restund/blob/master/defaults/main.yml>`__
 for a full list of variables to change if necessary)
 
+- Place a copy of the PEM formatted certificate and key you are going
+  to use for TLS communication to the restund server in
+  ``/tmp/tls_cert_and_priv_key.pem``. Remove it after you have
+  completed deploying restund with ansible.
+
 Install restund:
 
 ::

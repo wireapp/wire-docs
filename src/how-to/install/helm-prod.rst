@@ -1,15 +1,15 @@
 .. _helm_prod:
 
-Installing wire-server (production) components using helm
+Installing wire-server (production) components using Helm
 =========================================================
 
 .. note::
 
    Code in this repository should be considered *beta*. As of 2020, we do not (yet)
-   run our production infrastructure on kubernetes (but plan to do so soon).
+   run our production infrastructure on Kubernetes (but plan to do so soon).
 
 Introduction
------------------
+------------
 
 The following will install a version of all the wire-server components. These instructions are for reference, and may not set up what you would consider a production environment, due to the fact that there are varying definitions of 'production ready'. These instructions will cover what we consider to be a useful overlap of our users' production needs. They do not cover load balancing/distributing, using multiple datacenters, federating wire, or other forms of intercontinental/interplanetary distribution of the wire service infrastructure. If you deviate from these directions and need to contact us for support, please provide the deviations you made to fit your production environment along with your support request.
 
@@ -32,22 +32,23 @@ What will not be installed?
 -  SSO Capabilities
 
 Additionally, if you opt to do the 'No AWS' route, you will not get:
+
 -  notifications over native push notifications via `FCM <https://firebase.google.com/docs/cloud-messaging/>`__/`APNS <https://developer.apple.com/notifications/>`__
 
 Prerequisites
 -------------
 
-You need to have access to a kubernetes cluster running a kubernetes version , and the ``helm`` local binary on your PATH.
-Your kubernetes cluster needs to have internal dns services, so that wire-server can find it's databases.
+You need to have access to a Kubernetes cluster running a Kubernetes version , and the ``helm`` local binary on your PATH.
+Your Kubernetes cluster needs to have internal DNS services, so that wire-server can find it's databases.
 You need to have docker on the machine you are using to perform this installation with, or a secure data path to a machine that runs docker. You will be using docker to generate security credentials for your wire installation.
 
 * If you want calling services, you need to have
 
   * FIXME
 
-* If you don't have a kubernetes cluster, you have two options:
+* If you don't have a Kubernetes cluster, you have two options:
 
-  * You can get access to a managed kubernetes cluster with the cloud provider of your choice.
+  * You can get access to a managed Kubernetes cluster with the cloud provider of your choice.
   * You can install one if you have ssh access to a set of sufficiently large virtual machines, see :ref:`ansible-kubernetes`
 
 * If you don't have ``helm`` yet, see `Installing helm <https://helm.sh/docs/using_helm/#installing-helm>`__.
@@ -75,7 +76,7 @@ Download and install the newest version of Helm 3 from get.helm.sh.
 
 How to download charts for Helm 3 in an offline environment
 -----------------------------------------------------------
-If you are using the approach of the offline environment described in wire-server-deploy-networkless/vpc/README.md, with an 'assethost', that assethost will have a copy of the charts available from helm.<domainname>. to download them on the admin host, and prepare them for installation:
+If you are using the approach of the offline environment described in wire-server-deploy-networkless/vpc/README.md, with an 'assethost', that assethost will have a copy of the charts available from Helm.<domainname>. to download them on the admin host, and prepare them for installation:
 
 .. code:: shell
 
@@ -88,7 +89,7 @@ where 'internal.vpc' needs to be replaced with the domain you're using in your o
 
 Preparing to install charts from wire with Helm 2
 --------------------------------------------------
-If your environment is online, and you wish to use helm2, you need to add the remote wire helm repository, to download wire charts.
+If your environment is online, and you wish to use Helm 2, you need to add the remote wire Helm repository, to download wire charts.
 
 To enable the wire charts helm repository:
 
@@ -103,9 +104,9 @@ Great! Now you can start installing.
 
 .. note::
 
-    all commands below can also take an extra ``--namespace <your-namespace>`` if you don't want to install into the default kubernetes namespace.
+    all commands below can also take an extra ``--namespace <your-namespace>`` if you don't want to install into the default Kubernetes namespace.
 
-There is a shell script for doing the following procedure with helm 2. For reference, examine `prod-setup.sh <https://github.com/wireapp/wire-server-deploy/blob/develop/bin/prod-setup.sh>`__.
+There is a shell script for doing the following procedure with Helm 2. For reference, examine `prod-setup.sh <https://github.com/wireapp/wire-server-deploy/blob/develop/bin/prod-setup.sh>`__.
 
 Watching changes as they happen
 -------------------------------
@@ -124,7 +125,7 @@ How to install charts that provide access to external databases
 Before you can deploy the helm charts that tell wire where external services
 are, you need the 'values' and 'secrets' files for those charts to be
 configured. Values and secrets YAML files provide helm charts with the settings
-that are installed in kubernetes.
+that are installed in Kubernetes.
 
 Assuming you have followed the procedures in the previous document, the values
 and secrets files for cassandra, elasticsearch, and minio(if you are using it)
@@ -192,8 +193,8 @@ In order for users to interact with their wire account, they need to receive mai
 
 If you are using a mail server, you will need to provide your authentication credentials before setting up wire.
 
-- Add your SMTP username in my-wire-server/values.yaml under ``brig.config.smtp.username``. you may need to add an entry for username.
-- Add your SMTP pasword is my-wire-server/secrets.yaml under ``brig.secrets.smtpPassword. 
+- Add your SMTP username in my-wire-server/values.yaml under ``brig.config.smtp.username``. You may need to add an entry for username.
+- Add your SMTP pasword is my-wire-server/secrets.yaml under ``brig.secrets.smtpPassword``.
 
 
 How to install fake SMTP (email) services
@@ -282,12 +283,12 @@ An installation needs 5 or 6 domain names (5 without audio/video support, 6 with
 
 You need
 
-* two dns names for the so-called "nginz" component of wire-server (the main REST API entry point), these are usually called `nginz-https.<domain>` (or `wire-https.<domain>`) and `nginz-ssl.<domain>` (or `wire-https.<domain>`).
-* one dns name for the asset store (images, audio files etc. that your users are sharing); usually `assets.<domain>` or `s3.<domain>`.
-* one dns name for the webapp (equivalent of https://app.wire.com, i.e. the javascript app running in the browser), usually called `webapp.<domain>`.
-* one dns name for the account pages (hosts some html/javascript pages for e.g. password reset), usually called `account.<domain>`.
-* (optional) one dns name for team settings (to manage team membership if using PRO accounts), usually called `teams.<domain>`
-* (optional) one dns name for a audio/video calling server, usually called `restund01.<domain>`.
+* two DNS names for the so-called "nginz" component of wire-server (the main REST API entry point), these are usually called `nginz-https.<domain>` (or `wire-https.<domain>`) and `nginz-ssl.<domain>` (or `wire-https.<domain>`).
+* one DNS name for the asset store (images, audio files etc. that your users are sharing); usually `assets.<domain>` or `s3.<domain>`.
+* one DNS name for the webapp (equivalent of https://app.wire.com, i.e. the javascript app running in the browser), usually called `webapp.<domain>`.
+* one DNS name for the account pages (hosts some html/javascript pages for e.g. password reset), usually called `account.<domain>`.
+* (optional) one DNS name for team settings (to manage team membership if using PRO accounts), usually called `teams.<domain>`
+* (optional) one DNS name for a audio/video calling server, usually called `restund01.<domain>`.
 
 If you are on the most recent charts from wire-server-deploy, these are your names:
 
@@ -310,7 +311,7 @@ You may be happy with skipping the DNS setup and just make sure that the ``/etc/
 Trying things out
 ---------------------------
 
-At this point, with a bit of luck, everything should be working (if not, see :ref:`helm_troubleshooting`)
+At this point, with a bit of luck, everything should be working (if not, see :ref:`helm_prod_troubleshooting`)
 
 Can you reach the nginz server?
 
@@ -330,7 +331,7 @@ You should get a 200 return code
 
 Can you access the webapp? Open https://webapp.<your-domain> in your browser (Firefox/Chrome/Safari only)
 
-.. _helm_troubleshooting:
+.. _helm_prod_troubleshooting:
 
 Troubleshooting
 --------------------
@@ -342,7 +343,7 @@ There are multiple artifacts which combine to form a running wire-server
 deployment; these include:
 
 -  docker images for each service
--  kubernetes configs for each deployment (from helm charts)
+-  Kubernetes configs for each deployment (from helm charts)
 -  configuration maps for each deployment (from helm charts)
 
 If you wish to get some information regarding the code currently running
@@ -385,7 +386,7 @@ and/or::
 
 to know more.
 
-As long as nobody is using your cluster yet, you can safely delete and re-create a specific helm release (list releases with ``helm list --all``). Example delete the ``wire-server`` helm release:
+As long as nobody is using your cluster yet, you can safely delete and re-create a specific Helm release (list releases with ``helm list --all``). Example delete the ``wire-server`` Helm release:
 
 .. code:: shell
 

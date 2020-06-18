@@ -102,10 +102,6 @@ new versions as time passes, you may need to run ``helm repo update``)
 
 Great! Now you can start installing.
 
-.. note::
-
-    all commands below can also take an extra ``--namespace <your-namespace>`` if you don't want to install into the default Kubernetes namespace.
-
 There is a shell script for doing a version of the following procedure with Helm 22. For reference, examine `prod-setup.sh <https://github.com/wireapp/wire-server-deploy/blob/develop/bin/prod-setup.sh>`__.
 
 Watching changes as they happen
@@ -118,6 +114,13 @@ Open a terminal and run:
    kubectl get pods -w
 
 This will block your terminal and show some things happening as you proceed through this guide. Keep this terminal open and open a second terminal.
+
+General installation notes
+--------------------------
+
+.. note::
+
+    All helm and kubectl commands below can also take an extra ``--namespace <your-namespace>`` if you don't want to install into the default Kubernetes namespace.
 
 How to install charts that provide access to external databases
 ---------------------------------------------------------------

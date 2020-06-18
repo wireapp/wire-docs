@@ -239,6 +239,38 @@ Great, now try the installation:
    helm upgrade --install wire-server wire/wire-server -f my-wire-server/values.yaml -f my-wire-server/secrets.yaml --wait
 
 
+How to set up DNS records
+----------------------------
+
+An installation needs 5 or 6 domain names (5 without audio/video support, 6 with audio/video support):
+
+You need
+
+* two DNS names for the so-called "nginz" component of wire-server (the main REST API entry point), these are usually called `nginz-https.<domain>` and `nginz-ssl.<domain>`.
+* one DNS name for the asset store (images, audio files etc. that your users are sharing); usually `assets.<domain>` or `s3.<domain>`.
+* one DNS name for the webapp (equivalent of https://app.wire.com, i.e. the javascript app running in the browser), usually called `webapp.<domain>`.
+* one DNS name for the account pages (hosts some html/javascript pages for e.g. password reset), usually called `account.<domain>`.
+* (optional) one DNS name for team settings (to manage team membership if using PRO accounts), usually called `teams.<domain>`
+* (optional) one DNS name for a audio/video calling server, usually called `restund01.<domain>`.
+
+If you are on the most recent charts from wire-server-deploy, these are your names:
+
+* nginz-https.<domain>
+* nginz-ssl.<domain>
+* webapp.<domain>
+* assets.<domain>
+* account.<domain>
+* teams.<domain>
+
+(Yes, they all need to point to the same IP address - this is necessary for the nginx ingress to know how to do internal routing based on virtual hosting.)
+
+You may be happy with skipping the DNS setup and just make sure that the ``/etc/hosts`` on your client machine points all the above names to the right IP address:
+
+::
+
+   1.2.3.4 nginz-https.<domain> nginz-ssl.<domain> assets.<domain> webapp.<domain> teams.<domain> account.<domain>
+
+
 How to direct traffic to your cluster
 ------------------------------------------
 
@@ -277,41 +309,11 @@ Install the nodeport nginx ingress:
 Next, we want to redirect port 443 to the port the nginx https ingress nodeport is listening on (31773), and, redirect port 80 to the nginz http port (31772) (for redirects only). To do that, you have two options:
 
 * Option 1: ssh into your kubernetes node, then execute:
+
   * ``iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-port 31773``
   * ``iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 31772``
+
 * Option 2: Use ansible to do that, run the `iptables playbook <https://github.com/wireapp/wire-server-deploy/blob/master/ansible/iptables.yml>`__
-
-How to set up DNS records
-----------------------------
-
-An installation needs 5 or 6 domain names (5 without audio/video support, 6 with audio/video support):
-
-You need
-
-* two DNS names for the so-called "nginz" component of wire-server (the main REST API entry point), these are usually called `nginz-https.<domain>` (or `wire-https.<domain>`) and `nginz-ssl.<domain>` (or `wire-https.<domain>`).
-* one DNS name for the asset store (images, audio files etc. that your users are sharing); usually `assets.<domain>` or `s3.<domain>`.
-* one DNS name for the webapp (equivalent of https://app.wire.com, i.e. the javascript app running in the browser), usually called `webapp.<domain>`.
-* one DNS name for the account pages (hosts some html/javascript pages for e.g. password reset), usually called `account.<domain>`.
-* (optional) one DNS name for team settings (to manage team membership if using PRO accounts), usually called `teams.<domain>`
-* (optional) one DNS name for a audio/video calling server, usually called `restund01.<domain>`.
-
-If you are on the most recent charts from wire-server-deploy, these are your names:
-
-* nginz-https.<domain>
-* nginz-ssl.<domain>
-* webapp.<domain>
-* assets.<domain>
-* account.<domain>
-* teams.<domain>
-
-(Yes, they all need to point to the same IP address - this is necessary for the nginx ingress to know how to do internal routing based on virtual hosting.)
-
-You may be happy with skipping the DNS setup and just make sure that the ``/etc/hosts`` on your client machine points all the above names to the right IP address:
-
-::
-
-   1.2.3.4 nginz-https.<domain> nginz-ssl.<domain> assets.<domain> webapp.<domain> teams.<domain> account.<domain>
-
 
 Trying things out
 ---------------------------

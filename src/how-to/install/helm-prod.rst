@@ -1,7 +1,7 @@
 .. _helm_prod:
 
-Installing wire-server (production) components using helm, without AWS
-======================================================================
+Installing wire-server (production) components using helm
+=========================================================
 
 .. note::
 
@@ -13,9 +13,7 @@ Introduction
 
 The following will install a version of all the wire-server components. These instructions are for reference, and may not set up what you would consider a production environment, due to the fact that there are varying definitions of 'production ready'. These instructions will cover what we consider to be a useful overlap of our users' production needs. They do not cover load balancing/distributing, using multiple datacenters, federating wire, or other forms of intercontinental/interplanetary distribution of the wire service infrastructure. If you deviate from these directions and need to contact us for support, please provide the deviations you made to fit your production environment along with your support request.
 
-During the instructions here, we will present you with two options: No AWS, and minimal AWS usage. The 'No AWS' instructions will not require any AWS infrastructure, but will have a reduced feature set.
-
-Please read, and ensure you understand :ref:
+Some of the instructions here will present you with two options: No AWS, and with AWS. The 'No AWS' instructions will not require any AWS infrastructure, but may have a reduced feature set. The 'with AWS' instructions will assume you have completed the setup procedures in :ref:`aws_prod`.
 
 What will be installed?
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -24,13 +22,14 @@ What will be installed?
     -  user accounts, authentication, conversations
     -  assets handling (images, files, ...)
     -  notifications over websocket
--  wire-webapp, a fully functioning web client (like ``https://app.wire.com``)
--  wire-account-pages, user account management (a few pages relating to e.g. password reset)
+-  wire-webapp, a fully functioning web client (like ``https://app.wire.com/``)
+-  wire-account-pages, user account management (a few pages relating to e.g. password reset procedures)
 
 What will not be installed?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 -  team-settings page
+-  SSO Capabilities
 
 Additionally, if you opt to do the 'No AWS' route, you will not get:
 -  notifications over native push notifications via `FCM <https://firebase.google.com/docs/cloud-messaging/>`__/`APNS <https://developer.apple.com/notifications/>`__
@@ -38,16 +37,18 @@ Additionally, if you opt to do the 'No AWS' route, you will not get:
 Prerequisites
 -------------
 
-You need to have access to a kubernetes cluster, and the ``helm`` local binary on your PATH.
+You need to have access to a kubernetes cluster running a kubernetes version , and the ``helm`` local binary on your PATH.
 Your kubernetes cluster needs to have internal dns services, so that wire-server can find it's databases.
 You need to have docker on the machine you are using to perform this installation with, or a secure data path to a machine that runs docker. You will be using docker to generate security credentials for your wire installation.
-If you want calling services, you need to have 
+
+* If you want calling services, you need to have
+
+  * FIXME
 
 * If you don't have a kubernetes cluster, you have two options:
 
   * You can get access to a managed kubernetes cluster with the cloud provider of your choice.
-  * You can install one if you have ssh access to a virtual machine, see :ref:`ansible-kubernetes`
-
+  * You can install one if you have ssh access to a set of sufficiently large virtual machines, see :ref:`ansible-kubernetes`
 
 * If you don't have ``helm`` yet, see `Installing helm <https://helm.sh/docs/using_helm/#installing-helm>`__.
 
@@ -147,31 +148,14 @@ Once you have values and secrets for your environment, open a terminal and run:
    helm upgrade --install elasticsearch-external wire/elasticsearch-external -f values/elasticsearch-external/values.yaml --wait
    helm upgrade --install databases-ephemeral wire/databases-ephemeral -f values/databases-ephemeral/values.yaml --wait
 
-If you are using minio, run:
+If you are using minio instead of AWS S3, you should also run:
 
 .. code:: shell
 
    helm upgrade --install minio-external wire/minio-external -f values/minio-external/values.yaml --wait
    
-How to attach real AWS services for SNS / DynamoDB
---------------------------------------------------------
-AWS SNS and dynamoDB are required to send notification events to clients via `FCM <https://firebase.google.com/docs/cloud-messaging/>`__/`APNS <https://developer.apple.com/notifications/>`__ . These notification channels are useable only for clients that are connected from the public internet. Using these vendor provided communication channels allows client devices (phones) running a wire client to save a considerable amount of battery life, compared to the websockets approach.
-
-FIXME: detail this step.
-
-How to attach real AWS services for SES / SQS
----------------------------------------------
-AWS SES and SQS are used for delivering emails to clients, and for receiving notifications of bounced emails.
-
-FIXME: detail this step.
-
-How to attach real AWS services for S3
---------------------------------------
-FIXME: detail this step.
-
-
 How to install fake AWS services for SNS / SQS / DynamoDB
---------------------------------
+---------------------------------------------------------
 AWS SNS is required to send notifications to clients. If you use the fake-aws version, clients will use the websocket method to receive notifications, which keeps connections to the servers open, draining battery.
 AWS SES and SQS are used for mail delivery, and reception, respectively. 
 
@@ -185,8 +169,36 @@ Open a terminal and run:
 
 You should see some pods being created in your first terminal as the above command completes.
 
+
+Preparing to install wire-server
+--------------------------------
+As part of configuring wire-server, we need to change some values, and provide some secrets. We're going to copy the files for this to a new folder, so that you always have the originals for reference.
+
+.. note::
+
+    this part of the process makes use of overrides for helm charts. You may wish to read :ref:`understand-helm-overrides` first.*
+
+
+.. code:: shell
+
+   mkdir -p my-wire-server
+   cp values/wire-server/prod-secrets.example.yaml my-wire-server/secrets.yaml
+   cp values/wire-server/prod-values.example.yaml my-wire-server/values.yaml
+
+
+How to configure real SMTP (email) services
+-------------------------------------------
+In order for users to interact with their wire account, they need to receive mail from your wire server.
+
+If you are using a mail server, you will need to provide your authentication credentials before setting up wire.
+
+- Add your SMTP username in my-wire-server/values.yaml under ``brig.config.smtp.username``. you may need to add an entry for username.
+- Add your SMTP pasword is my-wire-server/secrets.yaml under ``brig.secrets.smtpPassword. 
+
+
 How to install fake SMTP (email) services
-----------------------------------------
+-----------------------------------------
+If you are not making use of mail services, and are adding your users via some other means, you can use demo-smtp, as a placeholder.
 
 .. code:: shell
 
@@ -197,18 +209,7 @@ How to install fake SMTP (email) services
 You should see some pods being created in your first terminal as the above command completes.
 
 How to install wire-server itself
----------------------------------------
-
-.. note::
-
-    the following makes use of overrides for helm charts. You may wish to read :ref:`understand-helm-overrides` first.*
-
-
-.. code:: shell
-
-   mkdir -p wire-server && cd wire-server
-   cp values/wire-server/prod-secrets.example.yaml my-wire-server/secrets.yaml
-   cp values/wire-server/prod-values.example.yaml my-wire-server/values.yaml
+---------------------------------
 
 Open ``my-wire-server/values.yaml`` and replace ``example.com`` and other domains and subdomains with domains of your choosing. Look for the ``# change this`` comments. You can try using ``sed -i 's/example.com/<your-domain>/g' values.yaml``.
 
@@ -220,7 +221,8 @@ Generate some secrets:
 .. code:: shell
 
   openssl rand -base64 64 | env LC_CTYPE=C tr -dc a-zA-Z0-9 | head -c 42 > my-wire-server/restund.txt
-  docker run --rm quay.io/wire/alpine-intermediate /dist/zauth -m gen-keypair -i 1 > my-wire-server/zauth.txt
+  apt install docker-ce
+  sudo docker run --rm quay.io/wire/alpine-intermediate /dist/zauth -m gen-keypair -i 1 > my-wire-server/zauth.txt
 
 1. Add the generated secret from my-wire-server/restund.txt to my-wire-serwer/secrets.yaml under ``brig.secrets.turn.secret``
 2. add **both** the public and private parts from zauth.txt to secrets.yaml under ``brig.secrets.zAuth``

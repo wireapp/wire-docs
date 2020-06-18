@@ -87,9 +87,9 @@ If you are using the approach of the offline environment described in wire-serve
 
 where 'internal.vpc' needs to be replaced with the domain you're using in your offline environment.
 
-Preparing to install charts from wire with Helm 2
---------------------------------------------------
-If your environment is online, and you wish to use Helm 2, you need to add the remote wire Helm repository, to download wire charts.
+Preparing to install charts from the internet with Helm
+-------------------------------------------------------
+If your environment is online, you need to add the remote wire Helm repository, to download wire charts.
 
 To enable the wire charts helm repository:
 

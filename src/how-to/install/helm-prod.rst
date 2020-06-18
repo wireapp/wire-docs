@@ -197,7 +197,7 @@ In order for users to interact with their wire account, they need to receive mai
 If you are using a mail server, you will need to provide your authentication credentials before setting up wire.
 
 - Add your SMTP username in my-wire-server/values.yaml under ``brig.config.smtp.username``. You may need to add an entry for username.
-- Add your SMTP pasword is my-wire-server/secrets.yaml under ``brig.secrets.smtpPassword``.
+- Add your SMTP password is my-wire-server/secrets.yaml under ``brig.secrets.smtpPassword``.
 
 
 How to install fake SMTP (email) services
@@ -207,7 +207,7 @@ If you are not making use of mail services, and are adding your users via some o
 .. code:: shell
 
    cp values/demo-smtp/prod-values.example.yaml values/demo-smtp/values.yaml
-   helm install smtp wire/demo-smtp -f values/demo-smtp/values.yaml
+   helm upgrade --install smtp wire/demo-smtp -f values/demo-smtp/values.yaml
 
 
 You should see some pods being created in your first terminal as the above command completes.
@@ -236,7 +236,7 @@ Great, now try the installation:
 
 .. code:: shell
 
-   helm install wire-server wire/wire-server -f my-wire-server/values.yaml -f my-wire-server/secrets.yaml --wait
+   helm upgrade --install wire-server wire/wire-server -f my-wire-server/values.yaml -f my-wire-server/secrets.yaml --wait
 
 
 How to direct traffic to your cluster

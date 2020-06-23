@@ -83,7 +83,7 @@ Next, open ``secrets.yaml`` and add a TLS wildcard certificate and private key m
           #       sure everything is order, and only to `false` before deploying again, so
           #       that a valid certificate is actually issued.
           inTestMode: false
-          certmasterEmail: "ADD-VALID-ADDREESS-HERE"
+          certmasterEmail: "ADD-VALID-ADDRESS-HERE"
 
 
     Please note, in this case, you can omit the ``secrets.yaml`` file entirely.

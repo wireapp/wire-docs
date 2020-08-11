@@ -13,40 +13,38 @@ Redirect some traffic through a http(s) proxy
 
 In case you wish to use http(s) proxies, you can add a configuration like this to the wire-server services in question:
 
-Assuming your proxy can be reached from within kubernetes at ``http://proxy:8080``, add the following for each affected service (e.g. ``gundeck``) to your helm overrides in ``values/wire-server/values.yaml`` :
+Assuming your proxy can be reached from within Kubernetes at ``http://proxy:8080``, add the following for each affected service (e.g. ``gundeck``) to your Helm overrides in ``values/wire-server/values.yaml`` :
 
 .. code:: yaml
 
-   wire-server:
-     # ...
-     gundeck:
-       # ...
-       config:
-         # ...
-         proxy:
-            httpProxy: "http://proxy:8080"
-            httpsProxy: "http://proxy:8080"
-            noProxyList:
-              - "localhost"
-              - "127.0.0.1"
-              - "10.0.0.0/8"
-              - "elasticsearch-external"
-              - "cassandra-external"
-              - "redis-ephemeral"
-              - "fake-aws-sqs"
-              - "fake-aws-dynamodb"
-              - "fake-aws-sns"
-              - "brig"
-              - "cargohold"
-              - "galley"
-              - "gundeck"
-              - "proxy"
-              - "spar"
-              - "federator"
-              - "cannon"
-              - "cannon-0.cannon.default"
-              - "cannon-1.cannon.default"
-              - "cannon-2.cannon.default"
+    gundeck:
+      # ...
+      config:
+        # ...
+        proxy:
+          httpProxy: "http://proxy:8080"
+          httpsProxy: "http://proxy:8080"
+          noProxyList:
+            - "localhost"
+            - "127.0.0.1"
+            - "10.0.0.0/8"
+            - "elasticsearch-external"
+            - "cassandra-external"
+            - "redis-ephemeral"
+            - "fake-aws-sqs"
+            - "fake-aws-dynamodb"
+            - "fake-aws-sns"
+            - "brig"
+            - "cargohold"
+            - "galley"
+            - "gundeck"
+            - "proxy"
+            - "spar"
+            - "federator"
+            - "cannon"
+            - "cannon-0.cannon.default"
+            - "cannon-1.cannon.default"
+            - "cannon-2.cannon.default"
 
 Depending on your setup, you may need to repeat this for the other services like ``brig`` as well.
 
@@ -67,7 +65,7 @@ Enable push notifications using the public appstore / playstore mobile Wire clie
       "sqs_endpoint" = "https://sqs.<region>.amazonaws.com"
     }
 
-To make use of those, first test the credentials are correct, e.g. using the ``aws`` command-line tool:
+To make use of those, first test the credentials are correct, e.g. using the ``aws`` command-line tool (for more information on how to configure credentials, please refer to the `official docs <https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-precedence>`__):
 
 .. code::
 
@@ -93,29 +91,25 @@ Then add them to your gundeck configuration overrides:
 
    # in values/wire-server/values.yaml
 
-   wire-server:
-     # ...
-     gundeck:
-       # ...
-       config:
-         aws:
-           queueName: # e.g. staging-gundeck-events
-           region: # e.g. eu-central-1
-           snsEndpoint: # e.g. https://sqs.eu-central-1.amazonaws.com
-           sqsEndpoint: # e.g. https://sns.eu-central-1.amazonaws.com
-           arnEnv: # e.g. staging
+    gundeck:
+      # ...
+      config:
+        aws:
+          queueName: # e.g. staging-gundeck-events
+          region: # e.g. eu-central-1
+          snsEndpoint: # e.g. https://sns.eu-central-1.amazonaws.com
+          sqsEndpoint: # e.g. https://sqs.eu-central-1.amazonaws.com
+          arnEnv: # e.g. staging
 
 .. code:: yaml
 
    # in values/wire-server/secrets.yaml
 
-   wire-server:
-     # ...
-     gundeck:
-       # ...
-       secrets:
-         awsKeyId: ABCD...
-         awsSecretKey: ABCD...
+    gundeck:
+      # ...
+      secrets:
+        awsKeyId: CHANGE-ME
+        awsSecretKey: CHANGE-ME
 
 
 You may want

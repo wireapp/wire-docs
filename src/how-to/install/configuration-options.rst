@@ -95,6 +95,7 @@ Then add them to your gundeck configuration overrides:
       config:
         aws:
           queueName: # e.g. staging-gundeck-events
+          account: # <aws-account-id>, e.g. 123456789
           region: # e.g. eu-central-1
           snsEndpoint: # e.g. https://sns.eu-central-1.amazonaws.com
           sqsEndpoint: # e.g. https://sqs.eu-central-1.amazonaws.com
@@ -110,6 +111,8 @@ Then add them to your gundeck configuration overrides:
         awsKeyId: CHANGE-ME
         awsSecretKey: CHANGE-ME
 
+
+After making this change and applying it to gundeck (ensure gundeck pods have restarted to make use of the updated configuration - that should happen automatically), make sure to reset the push token on any mobile devices that you may have in use.
 
 You may want
 --------------

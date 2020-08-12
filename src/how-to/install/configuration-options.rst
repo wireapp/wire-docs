@@ -58,6 +58,7 @@ Enable push notifications using the public appstore / playstore mobile Wire clie
 .. code::
 
     push_notification_settings = {
+      "aws_account_id" = "REDACTED"
       "gundeck_access_key" = "REDACTED"
       "gundeck_access_secret" = "REDACTED"
       "notification_queue_name" = "<environment>-gundeck-events"

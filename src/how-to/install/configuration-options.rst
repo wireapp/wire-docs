@@ -72,17 +72,16 @@ To make use of those, first test the credentials are correct, e.g. using the ``a
     AWS_REGION=<region>
     AWS_ACCESS_KEY_ID=<...>
     AWS_SECRET_ACCESS_KEY=<...>
+    ENV=<environment> #e.g staging
 
-    aws sqs list-queues
+    aws sqs get-queue-url --queue-name "$ENV-gundeck-events"
 
 You should get a result like this:
 
 .. code::
 
     {
-        "QueueUrls": [
-            "https://<region>.queue.amazonaws.com/<aws-account-id>/<environment>-gundeck-events"
-        ]
+        "QueueUrl": "https://<region>.queue.amazonaws.com/<aws-account-id>/<environment>-gundeck-events"
     }
 
 Then add them to your gundeck configuration overrides:
@@ -99,7 +98,7 @@ Then add them to your gundeck configuration overrides:
           region: # e.g. eu-central-1
           snsEndpoint: # e.g. https://sns.eu-central-1.amazonaws.com
           sqsEndpoint: # e.g. https://sqs.eu-central-1.amazonaws.com
-          arnEnv: # e.g. staging
+          arnEnv: # e.g. staging - this must match the environment name (first part of queueName)
 
 .. code:: yaml
 

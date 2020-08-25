@@ -39,7 +39,12 @@ If you installed as per the instructions on docs.wire.com, then the default logg
 
 The default will thus keep your logs around until reaching 250 MB per pod, which is far longer than three days. Since docker logs don't allow a time-based log rotation, we can instead make use of `logrotate <https://linux.die.net/man/8/logrotate>`__ to rotate logs for us.
 
-Create the file ``/etc/logrotate.d/podlogs`` with the following contents::
+Create the file ``/etc/logrotate.d/podlogs`` with the following contents:
+
+..
+   NOTE: in case you change these docs, also make sure to update the actual code
+   under https://github.com/wireapp/wire-server-deploy/blob/develop/ansible/kubernetes_logging.yml
+.. code::
 
    "/var/lib/docker/containers/*/*.log"
    {

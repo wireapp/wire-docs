@@ -14,4 +14,4 @@ And here is a diagram that explains it in slightly more technical terms:
 See also
 --------
 
-:ref:`Trouble shooting & FAQ <trouble-shooting-faq>`
+`FAQ <https://docs.wire.com/how-to/single-sign-on/trouble-shooting.html>`__

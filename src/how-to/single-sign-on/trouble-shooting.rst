@@ -1,3 +1,5 @@
+.. _trouble-shooting-faq:
+
 Trouble shooting & FAQ
 ======================
 

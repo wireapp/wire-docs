@@ -139,7 +139,7 @@ minimal example that still works, we'd be love to take a look.
     </saml:Assertion>
 
 
-The auth response does not contain a reference to an auth request.  (Also: can i use IdP-initiated login?)
+Why does the auth response not contain a reference to an auth request?  (Also: can i use IdP-initiated login?)
 ------------------------------------------------------------------------------------------------------------
 
 tl;dr: Wire only supports SP-initiated login, where the user selects
@@ -147,8 +147,8 @@ the auth method from inside the app's login screen.  It does not
 support IdP-initiated login, where the user enters the app from a list
 of applications in the IdP UI.
 
-Why?
-^^^^
+The full story
+^^^^^^^^^^^^^^
 
 SAML authentication can be initiated by the IdP (eg., Okta or Azure),
 or by the SP (Wire).

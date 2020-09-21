@@ -140,7 +140,7 @@ minimal example that still works, we'd be love to take a look.
 
 
 Why does the auth response not contain a reference to an auth request?  (Also: can i use IdP-initiated login?)
-------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------
 
 tl;dr: Wire only supports SP-initiated login, where the user selects
 the auth method from inside the app's login screen.  It does not

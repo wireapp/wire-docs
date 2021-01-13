@@ -6,3 +6,5 @@ In case you have installed wire-server using certificates signed using a custom 
 The following details the procedure for Desktop and Web on Linux/Windows:
 
 https://thomas-leister.de/en/how-to-import-ca-root-certificate/
+
+For Android and iOS, if you know how to trust custom certificates, please let use know so we can update this documentation.

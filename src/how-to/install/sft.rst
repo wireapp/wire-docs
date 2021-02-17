@@ -44,7 +44,7 @@ As part of the wire-server umbrella chart
 
 By default, ``sftd`` will be installed as part of the ``wire-server`` umbrella chart.
 
-In your ````./values/wire-server/values.yaml`` file you should set the following settings:
+In your ``./values/wire-server/values.yaml`` file you should set the following settings:
 
 .. code:: yaml
 

@@ -44,7 +44,7 @@ As part of the wire-server umbrella chart
 
 By default, ``sftd`` will be installed as part of the ``wire-server`` umbrella chart.
 
-In your ``values.yaml`` for ``wire-server`` you should set the following settings:
+In your ````./values/wire-server/values.yaml`` file you should set the following settings:
 
 .. code:: yaml
 
@@ -63,9 +63,20 @@ In your ``secrets.yaml`` you should set the TLS keys for sftd domain:
        key: |
          <TLS KEY HERE>
           
+You should also make sure that you configure brig to know about the SFT server in your ``./values/wire-server/values.yaml``  file:
+
+.. code:: yaml
+   
+   brig:
+     optSettings:
+       setSftStaticUrl: "https://sftd.example.com:443"
+
+Now you can deploy as usual:
+
 .. code:: shell
 
    helm upgrade wire-server wire/wire-server --values ./values/wire-server/values.yaml
+
           
 Standalone
 ^^^^^^^^^^
@@ -78,7 +89,7 @@ if you want to avoid dropping calls during an upgrade, you'd set the ``terminati
 for calls to drain before updating to the new version (See  `technical documentation <https://github.com/wireapp/wire-server/blob/develop/charts/sftd/README.md>`_).  that would cause your otherwise snappy upgrade of the ``wire-server`` chart to now take a long time, as it waits for all
 the SFT servers to drain. If this is a concern for you, we advice installing ``sftd`` as a separate chart.
 
-It is important that you disable ``sftd`` in the ``wire-server`` umbrella chart, by setting this in your ``values.yaml`` :
+It is important that you disable ``sftd`` in the ``wire-server`` umbrella chart, by setting this in your ``./values/wire-server/values.yaml``  file
 
 .. code:: yaml
 
@@ -104,17 +115,22 @@ Now you can install the chart:
       --set host=$SFTD_HOST \
       --set allowOrigin=https://$WEBAPP_HOST \
       --set-file tls.crt=/path/to/tls.crt \
-      --set-file tls.key=/path/to/tls.k
+      --set-file tls.key=/path/to/tls.key
+      
+You should also make sure that you configure brig to know about the SFT server, in the ``./values/wire-server/values.yaml`` file:
 
-For more advanced setups please refer to the `technical documentation <https://github.com/wireapp/wire-server/blob/develop/charts/sftd/README.md>`_
+.. code:: yaml
+   
+   brig:
+     optSettings:
+       setSftStaticUrl: "https://sftd.example.com:443"
 
-Configuring wire-server
------------------------
-
-You should make sure that in ``values/wire-server/values.yaml`` you set  ``brig.optSettings.setSftStaticUrl`` to ``https://$SFTD_HOST:443`` where ``$SFTD_HOST`` is replaced with the domain name of the SFT server. Then roll out the change:
-
-
+And then roll-out the change to the ``wire-server`` chart
 .. code:: shell
 
    helm upgrade wire-server wire/wire-server --values ./values/wire-server/values.yaml
+
+For more advanced setups please refer to the `technical documentation <https://github.com/wireapp/wire-server/blob/develop/charts/sftd/README.md>`_
+
+
 

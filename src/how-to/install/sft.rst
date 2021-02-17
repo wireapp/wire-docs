@@ -39,8 +39,52 @@ For more information about capacity planning and networking please refer to the 
 Deploying the SFT
 ------------------
 
-The SFT component is shipped as a separate helm chart. Installation is similar to installing
+As part of the wire-server umbrella chart
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+By default, ``sftd`` will be installed as part of the ``wire-server`` umbrella chart.
+
+In your ``values.yaml`` for ``wire-server`` you should set the following settings:
+
+.. code:: yaml
+
+   sftd:
+     host: sftd.example.com # Replace example.com with your domain
+     allowOrigin: webapp.example.com # Should be the address you used for the webapp deployment
+
+In your ``secrets.yaml`` you should set the TLS keys for sftd domain:
+
+.. code:: yaml
+
+   sftd:
+     tls:
+       crt: |
+         <TLS CRT HERE>
+       key: |
+         <TLS KEY HERE>
+          
+.. code:: shell
+
+   helm upgrade wire-server wire/wire-server --values ./values/wire-server/values.yaml
+          
+Standalone
+^^^^^^^^^^
+
+The SFT component is also shipped as a separate helm chart. Installation is similar to installing
 the charts as in :ref:`helm_prod`.
+
+Some people might want to run SFT separately, because the deployment lifecycle for the SFT is a bit more intricate. For example,
+if you want to avoid dropping calls during an upgrade, you'd set the ``terminationGracePeriodSeconds`` of the SFT to a high number, to wait
+for calls to drain before updating to the new version (See  `technical documentation <https://github.com/wireapp/wire-server/blob/develop/charts/sftd/README.md>`_).  that would cause your otherwise snappy upgrade of the ``wire-server`` chart to now take a long time, as it waits for all
+the SFT servers to drain. If this is a concern for you, we advice installing ``sftd`` as a separate chart.
+
+It is important that you disable ``sftd`` in the ``wire-server`` umbrella chart, by setting this in your ``values.yaml`` :
+
+.. code:: yaml
+
+   tags:
+     sftd: false
+      
 
 By default ``sftd`` doesn't need to set that many options, so we define them inline. However, you could of course also set these values in a ``values.yaml`` file.
 
@@ -62,7 +106,7 @@ Now you can install the chart:
       --set-file tls.crt=/path/to/tls.crt \
       --set-file tls.key=/path/to/tls.k
 
-For more advanced setups please refer to the `technical documentation <https://github.com/wireapp/wire-server/blob/eab0ce1ff335889bc5a187c51872dfd0e78cc22b/charts/sftd/README.md>`_
+For more advanced setups please refer to the `technical documentation <https://github.com/wireapp/wire-server/blob/develop/charts/sftd/README.md>`_
 
 Configuring wire-server
 -----------------------

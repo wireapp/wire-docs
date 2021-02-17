@@ -126,6 +126,7 @@ You should also make sure that you configure brig to know about the SFT server, 
        setSftStaticUrl: "https://sftd.example.com:443"
 
 And then roll-out the change to the ``wire-server`` chart
+
 .. code:: shell
 
    helm upgrade wire-server wire/wire-server --values ./values/wire-server/values.yaml

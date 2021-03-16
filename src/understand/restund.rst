@@ -53,7 +53,7 @@ are configured with - such block is either considered to be *public* or *private
 - `IPv6 private blocks <https://www.iana.org/assignments/iana-ipv6-special-registry/iana-ipv6-special-registry.xhtml>`__
 
 In cases where a machine, that is hosting the TURN server, also connects
-to a *private* network in which other services are running too, chances are
+to a *private* network in which other services are running, chances are
 that these services are being indirectly exposed through that TURN server.
 
 To prevent this kind of exposure, a TURN server has to be configured with an inclusive

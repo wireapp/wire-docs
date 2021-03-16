@@ -60,7 +60,7 @@ To prevent this kind of exposure, a TURN server has to be configured with an inc
 or exclusive list of address blocks to prevents undesired connections from being
 established [1]_. At the moment (Feb. 2021), this functionality is not yet available
 with *Restund* on the application-level. Instead, the system-level firewall capabilities
-can be utilized. The `IP ranges <https://www.rtcsec.com/post/2021/01/details-about-cve-2020-26262-bypass-of-coturns-default-access-control-protection/#further-concerns-what-else>`__
+must be utilized. The `IP ranges <https://www.rtcsec.com/post/2021/01/details-about-cve-2020-26262-bypass-of-coturns-default-access-control-protection/#further-concerns-what-else>`__
 mentioned in the article [1]_ should be blocked for egress and, depending on the scenario,
 also for ingress traffic. Tools like ``iptables`` or ``ufw`` can be used to set this up.
 

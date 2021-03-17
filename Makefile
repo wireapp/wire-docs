@@ -8,17 +8,13 @@ DOCKER_USER   ?= quay.io/wire
 DOCKER_IMAGE  = alpine-sphinx
 DOCKER_TAG    ?= pdf
 
-# You can set these variables from the command line, and also
-# from the environment for the first two.
+# You can set these variables (with a ?=) from the command line, and also
+# from the environment.
 SPHINXOPTS    ?= -q
 SPHINXBUILD   ?= sphinx-build
 SOURCEDIR     = $(MKFILE_DIR)/src
 BUILDDIR      = $(MKFILE_DIR)/build
-USE_POETRY    ?= 1
-
-
-.PHONY: Makefile
-
+USE_POETRY    ?= 1 # note: if you're using direnv/nix, this will be set to USE_POETRY=0 automatically in .envrc
 
 .DEFAULT: docs
 .PHONY: docs

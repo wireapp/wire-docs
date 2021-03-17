@@ -1,5 +1,7 @@
 FROM alpine:3.13
 
+# FUTUREWORK: make a docker image based on nix?
+
 RUN echo "**** install Python, curl, make ****" && \
     apk add --no-cache bash curl python3 make && \
     if [ ! -e /usr/bin/python ]; then ln -sf python3 /usr/bin/python ; fi && \

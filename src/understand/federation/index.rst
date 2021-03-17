@@ -1,10 +1,12 @@
 Wire federation
 ===============
 
-Wire Federation aims to allow multiple Wire-server backends to federate with each other, i.e. users registered on backends A and B must be able to discover and send messages to each other.
+Wire Federation, once implemented, aims to allow multiple Wire-server :ref:`backends <glossary>` to federate with each other.
 
-.. warning::
-   This section of the documentation is work in progress, since the implementation of federation, as well as certain design decision are still subject to change.
+Federation means that user 1 registered on backend A and user 2 registered on backend B must be able to discover each other and send messages to each other.
+
+.. note::
+   Federation is as of March 2021 still early work in progress, since the implementation of federation is ongoing, and certain design decision are still subject to change. Where possible documentation will indicate the state of implementation.
 
 .. toctree::
    :maxdepth: 2

@@ -1,21 +1,5 @@
 let
-  sources = import ./sources.nix;
-
-  pkgs = import sources.nixpkgs {
-    config = { };
-    overlays = [
-      (import ./overlay.nix)
-    ];
-  };
-
-  profileEnv = pkgs.writeTextFile {
-    name = "profile-env";
-    destination = "/.profile";
-    # This gets sourced by direnv. Set NIX_PATH, so `nix-shell` uses the same nixpkgs as here.
-    text = ''
-      export NIX_PATH=nixpkgs=${toString pkgs.path}
-    '';
-  };
+  pkgs = import ./nixpkgs.nix;
 in
 {
   inherit pkgs;
@@ -27,13 +11,9 @@ in
       pkgs.jq
       pkgs.niv
       pkgs.zip
-      pkgs.awscli
-      pkgs.python39Packages.sphinx
-      pkgs.python39Packages.recommonmark
-      # TODO: sphinx-autobuild
-      # TODO: rst2pdf
+      pkgs.gnumake
 
-      profileEnv
+      (pkgs.python3.withPackages (ps: with ps; [ sphinx recommonmark rst2pdf sphinx-autobuild ]))
     ];
   };
 }

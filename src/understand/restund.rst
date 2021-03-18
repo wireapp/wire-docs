@@ -94,10 +94,14 @@ Protocols and open ports
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-Restund servers provide the best audio/video connections if end-user
-devices can connect to them via UDP. In this case, a firewall (if any)
-needs to allow and/or forward the complete UDP port range ``32768-61000``
-for incoming UDP traffic. Port ``3478`` is the default control port,
+Restund servers provide the best audio/video connections if end-user devices
+can connect to them via UDP. In this case, a firewall (if any) needs to allow
+and/or forward the complete UDP port range ``32768-61000`` for incoming UDP
+traffic. Ports for allocations are allocated from `ip_local_port_range
+<https://ma.ttias.be/linux-increase-ip_local_port_range-tcp-port-range/>` which
+is 32768 61000 by default.
+
+Port ``3478`` is the default control port,
 however one UDP port per active connection is required, so a whole port
 range must be available and reachable from the outside.
 

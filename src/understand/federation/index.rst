@@ -1,7 +1,7 @@
 Wire federation
 ===================
 
-Wire Federation, once implemented, aims to allow multiple Wire-server :ref:`backends <glossary>` to federate with each other.
+Wire Federation, once implemented, aims to allow multiple Wire-server :term:`backends <Backend>` to federate with each other.
 
 Federation means that user 1 registered on backend A and user 2 registered on backend B must be able to interact with each other as if they belonged to the same backend.
 

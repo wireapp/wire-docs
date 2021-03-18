@@ -3,6 +3,11 @@
 Federation Glossary
 =====================
 
+..
+  note to documentation authors:
+  you can refer to any entry in this glossary with this syntax:
+  have a look at :term:`text to appear which links to backend's definition <Backend>`
+
 .. glossary::
 
    Backend

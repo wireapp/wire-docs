@@ -20,7 +20,7 @@
 project = 'Wire'
 copyright = '2021, Wire'
 author = 'Wire Swiss GmbH'
-# version = "0.0.1"
+version = "0.0.1"
 
 
 # -- General configuration ---------------------------------------------------

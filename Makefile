@@ -79,6 +79,11 @@ else
 		"$(SOURCEDIR)" "$(BUILDDIR)"
 endif
 
+.PHONY: dev-pdf
+dev-pdf: pdf
+	evince build/pdf/wire_federation.pdf 2>&1 > /dev/null &
+	find src/ | entr make pdf
+
 .PHONY: help
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS)

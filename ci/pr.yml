@@ -2,13 +2,13 @@
 platform: linux
 inputs:
   - name: wire-docs-pr
-    path: wire-docs-pr
+    path: wire-docs
 run:
   path: sh
   args:
   - -exc
   - |
-    cd wire-docs-pr
+    cd wire-docs
     # hack: FUTUREWORK remove this section
     rm -rf /mnt
     ln -s $PWD /mnt

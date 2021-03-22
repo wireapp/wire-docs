@@ -1,6 +1,5 @@
 ---
 platform: linux
-image: alpine-sphinx
 inputs:
   - name: wire-docs
 run:

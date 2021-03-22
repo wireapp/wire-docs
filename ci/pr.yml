@@ -1,7 +1,8 @@
 ---
 platform: linux
 inputs:
-  - name: wire-docs
+  - name: wire-docs-pr
+    path: wire-docs
 run:
   path: sh
   args:

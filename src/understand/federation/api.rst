@@ -14,7 +14,9 @@ You can download the latest released :download:`router.proto <https://raw.github
    note: the following depends on the assumption that wire-docs is a sibling folder to wire-server. Perhaps we can instead have CI download that file when building docs into the static folder, for instance.
    literalinclude should have the advantage to also work for pdf output (unlike links)
 
-.. literalinclude:: ../../../../wire-server/libs/wire-api-federation/proto/router.proto
+..
+   TODO: include some code from wire-server using literalinclude
+   literalinclude:: ../../../../wire-server/libs/wire-api-federation/proto/router.proto
    :linenos:
    :language: protobuf
    :caption: router.proto

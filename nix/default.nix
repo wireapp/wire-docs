@@ -13,7 +13,6 @@ in
       pkgs.zip
       pkgs.gnumake
       pkgs.entr
-      pkgs.evince
 
       (pkgs.python3.withPackages (ps: with ps; [ sphinx recommonmark rst2pdf sphinx-autobuild ]))
     ];

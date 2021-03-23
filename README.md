@@ -90,7 +90,7 @@ NOTE: support is experimental and resulting pdf may not have great formatting. S
 
 Run `make pdf` and look at files in `./build/pdf/`.
 
-If you have nix & direnv, you can use the `make dev-pdf` target to get auto-refreshing PDF files as you save source files.
+If you have nix & direnv, you can use the `make dev-pdf` target to get auto-refreshing PDF files as you save source files. (requires a PDF viewer installed globally)
 
 ## For maintainers (Wire employees)
 

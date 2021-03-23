@@ -16,9 +16,8 @@ Example of the network connections made between the components of two :ref:`back
 
 |flow-exact-handle-search|
 
-Other requests for federation will be similar to the above:
-
-* Depending on the request made by user 1 registered on backend A, different wire-server components (e.g. 'brig', 'galley', or 'gundeck') will make a request over their local network to the 'federator' component.
+* The exact message objects shown in the above diagram are simplified to ease understanding of which components send bytes over the network to which other components. For the precise definitions of those bytes take a look at the :ref:`federation API<federation-api>`.
+* Depending on the request made by user 1 registered on backend A, different :ref:`wire-server components<other-wire-server` than 'brig' shown above will make a request over their local network to the 'federator' component.
 
 Component responsibilities
 ---------------------------
@@ -51,12 +50,15 @@ The ingress is a `kubernetes ingress <https://kubernetes.io/docs/concepts/servic
 * perform :ref:`authentication`
 * forward requests to a local instance of the :ref:`federator`
 
+.. _other-wire-server:
+
 Other wire-server components
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Components such as 'brig', 'galley', or 'gundeck' are responsible for actual business logic and interfacing with databases and non-federation related external services. See `source code documentation <https://github.com/wireapp/wire-server>`_. In the context of federation, their functions include:
 
-* Per-request :ref:`authorization`
+* For incoming requests from other backends: per-request :ref:`authorization`
+* Outgoing requests to other backends are always sent via a local :ref:`federator` instance.
 
 .. _discovery:
 

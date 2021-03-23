@@ -15,6 +15,7 @@ M1 will have support for:
 
 Caveats:
 
+* Message delivery guarantees will be weak if any backends are temporarily unavailable.
 * Images, files, calling, etc will not yet be supported.
 * Only the web client will be supported, mobile clients will not yet be supported.
 * Federation with the production cloud version of wire.com will not yet be supported.
@@ -32,6 +33,7 @@ M(N) | N >1
      * implementation: not started yet
 
 * support more features (assets, calling, ...)
+* support better message delivery guarantees
 * support more platforms (android and iOS)
 * support for wire-server installations to federate with wire.com
 * support for better encryption primitives (MLS)

@@ -21,7 +21,7 @@ And [another one](https://sublime-and-sphinx-guide.readthedocs.io/en/latest/refe
 
 The re-structured spec text allows for choosing any underline/overline symbol
 for any level. In this repository we have not been very consistent. For any new
-contribution let's stick to this conevention:
+contribution let's stick to this convention:
 
 ```rst
 ######

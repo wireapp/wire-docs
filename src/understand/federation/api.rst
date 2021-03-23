@@ -66,7 +66,7 @@ request is meant for and the rest of the arguments are details of the HTTP
 request which must be made against the component. It intentionally supports a
 restricted set of parameters to ensure that the API is simple.
 
-The ``HTTPResponse`` object also intentionally restricts the response to staus
+The ``HTTPResponse`` object also intentionally restricts the response to status
 and body to ensure the API is simple and we do not leak headers across backends.
 The body must always be considered as json encoded without any compression.
 

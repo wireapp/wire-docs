@@ -5,7 +5,8 @@ RUN set -e -x ;\
 
 COPY . /wire-docs
 
-RUN nix-env -f /wire-docs/nix/default.nix -iA env
+RUN nix-env -f /wire-docs/nix/default.nix -iA env && \
+    rm -rf /wire-docs
 
 SHELL ["/bin/bash", "-c"]
 ENTRYPOINT "/bin/bash"

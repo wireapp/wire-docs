@@ -118,7 +118,7 @@ API From Federator to Components
 
 The components expose a REST API over HTTP to be consumed by the federator. All
 the paths start with ``/federation``. When a federator recieves a request like
-this (shown as json for convinience):
+this (shown as JSON for convenience):
 
 .. code-block:: json
 

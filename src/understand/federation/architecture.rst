@@ -17,7 +17,7 @@ Example of the network connections made between the components of two :ref:`back
 |flow-exact-handle-search|
 
 * The exact message objects shown in the above diagram are simplified to ease understanding of which components send bytes over the network to which other components. For the precise definitions of those bytes take a look at the :ref:`federation API<federation-api>`.
-* Depending on the request made by user 1 registered on backend A, different :ref:`wire-server components<other-wire-server` than 'brig' shown above will make a request over their local network to the 'federator' component.
+* Depending on the request made by user 1 registered on backend A, different :ref:`wire-server components <other-wire-server>` than 'brig' shown above will make a request over their local network to the 'federator' component.
 
 Component responsibilities
 ---------------------------

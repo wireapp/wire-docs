@@ -147,6 +147,9 @@ List of Federation APIs exposed by Components
           APIs please refer to the :download:`wire-api-federation
           package<https://github.com/wireapp/wire-server/blob/develop/libs/wire-api-federation/src/Wire/API/Federation/API/Brig.hs>`
 
+.. comment: The endpoints and objects are written manually. FUTUREWORK: Automate
+   this.
+
 Brig
 ~~~~
 

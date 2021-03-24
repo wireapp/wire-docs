@@ -143,6 +143,10 @@ gRPC call.
 List of Federation APIs exposed by Components
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. note:: This reflects status of API endpoints as of 2021-03-24. For latest
+          APIs please refer to the :download:`wire-api-federation
+          package<https://github.com/wireapp/wire-server/blob/develop/libs/wire-api-federation/src/Wire/API/Federation/API/Brig.hs>`
+
 Brig
 ~~~~
 

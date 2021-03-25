@@ -125,11 +125,11 @@ To make this possible, requests to remote backends are required to contain a
 
 The receiving backend then follows the process described in :ref:`discovery` to
 ensure that the infra domain matches the domain of the sending backend. If this
-is not the case, it should reject the request.
+is not the case, it rejects the request.
 
  * TODO be more precise about what it looks like to reject a request. 502?
 
-If this is the case, the receiving client should check if the domain of the
+If this is the case, the receiving backend checks if the domain of the
 sending backend is in the :ref:`allow-list` and reject the request if it is not.
 
 .. _allow-list:
@@ -141,7 +141,7 @@ Federation can happen between any backends on a network (e.g. the open internet)
 
 * outgoing requests will only happen if the requested domain is contained in the allow list.
 * incoming requests: if the domain of the sending backend is not in the allow
-  list, any request originating from that domain should be rejected.
+  list, any request originating from that domain is rejected.
 
 
 Per-request Authorization

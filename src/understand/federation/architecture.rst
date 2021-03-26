@@ -86,7 +86,7 @@ domain `wire.company-a.com` could publish
 
 .. code-block:: bash
 
-   _wire-federator._tcp.company-a.com. 600  IN  SRV 10 5 443 .wire.company-a.com.
+   _wire-server-federator._tcp.company-a.com. 600  IN  SRV 10 5 443 federator.wire.company-a.com.
 
 A backend can then be discovered, given its domain, by issueing a DNS query for
 the SRV record specifying the `wire` service.

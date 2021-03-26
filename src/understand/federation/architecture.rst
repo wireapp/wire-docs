@@ -77,7 +77,7 @@ while the domain that the backend is hosted at is called `infrastructure domain`
 
 To make discovery possible, any party hosting a Wire backend has to announce the
 the infra domain via a DNS `SRV` record as defined in `RFC 2782
-<https://tools.ietf.org/html/rfc2782>`_ with `service = wire-federator, proto =
+<https://tools.ietf.org/html/rfc2782>`_ with `service = wire-server-federator, proto =
 tcp` and with `name` pointing to the backend's domain and `target` to the
 backend's infra domain.
 
@@ -110,6 +110,9 @@ Note that the client certificate is expected to be issued with the backend's
 infra domain as the subject alternative name (SAN), which is defined in `RFC
 5280 <https://tools.ietf.org/html/rfc5280>`_.
 
+If a receiving backend fails to authenticate the client certificate, it should
+reply with an :ref:`authentication error <authentication error>`.
+
 .. _authorization:
 
 Authorization
@@ -125,12 +128,11 @@ To make this possible, requests to remote backends are required to contain a
 
 The receiving backend then follows the process described in :ref:`discovery` to
 ensure that the infra domain matches the domain of the sending backend. If this
-is not the case, it rejects the request.
+is not the case, it should reply with a :ref:`discovery error <discovery
+error>`.
 
- * TODO be more precise about what it looks like to reject a request. 502?
-
-If this is the case, the receiving backend checks if the domain of the
-sending backend is in the :ref:`allow-list` and reject the request if it is not.
+If this is the case, the receiving backend checks if the domain of the sending
+backend is in the :ref:`allow-list` and reply with an :ref:`authorization error <authorization error>` if it is not.
 
 .. _allow-list:
 
@@ -141,7 +143,8 @@ Federation can happen between any backends on a network (e.g. the open internet)
 
 * outgoing requests will only happen if the requested domain is contained in the allow list.
 * incoming requests: if the domain of the sending backend is not in the allow
-  list, any request originating from that domain is rejected.
+  list, any request originating from that domain is replied to with an
+  :ref:`authorization error <authorization error>`
 
 
 Per-request Authorization

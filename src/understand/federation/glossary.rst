@@ -38,7 +38,7 @@ Qualified User Name (QUN)
   name is a string consisting of 2-256 characters which are either lower case
   alphanumeric, dashes, underscores or dots. See `here
   <https://github.com/wireapp/wire-server/blob/f683299a03207acb505254ff3121213383d0b672/libs/types-common/src/Data/Handle.hs#L76-L93>`_
-  for the code defining the rules for user names.
+  for the code defining the rules for user names. Note that in the wire-server source code, user names are called 'Handle' and qualified user names 'Qualified Handle'.
 
 .. _qualified-device-id:
 

@@ -44,7 +44,7 @@ Qualified User Name (QUN)
 
 Qualified Device Identifier (QDID)
 
-  A combination of a randomly generated string of either 10 or 15 characters
+  A combination of a device identifier (a hash of the public key generated for a user's device)
   concatenated with a dot and the QUID of the associated user. The resulting
   string is unique on the backend of the associated user.
 

@@ -32,7 +32,7 @@ Qualified User Identifier (QUID)
 
 .. _qualified-user-name:
 
-Qualified User Identifier (QUN)
+Qualified User Name (QUN)
 
   A combination of a name that is unique on the user's backend and a domain. The
   name is a string consisting of 2-256 characters which are either lower case

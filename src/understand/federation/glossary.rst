@@ -32,19 +32,19 @@ Qualified User Identifier (QUID)
 
 .. _qualified-user-name:
 
-Qualified User Identifier (QUN)
+Qualified User Name (QUN)
 
   A combination of a name that is unique on the user's backend and a domain. The
   name is a string consisting of 2-256 characters which are either lower case
   alphanumeric, dashes, underscores or dots. See `here
   <https://github.com/wireapp/wire-server/blob/f683299a03207acb505254ff3121213383d0b672/libs/types-common/src/Data/Handle.hs#L76-L93>`_
-  for the code defining the rules for user names.
+  for the code defining the rules for user names. Note that in the wire-server source code, user names are called 'Handle' and qualified user names 'Qualified Handle'.
 
 .. _qualified-device-id:
 
 Qualified Device Identifier (QDID)
 
-  A combination of a randomly generated string of either 10 or 15 characters
+  A combination of a device identifier (a hash of the public key generated for a user's device)
   concatenated with a dot and the QUID of the associated user. The resulting
   string is unique on the backend of the associated user.
 

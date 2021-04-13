@@ -1,5 +1,6 @@
+****************************
 Release notes of helm charts
-============================
+****************************
 
 We have recently migrated all the helm charts from
 https://github.com/wireapp/wire-server-deploy to the

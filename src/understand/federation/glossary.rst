@@ -68,3 +68,10 @@ Qualified Team Identifier (QTID)
 
   The string `backend-domain.com/teams/` concatenated with a UUID that is
   unique on a given backend.
+
+.. _display-name:
+
+(User) Profile/Display Name
+
+  The profile/display name of a user is a UTF-8 encoded string with 1-128
+  characters.

@@ -32,9 +32,10 @@ above, the API often decomposes the qualified identifiers into an (unqualified)
 id and a domain name. In the code and API documentation, we sometimes call a
 username a "handle" and a qualified username a "qualified handle".
 
-Besides the above names and identifiers, there are also user display names
-(sometimes also referred to as "profile names"), which are not unique on the
-user's backend, can be changed by the user at any time and are not qualified.
+Besides the above names and identifiers, there are also user :ref:`display names
+<display-name>` (sometimes also referred to as "profile names"), which are not
+unique on the user's backend, can be changed by the user at any time and are not
+qualified.
 
 
 API between Federators

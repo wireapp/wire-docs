@@ -84,7 +84,7 @@ Now to perform a rolling restart of the cluster, do the following steps:
 5. Wait for your cluster to be healthy again.
 6. Do the same on the next server.
 
-*For more details and commands, please refer to the official documentation:* `Replacing a failed etcd member <https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#replacing-a-failed-etcd-member>`__
+*For more details please refer to the official documentation:* `Replacing a failed etcd member <https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#replacing-a-failed-etcd-member>`__
 
 
 .. _etcd_backup-and-restore:
@@ -100,7 +100,7 @@ in cases of disaster recovery. Information about how to do snapshots and
 restores can be found here:
 https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/recovery.md
 
-*For more details and commands, please refer to the official documentation:* `Backing up an etcd cluster <https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster>`__
+*For more details please refer to the official documentation:* `Backing up an etcd cluster <https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster>`__
 
 
 Troubleshooting

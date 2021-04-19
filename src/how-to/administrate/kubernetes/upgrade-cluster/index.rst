@@ -4,13 +4,13 @@ Upgrading a Kubernetes cluster
 Before upgrading Kubernetes, a couple of aspects should be taken into account:
 
 * downtime is (not) permitted
-* stateful backing services run outside or on top of Kubernetes
+* stateful backing services that run outside or on top of Kubernetes
 
 As a result the following questions arise:
 
 1. Is an in-place upgrade required (reuse existing machines) or is it possible to
    deploy a second cluster right next to the first one and install Wire on top?
-2. How was the Kubernetes cluster being deployed?
+2. How was the Kubernetes cluster deployed?
 
 Depending on the deployment method, the upgrade procedure may vary. It may be reasonable to test
 the upgrade in a non-production environment first.
@@ -22,7 +22,7 @@ can be found in the section about :ref:`restarting a machine in an kubernetes cl
 .. warning::
 
     For an in-place upgrade, it is *NOT* recommended to go straight to the latest Kubernetes
-    version. Instead, one should upgrade step by step to each minor version.
+    version. Instead, one should upgrade step by step between each minor version.
 
 
 Manually
@@ -31,15 +31,15 @@ Manually
 Doing an upgrade by hand is cumbersome and error-prone, which is why there are tools and
 automation for this procedure. The high-level steps would be:
 
-1. control plane (also see a more detailed `list <https://kubernetes.io/docs/tasks/administer-cluster/cluster-upgrade/#manual-deployments>`__)
+1. upgrade the control plane (also see a more detailed `list <https://kubernetes.io/docs/tasks/administer-cluster/cluster-upgrade/#manual-deployments>`__)
     a) all *etcd* instances
     b) api-server on each control-plane host
     c) controllers, scheduler,
-2. nodes (order may vary, depending on whether the kube-components run in containers)
+2. upgrade the nodes (order may vary, depending on whether the kube-components run in containers)
     * kubelet
     * kube-proxy
     * container runtime
-3. clients (``kubectl``, e.g. on workstations or in pipelines)
+3. then upgrade the clients (``kubectl``, e.g. on workstations or in pipelines)
 
 *For more details, please refer to the official documentation:*
 `Upgrade A Cluster <https://kubernetes.io/docs/tasks/administer-cluster/cluster-upgrade/>`__
@@ -72,7 +72,7 @@ with Kubespray 2.14):
 Kubespray takes care of bringing the new binaries into position on each machine, restarting
 the components, and draining/uncordon nodes.
 
-*For more details and commands, please refer to the official documentation:*
+*For more details please refer to the official documentation:*
 `Upgrading Kubernetes in Kubespray <https://kubespray.io/#/docs/upgrades>`__
 
 

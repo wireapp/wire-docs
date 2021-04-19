@@ -42,4 +42,4 @@ Node
 2. Restart / Update / Decommission
 3. Mark the node as being schedulable again (if not decommissioned)
 
-*For more details and commands, please refer to the official documentation:* `Safely Drain a Node <https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/>`__
+*For more details please refer to the official documentation:* `Safely Drain a Node <https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/>`__

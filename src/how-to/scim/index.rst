@@ -3,7 +3,7 @@ How to set up user provisioning with SCIM
 
 Wire supports the `SCIM <http://www.simplecloud.info/>`__ (`RFC 7643 <https://tools.ietf.org/html/rfc7643>`__) protocol to create, update and delete users.
 
-Note that connecting a SCIM client to Wire also disables the functionality to create new users in the SSO login process.
+Note that connecting a SCIM client to Wire also disables the functionality to create new users in the SSO login process. This functionality is when a token is created (see below).
 
 To set up the connection of your SCIM client (e.g. Azure Active Directory) you need to provide
 
@@ -30,4 +30,4 @@ You need to configure your SCIM client to use the following mandatory SCIM attri
    b. If you are using email/password authentication then set the ``externalId``
       attribute to the user's email address. The user will receive an invitation email during provisioning. Also note that the account will be set to ``"active": false`` until the user has accepted the invitation and activated the account.
 
-You can optionally make use of Wire's ``urn:wire:scim:schemas:profile:1.0`` extension field to store arbitrary user profile data, that is shown in the users profile, e.g. department, role. See `docs <https://github.com/wireapp/wire-server/blob/develop/docs/reference/user/rich-info.md#scim-support-refrichinfoscim>`__ for details.
+You can optionally make use of Wire's ``urn:wire:scim:schemas:profile:1.0`` extension field to store arbitrary user profile data that is shown in the users profile, e.g. department, role. See `docs <https://github.com/wireapp/wire-server/blob/develop/docs/reference/user/rich-info.md#scim-support-refrichinfoscim>`__ for details.

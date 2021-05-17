@@ -36,11 +36,14 @@ Release notes
    From this version on; we do not ship DynamoDB-compatible service anymore. Instead, we ship with a built-in prekey distribution strategy
    that no longer depends on an external locking service. (#1416, #1476).
 
+   If you want to keep using DynamoDB, you must set ``brig.randomPrekeys`` to ``false`` in your ``values.yaml`` explicitly.
+
+
 
 
 Features
 -------------
- - [brig] New option to use a random prekey selection strategy to remove DynamoDB dependency (#1416, #1476) 
+ - [brig] New option to use a random prekey selection strategy to remove DynamoDB dependency (#1416, #1476)
  - [brig] Ensure servant APIs are recorded by the metrics middleware (#1441)
  - [brig] Add exact handle matches from all teams in /search/contacts (#1431, #1455)
  - [brig] CSV endpoint: Add columns to output (#1452)
@@ -58,9 +61,9 @@ Bug fixes and other updates
  - [brig] Fix FromJSON instance of ListUsersQuery (#1456)
  - [galley] Lower the limit for URL lengths for galley -> brig RPC calls (#1469)
  - [chores] Remove unused dependencies (#1424) …
- - [compilation] Stop re-compiling nginz when running integration test for unrelated changes 
- - [tooling] Use jq magic instead of bash (#1432), Add wget (#1443) 
- - [chores] Refactor Dockerfile apk installation tasks (#1448) 
+ - [compilation] Stop re-compiling nginz when running integration test for unrelated changes
+ - [tooling] Use jq magic instead of bash (#1432), Add wget (#1443)
+ - [chores] Refactor Dockerfile apk installation tasks (#1448)
  - [tooling] Script to generate token for SCIM endpoints (#1457)
  - [tooling] Ormolu script improvements (#1458)
  - [tooling] Add script to colourise test failure output (#1459)

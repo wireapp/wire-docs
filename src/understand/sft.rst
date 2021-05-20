@@ -34,12 +34,13 @@ and that the instance allocates at least one port for media transport per partic
 Establishing a call
 -------------------
 
-1. *Client A* wants initiates a call. It contacts all the knows SFT servers via HTTPS.
-   The SFT server that is quickest to respond is the one that it will be used.
+1. *Client A* wants to initiates a call. It contacts all the known SFT servers via HTTPS.
+   The SFT server that is quickest to respond is the one that will be used by the client.
+   (Request 1: ``CONFCONN``)
 2. *Client A* gathers connection candidates (own public IP, public IP of the network the
    client is in with the help of STUN, through TURN servers) [1]_ for the SFT server to
    establish a media connection to *Client A*. These information are then being send again
-   from *Client A* to chosen SFT server via HTTPS request.
+   from *Client A* to the chosen SFT server via HTTPS request. (Request 2: ``SETUP``)
 3. The SFT server tests which of the connection candidates actually work. Meaning, it
    goes through all the candidates until one leads to a successful media connection
    between itself and *client A*
@@ -69,9 +70,10 @@ If that is no possible, then at least SFT servers and Restund servers should be 
 other via UDP - and clients may connect via UDP and/or TCP to Restund servers
 (see :ref:`Protocols and open ports <understand-restund-protocal-and-ports>`), which in
 turn will connect to SFT server.
-In the unlikely scenario where no UDP is allowed whatsoever and SFT servers cannot reach the Restund
-servers that clients are using to make themselves reachable, an SFT server itself can also choose to
-be proxied by a Restund server, which can be different from the Restund servers used by clients.
+In the unlikely scenario where no UDP is allowed whatsoever or SFT servers may not be able to reach
+the Restund servers that clients are using to make themselves reachable, an SFT server itself can
+also choose to proxy itself by a Restund server, which cloud be different from the Restund servers
+used by clients (see *TURN discovery* flag).
 
 The SFT may need to receive and send traffic over UDP and TCP on a wide range of ports.
 Due to the fact that Kubernetes services do not support setting port ranges, and Kubernetes pods not being publicly routable (at least in IPv4) we require the SFT pods to run in `hostNetwork` mode and the pod will bind directly to the default interface of the node.

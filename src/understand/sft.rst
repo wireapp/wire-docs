@@ -34,7 +34,7 @@ and that the instance allocates at least one port for media transport per partic
 Establishing a call
 -------------------
 
-1. *Client A* wants to initiates a call. It contacts all the known SFT servers via HTTPS.
+1. *Client A* wants to initiate a call. It contacts all the known SFT servers via HTTPS.
    The SFT server that is quickest to respond is the one that will be used by the client.
    (Request 1: ``CONFCONN``)
 2. *Client A* gathers connection candidates (own public IP, public IP of the network the
@@ -44,7 +44,7 @@ Establishing a call
 3. The SFT server tests which of the connection candidates actually work. Meaning, it
    goes through all the candidates until one leads to a successful media connection
    between itself and *client A*
-4. *Client A* sends an OTR message ``CONFSTART`` (to all members of chat), which contains
+4. *Client A* sends an OTR [2]_ message ``CONFSTART`` (to all members of chat), which contains
    the IP address of the SFT server that is being used for the call.
 5. Any other client that wants to join the call, does 1. + 2. with the exception of **only**
    contacting one SFT server i.e. the one that *client A* chose and told all other
@@ -56,6 +56,9 @@ connection (i.e. no more HTTPS at that point). There are just 2 HTTPS request/re
 sequences per participant.
 
 .. [1] STUN & TURN are both part of a :ref:`Restund server <understand-restund>`
+.. [2] Off The Record - an encrypted message sent in a conversation hidden from user's view but
+       interpreted by user's clients. It is sent via backend servers and forwarded to other
+       conversation participants, not to or via SFT.
 
 
 Prerequisites
@@ -66,13 +69,13 @@ of the SFT server(s) - either directly or through a load balancer sitting in fro
 This is only needed for the call initiation/joining part.
 Additionally, for the media connection, clients and SFT servers should be able to reach each other
 via UDP (see :ref:`Firewall rules <install-sft-firewall-rules>`).
-If that is no possible, then at least SFT servers and Restund servers should be able to reach each
+If that is not possible, then at least SFT servers and Restund servers should be able to reach each
 other via UDP - and clients may connect via UDP and/or TCP to Restund servers
 (see :ref:`Protocols and open ports <understand-restund-protocal-and-ports>`), which in
 turn will connect to SFT server.
 In the unlikely scenario where no UDP is allowed whatsoever or SFT servers may not be able to reach
 the Restund servers that clients are using to make themselves reachable, an SFT server itself can
-also choose to proxy itself by a Restund server, which cloud be different from the Restund servers
+also choose to proxy itself by a Restund server, which could be different from the Restund servers
 used by clients (see *TURN discovery* flag).
 
 The SFT may need to receive and send traffic over UDP and TCP on a wide range of ports.

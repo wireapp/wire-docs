@@ -40,7 +40,19 @@ Wire-server needs a range of databases. Their names are: cassandra, elasticsearc
 
 All the server components on one physical machine can connect to all the databases (also those on a different physical machine). The databases each connect to each-other, e.g. cassandra on machine 1 will connect to the cassandra VMs on machines 2 and 3.
 
+Backend components startup
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The Wire server backend is designed to run on a kubernetes cluster. From a high level perspective the startup sequence from machine power-on to the Wire server being ready to receive requests is as follow:
+
+1. *Kubernetes node power on*. Systemd starts the kubelet service which makes the worker node available to kubernetes. For more details about kubernetes startup refer to `the official kubernetes documentation <https://kubernetes.io/docs/reference/setup-tools/kubeadm/implementation-details/>`__. For details about the installation and configuration of kubernetes and worker nodes for Wire server see `Installing kubernetes and databases on VMs with ansible <../how-to/install/ansible-VMs.html>`__  
+2. *Kubernetes workload startup*. Kubernetes will ensure that Wire server workloads installed via helm are scheduled on available worker nodes. For more details about workload scheduling refer to `the official kubernetes documentation <https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/>`__. For details about how to install Wire server with helm refer to `Installing wire-server (production) components using Helm <../how-to/install/helm-prod.html>`__.
+3. *Stateful workload startup*. Systemd starts the stateful services. See for instance `ansible-cassandra role <https://github.com/wireapp/ansible-cassandra/blob/master/tasks/systemd.yml#L10>`__ and other database installation instructions in `Installing kubernetes and databases on VMs with ansible <../how-to/install/ansible-VMs.html>`__  
+
+.. note::
+   For more information about Virual Machine startup or operating system level service startup, please consult your virtualisation and operating system documentation.
 
 .. |arch-simplified| image:: img/architecture-server-simplified.png
 .. |arch-proto| image:: ./img/architecture-tls-on-prem-2020-09.png
 .. |arch-ha| image:: ../how-to/install/img/architecture-server-ha.png
+

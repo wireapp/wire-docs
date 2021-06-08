@@ -7,7 +7,7 @@ connections between their respective users.
 Goals
 -----
 
-If two Wire backends A and B are _federated_, the goal is for users of backend A
+If two Wire backends A and B are *federated*, the goal is for users of backend A
 to be able to communicate with users of backend B and vice-versa in the same way
 as if they were both part of the same backend.
 
@@ -17,9 +17,9 @@ network.
 
 To enable federation, administrators of a Wire backend can decide to either
 specifically list the backends that they want to federate with, or those that
-they do _not_ want to federate with.
+they do *not* want to federate with.
 
-Federation is facilitated by a backend component called the _federator_, which
+Federation is facilitated by a backend component called the *federator*, which
 acts as the ingress and egress point for federated communication.
 
 Non-Goals

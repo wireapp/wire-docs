@@ -16,8 +16,7 @@ one-another using the domain names under which they are reachable via the
 network.
 
 To enable federation, administrators of a Wire backend can decide to either
-specifically list the backends that they want to federate with, or those that
-they do *not* want to federate with.
+specifically list the backends that they want to federate with, or to allow federation with all Wire backends reachable from the network.
 
 Federation is facilitated by a backend component called the *federator*, which
 acts as the ingress and egress point for federated communication.

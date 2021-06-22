@@ -20,7 +20,7 @@ specifically list the backends that they want to federate with, or to allow fede
 
 Federation is facilitated by two backend components: the *ingress*, which, as
 the name suggests, acts as ingress point for federated traffic and the
-*federator*, which acts as egress point.
+*federator*, which acts as egress point and processes all ingress requests from the *ingress* after the authentication step.
 
 Non-Goals
 ---------

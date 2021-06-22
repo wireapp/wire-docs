@@ -80,7 +80,7 @@ while the domain that the backend is hosted at is called `infrastructure domain`
 
 To make discovery possible, any party hosting a Wire backend has to announce the
 the infra domain via a DNS `SRV` record as defined in `RFC 2782
-<https://tools.ietf.org/html/rfc2782>`_ with `service = wire-server-ingress, proto =
+<https://tools.ietf.org/html/rfc2782>`_ with `service = wire-server-federator, proto =
 tcp` and with `name` pointing to the backend's domain and `target` to the
 backend's infra domain.
 
@@ -89,10 +89,10 @@ domain `wire.company-a.com` could publish
 
 .. code-block:: bash
 
-   _wire-server-ingress._tcp.company-a.com. 600  IN  SRV 10 5 443 federator.wire.company-a.com.
+   _wire-server-federator._tcp.company-a.com. 600  IN  SRV 10 5 443 federator.wire.company-a.com.
 
 A backend can then be discovered, given its domain, by issueing a DNS query for
-the SRV record specifying the `wire-server-ingress` service.
+the SRV record specifying the `wire-server-federator` service.
 
 .. _authentication:
 

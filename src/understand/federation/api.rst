@@ -23,7 +23,7 @@ In particular, we use the following identifiers throughout the API:
 
 * :ref:`Qualified User ID <qualified-user-id>` (QUID): `user_uuid@backend-domain.com`
 * :ref:`Qualified User Name <qualified-user-name>` (QUN): `user_name@backend-domain.com`
-* :ref:`Qualified Device ID <qualified-device-id>` (QDID) attached to a QUID: `device_uuid.user_uuid@backend-domain.com`
+* :ref:`Qualified Client ID <qualified-client-id>` (QDID) attached to a QUID: `client_uuid.user_uuid@backend-domain.com`
 * :ref:`Qualified Conversation <qualified-conversation-id>`/:ref:`Group ID <qualified-group-id>` (QCID/QGID): `backend-domain.com/groups/group_uuid`
 * :ref:`Qualified Team ID <qualified-team-id>` (QTID): `backend-domain.com/teams/team_uuid`
 
@@ -47,6 +47,10 @@ for serialization over gRPC. The latest protobuf schema can be downloaded from
 :download:`the wire-server repository
 <https://raw.githubusercontent.com/wireapp/wire-server/master/libs/wire-api-federation/proto/router.proto>`.
 
+All gRPC calls are made via a :ref:`mutually authenticated TLS connection
+<authentication>` and subject to a :ref:`general <authorization>`, as well as a
+:ref:`per-request authorization <per-request-authorization>` step.
+
 The ``Inward`` service defined in the schema is used between federators. It
 supports one rpc called ``call`` which requires a ``Request`` and returns an
 ``InwardResponse``. These objects looks like this:
@@ -56,27 +60,9 @@ supports one rpc called ``call`` which requires a ``Request`` and returns an
 
     message Request {
       Component component = 1;
-      Method method = 2;
-      bytes path = 3;
-      repeated QueryParam query = 4;
-      bytes body = 5;
-    }
-
-    message QueryParam {
-      bytes key = 1;
-      bytes value = 2;
-    }
-
-    enum Method {
-      GET = 0;
-      POST = 1;
-      HEAD = 2;
-      PUT = 3;
-      DELETE = 4;
-      TRACE = 5;
-      CONNECT = 6;
-      OPTIONS = 7;
-      PATCH = 8;
+      bytes path = 2;
+      bytes body = 3;
+      string originDomain = 4
     }
 
     message HTTPResponse {
@@ -106,41 +92,48 @@ API From Components to Federator
 Between two federated backends, the components talk to each other via their
 respective federators. When making the call to the federator, the components use
 protobuf over gRPC. They call the ``Outward`` service, which also supports one
-rpc called ``call``. This rpc requires the same ``Request`` object defined above
-and returns an ``OutwardResponse``. The ``OutwardResponse`` can either contain
-an ``HTTPResponse`` or an ``OutwardError``, these objects look like this:
+rpc called ``call``. This rpc requires a ``FederatedRequest`` object, which
+contains a ``Request`` object as defined above, as well as the domain of the
+destination federator. The rpc returns an ``OutwardResponse``, which can either
+contain an ``HTTPResponse`` or an ``OutwardError``, these objects look like
+this:
 
 .. code-block:: protobuf
 
-   message OutwardResponse {
-     oneof response {
-       HTTPResponse httpResponse = 1;
-       OutwardError err = 2;
-     }
-   }
+    message FederatedRequest {
+      string domain = 1;
+      Request request = 2;
+    }
 
-   message OutwardError {
-     enum ErrorType {
-       RemoteNotFound = 0;
-       DiscoveryFailed = 1;
-       ConnectionRefused = 2;
-       TLSFailure = 3;
-       InvalidCertificate = 4;
-       VersionMismatch = 5;
-       FederationDeniedByRemote = 6;
-       FederationDeniedLocally = 7;
-       RemoteFederatorError = 8;
-       InvalidRequest = 9;
-     }
+    message OutwardResponse {
+      oneof response {
+        HTTPResponse httpResponse = 1;
+        OutwardError err = 2;
+      }
+    }
 
-     ErrorType type = 1;
-     ErrorPayload payload = 2;
-   }
+    message OutwardError {
+      enum ErrorType {
+        RemoteNotFound = 0;
+        DiscoveryFailed = 1;
+        ConnectionRefused = 2;
+        TLSFailure = 3;
+        InvalidCertificate = 4;
+        VersionMismatch = 5;
+        FederationDeniedByRemote = 6;
+        FederationDeniedLocally = 7;
+        RemoteFederatorError = 8;
+        InvalidRequest = 9;
+      }
 
-   message HTTPResponse {
-       uint32 responseStatus = 1;
-       bytes responseBody = 2;
-   }
+      ErrorType type = 1;
+      ErrorPayload payload = 2;
+    }
+
+    message HTTPResponse {
+        uint32 responseStatus = 1;
+        bytes responseBody = 2;
+    }
 
 
 API From Federator to Components
@@ -166,95 +159,70 @@ The federator connects to brig and makes an HTTP request which looks like this:
 
    GET /federation/users/by-handle?handle=janedoe
 
+The ``/federation`` prefix to the path allows the component to distinguish
+federated requests from requests by clients or other local components.
+
 If this request succeeds with any status, the body and response are encoded as
 the ``HTTPResponse`` object and returned as a response to the ``Inward.call``
 gRPC call.
 
-List of Federation APIs exposed by Components
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Note, that before the ``path`` field of the ``Request`` is concatenated with
+``/federation`` and used as a component of the HTTP request, its segments are
+normalized as described in Section 6.2.2.3 of :download:`RFC 3986
+<https://datatracker.ietf.org/doc/html/rfc3986/#section-6.2.2.3>` to prevent
+path-traversal attacks such as ``/federation/../users/by-handle``.
 
-.. note:: This reflects status of API endpoints as of 2021-03-24. For latest
-          APIs please refer to the :download:`wire-api-federation
-          package<https://github.com/wireapp/wire-server/blob/develop/libs/wire-api-federation/src/Wire/API/Federation/API/Brig.hs>`
+.. _api-endpoints:
+
+List of Federation APIs exposed by Components
+---------------------------------------------
+
+Each component of the backend provides an API towards the federator for access
+by other backends.
 
 .. comment: The endpoints and objects are written manually. FUTUREWORK: Automate
    this.
 
 Brig
-~~~~
+^^^^
 
-Endpoints
-++++++++++
+See :download:`the source
+code<https://github.com/wireapp/wire-server/blob/master/libs/wire-api-federation/src/Wire/API/Federation/API/Brig.hs>`
+for a list of federated endpoints of the `Brig`, as well as their precise inputs
+and outputs.
 
-+------------------+---------+------------------+--------------+--------------+---------------+
-| Name             | Method  | Path             | Query Params | Request Body | Response Body |
-+==================+=========+==================+==============+==============+===============+
-| Get user profile |         |                  |              |              |               |
-| by handle        | GET     | /users/by-handle | handle       |              |  UserProfile  |
-+------------------+---------+------------------+--------------+--------------+---------------+
+* ``get-user-by-handle``: Given a handle, return the user profile
+  corresponding to that handle.
+* ``get-users-by-ids``: Given a list of user ids, return the list of
+  corresponding user profiles.
+* ``claim-prekey``: Given a user id and a client id, return a Proteus pre-key
+  belonging to that user.
+* ``claim-prekey-bundle``: Given a user id, return a prekey for each of the
+  user's clients.
+* ``claim-multi-prekey-bundle``: TODO: Not sure what this does.
+* ``search-users``: Given a term, search the user database for matches w.r.t.
+  that term.
+* ``get-user-clients``: Given a list of user ids, return the lists of clients of
+  each of the users.
 
-
-Objects
-+++++++
-
-UserProfile
-  +---------------+-------------+----------+-----------------------+
-  | Field         | Type        | Required | Remarks               |
-  +===============+=============+==========+=======================+
-  | qualified_id  | QualifiedId | True     |                       |
-  +---------------+-------------+----------+-----------------------+
-  | name          | String      | True     |                       |
-  +---------------+-------------+----------+-----------------------+
-  | picture       | [JSON Value]| False    | Deprecated            |
-  +---------------+-------------+----------+-----------------------+
-  | assets        | [Asset]     | True     | Could be empty        |
-  +---------------+-------------+----------+-----------------------+
-  | accent_id     | Integer     | True     |                       |
-  +---------------+-------------+----------+-----------------------+
-  | deleted       | Boolean     | False    |                       |
-  +---------------+-------------+----------+-----------------------+
-  | service       |             | False    | Only present for bots |
-  +---------------+-------------+----------+-----------------------+
-  | handle        | String      | False    |                       |
-  +---------------+-------------+----------+-----------------------+
-  | locale        | String      | False    |                       |
-  +---------------+-------------+----------+-----------------------+
-  | expires_at    | UTCTime     | False    | encoded as            |
-  |               |             |          | 2016-07-22T00:00:00Z  |
-  +---------------+-------------+----------+-----------------------+
-  | team          | UUID        | False    |                       |
-  +---------------+-------------+----------+-----------------------+
-  | email         | String      | False    |                       |
-  +---------------+-------------+----------+-----------------------+
-  | id            | UUID        | False    | deprecated,           |
-  |               |             |          | use qualified_id      |
-  +---------------+-------------+----------+-----------------------+
-
-QualifiedId
-  +---------------+-------------+----------+-----------------------+
-  | Field         | Type        | Required | Remarks               |
-  +===============+=============+==========+=======================+
-  | id            | UUID        | True     |                       |
-  +---------------+-------------+----------+-----------------------+
-  | domain        | String      | True     |                       |
-  +---------------+-------------+----------+-----------------------+
-
-Asset:
-  +---------------+-------------+----------+-----------------------+
-  | Field         | Type        | Required | Remarks               |
-  +===============+=============+==========+=======================+
-  | key           | String      | True     |                       |
-  +---------------+-------------+----------+-----------------------+
-  | size          | "complete"  | True     |                       |
-  |               | or "preview"|          |                       |
-  +---------------+-------------+----------+-----------------------+
-  | type          | "image"     | True     |                       |
-  +---------------+-------------+----------+-----------------------+
 
 Galley
-~~~~~~
+^^^^^^
 
-None yet.
+See :download:`the source
+code<https://github.com/wireapp/wire-server/blob/master/libs/wire-api-federation/src/Wire/API/Federation/API/Brig.hs>`
+for a list of federated endpoints of the `Brig`, as well as their precise inputs
+and outputs.
+
+* ``register-conversation``: Given a name and a list of conversation members,
+  create a conversation locally.
+* ``get-conversations``: Given a qualified user id and a list of conversation
+  ids, return the details of the conversations. TODO: Is this correct?
+* ``update-conversation-memberships``: Given a qualified user id and a qualified
+  conversation id, update the conversation details locally with the other data
+  provided.
+
+
 
 Cargohold
 ~~~~~~~~~

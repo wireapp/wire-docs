@@ -65,14 +65,14 @@ supports one rpc called ``call`` which requires a ``Request`` and returns an
       string originDomain = 4
     }
 
-    message HTTPResponse {
-        uint32 responseStatus = 1;
-        bytes responseBody = 2;
+    enum Component {
+      Brig = 0;
+      Galley = 1;
     }
 
     message InwardResponse {
       oneof response {
-        HTTPResponse httpResponse = 1;
+        bytes body = 1;
         string err = 2;
       }
     }
@@ -81,10 +81,6 @@ The ``component`` field in ``Request`` tells the federator which components this
 request is meant for and the rest of the arguments are details of the HTTP
 request which must be made against the component. It intentionally supports a
 restricted set of parameters to ensure that the API is simple.
-
-The ``HTTPResponse`` object also intentionally restricts the response to status
-and body to ensure the API is simple and we do not leak headers across backends.
-The body must always be considered as json encoded without any compression.
 
 API From Components to Federator
 --------------------------------
@@ -95,8 +91,8 @@ protobuf over gRPC. They call the ``Outward`` service, which also supports one
 rpc called ``call``. This rpc requires a ``FederatedRequest`` object, which
 contains a ``Request`` object as defined above, as well as the domain of the
 destination federator. The rpc returns an ``OutwardResponse``, which can either
-contain an ``HTTPResponse`` or an ``OutwardError``, these objects look like
-this:
+contains a body with the returned information or an ``OutwardError``, these
+objects look like this:
 
 .. code-block:: protobuf
 
@@ -107,8 +103,8 @@ this:
 
     message OutwardResponse {
       oneof response {
-        HTTPResponse httpResponse = 1;
-        OutwardError err = 2;
+        OutwardError err = 1;
+        bytes body = 2;
       }
     }
 
@@ -130,9 +126,9 @@ this:
       ErrorPayload payload = 2;
     }
 
-    message HTTPResponse {
-        uint32 responseStatus = 1;
-        bytes responseBody = 2;
+    message ErrorPayload {
+      string label = 1;
+      string msg = 2;
     }
 
 
@@ -178,7 +174,12 @@ List of Federation APIs exposed by Components
 ---------------------------------------------
 
 Each component of the backend provides an API towards the federator for access
-by other backends.
+by other backends. For example on how these APIs are used, see the section on
+:ref:`end-to-end flows<end-to-end-flows>`.
+
+.. note:: This reflects status of API endpoints as of 2021-06-25. For latest
+          APIs please refer to the corresponding source code linked in the
+          individual section.
 
 .. comment: The endpoints and objects are written manually. FUTUREWORK: Automate
    this.
@@ -189,7 +190,9 @@ Brig
 See :download:`the source
 code<https://github.com/wireapp/wire-server/blob/master/libs/wire-api-federation/src/Wire/API/Federation/API/Brig.hs>`
 for a list of federated endpoints of the `Brig`, as well as their precise inputs
-and outputs.
+and outputs. In its current state, the primary purpose of the Brig API is to
+allow users of remote backends to create conversations with the local users of
+the backend.
 
 * ``get-user-by-handle``: Given a handle, return the user profile
   corresponding to that handle.
@@ -199,7 +202,8 @@ and outputs.
   belonging to that user.
 * ``claim-prekey-bundle``: Given a user id, return a prekey for each of the
   user's clients.
-* ``claim-multi-prekey-bundle``: TODO: Not sure what this does.
+* ``claim-multi-prekey-bundle``: Given a list of user ids, return the lists of
+  their respective clients.
 * ``search-users``: Given a term, search the user database for matches w.r.t.
   that term.
 * ``get-user-clients``: Given a list of user ids, return the lists of clients of
@@ -210,21 +214,58 @@ Galley
 ^^^^^^
 
 See :download:`the source
-code<https://github.com/wireapp/wire-server/blob/master/libs/wire-api-federation/src/Wire/API/Federation/API/Brig.hs>`
-for a list of federated endpoints of the `Brig`, as well as their precise inputs
-and outputs.
+code<https://github.com/wireapp/wire-server/blob/master/libs/wire-api-federation/src/Wire/API/Federation/API/Galley.hs>`
+for a list of federated endpoints of the `Galley`, as well as their precise
+inputs and outputs. Each backend keeps a record of the conversations that each
+of its members is a part of. The purpose of the Galley API is to allow backends
+to synchronize the state of the conversations of their members.
 
 * ``register-conversation``: Given a name and a list of conversation members,
-  create a conversation locally.
+  create a conversation locally. This is used to inform another backend of a new
+  conversation that involves their local user.
 * ``get-conversations``: Given a qualified user id and a list of conversation
-  ids, return the details of the conversations. TODO: Is this correct?
+  ids, return the details of the conversations. This allows a remote backend to
+  query conversation metadata of their local user from this backend. To avoid
+  metadata leaks, the backend will check that the domain of the given user
+  corresponds to the domain of the backend sending the request.
 * ``update-conversation-memberships``: Given a qualified user id and a qualified
   conversation id, update the conversation details locally with the other data
-  provided.
+  provided. This is used to alert remote backend of updates in the conversation
+  metadata of conversations that one of their local users is involved in.
 
 
 
-Cargohold
-~~~~~~~~~
+.. _end-to-end-flows:
 
-None yet.
+End-to-End Flows
+----------------
+
+User Discovery
+^^^^^^^^^^^^^^
+
+1. User `A@backend-a.com` enters the qualified user name of the target user
+   `B@backend-b.com` into the search field of their Wire client.
+2. The client issues a query to `/search/contacts` searching for `B` at
+   `backend-b.com`.
+3. `A`'s backend queries the `search-users` endpoint of B's backend for `B`.
+4. `B`'s backend replies with with `B`'s user name and qualified handle.
+5. `A`'s backend forwards that information to `A`'s client.
+
+Conversation Establishment
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+1. From the search results of a :ref:`user discovery<user-discovery>` process,
+   `A` chooses to create a conversation with `B`.
+2. `A`'s client issues a `/users/backend-b.com/B/prekeys` query to `A`'s
+   backend.
+3. `A`'s backend queries the `claim-prekey-bundle` endpoint of `B`'s backend
+   using `B`'s user id.
+4. `B`'s backend replies with a prekey bundle for each of `B`'s clients.
+5. `A`'s backend forwards that information to `A`'s client.
+6. `A`'s client queries the `/conversations/one2one` endpoint of its backend
+   using `B`'s user id.
+7. `A`'s backend creates the conversation locally and queries the
+   `register-conversation` endpoint of `B`'s backend to inform it about the new
+   conversation, including the conversation metadata in the request.
+8. `B`'s backend registers the conversation locally and confirms the query.
+9. `B`'s backend notifies `B`'s client of the creation of the conversation.

@@ -43,9 +43,9 @@ API between Federators
 
 The layer between federators acts as an envelope for communication between other
 components of wire server. It uses Protocol Buffers (protobuf from here onwards)
-for serialization over gRPC. The latest protobuf schema can be downloaded from
-:download:`the wire-server repository
-<https://raw.githubusercontent.com/wireapp/wire-server/master/libs/wire-api-federation/proto/router.proto>`.
+for serialization over gRPC. The latest protobuf schema can be inspected at
+`the wire-server repository
+<https://github.com/wireapp/wire-server/blob/master/libs/wire-api-federation/proto/router.proto>`_.
 
 All gRPC calls are made via a :ref:`mutually authenticated TLS connection
 <authentication>` and subject to a :ref:`general <authorization>`, as well as a
@@ -164,8 +164,8 @@ gRPC call.
 
 Note, that before the ``path`` field of the ``Request`` is concatenated with
 ``/federation`` and used as a component of the HTTP request, its segments are
-normalized as described in Section 6.2.2.3 of :download:`RFC 3986
-<https://datatracker.ietf.org/doc/html/rfc3986/#section-6.2.2.3>` to prevent
+normalized as described in Section 6.2.2.3 of `RFC 3986
+<https://datatracker.ietf.org/doc/html/rfc3986/#section-6.2.2.3>`_ to prevent
 path-traversal attacks such as ``/federation/../users/by-handle``.
 
 .. _api-endpoints:
@@ -187,8 +187,8 @@ by other backends. For example on how these APIs are used, see the section on
 Brig
 ^^^^
 
-See :download:`the source
-code<https://github.com/wireapp/wire-server/blob/master/libs/wire-api-federation/src/Wire/API/Federation/API/Brig.hs>`
+See `the brig source code
+<https://github.com/wireapp/wire-server/blob/master/libs/wire-api-federation/src/Wire/API/Federation/API/Brig.hs>`_
 for a list of federated endpoints of the `Brig`, as well as their precise inputs
 and outputs. In its current state, the primary purpose of the Brig API is to
 allow users of remote backends to create conversations with the local users of
@@ -213,8 +213,8 @@ the backend.
 Galley
 ^^^^^^
 
-See :download:`the source
-code<https://github.com/wireapp/wire-server/blob/master/libs/wire-api-federation/src/Wire/API/Federation/API/Galley.hs>`
+See `the galley source code
+<https://github.com/wireapp/wire-server/blob/master/libs/wire-api-federation/src/Wire/API/Federation/API/Galley.hs>`_
 for a list of federated endpoints of the `Galley`, as well as their precise
 inputs and outputs. Each backend keeps a record of the conversations that each
 of its members is a part of. The purpose of the Galley API is to allow backends
@@ -240,14 +240,16 @@ to synchronize the state of the conversations of their members.
 End-to-End Flows
 ----------------
 
+.. _user-discovery:
+
 User Discovery
 ^^^^^^^^^^^^^^
 
 1. User `A@backend-a.com` enters the qualified user name of the target user
    `B@backend-b.com` into the search field of their Wire client.
-2. The client issues a query to `/search/contacts` searching for `B` at
+2. The client issues a query to ``/search/contacts`` searching for `B` at
    `backend-b.com`.
-3. `A`'s backend queries the `search-users` endpoint of B's backend for `B`.
+3. `A`'s backend queries the ``search-users`` endpoint of B's backend for `B`.
 4. `B`'s backend replies with with `B`'s user name and qualified handle.
 5. `A`'s backend forwards that information to `A`'s client.
 
@@ -256,16 +258,16 @@ Conversation Establishment
 
 1. From the search results of a :ref:`user discovery<user-discovery>` process,
    `A` chooses to create a conversation with `B`.
-2. `A`'s client issues a `/users/backend-b.com/B/prekeys` query to `A`'s
+2. `A`'s client issues a ``/users/backend-b.com/B/prekeys`` query to `A`'s
    backend.
-3. `A`'s backend queries the `claim-prekey-bundle` endpoint of `B`'s backend
+3. `A`'s backend queries the ``claim-prekey-bundle`` endpoint of `B`'s backend
    using `B`'s user id.
 4. `B`'s backend replies with a prekey bundle for each of `B`'s clients.
 5. `A`'s backend forwards that information to `A`'s client.
-6. `A`'s client queries the `/conversations/one2one` endpoint of its backend
+6. `A`'s client queries the ``/conversations/one2one`` endpoint of its backend
    using `B`'s user id.
 7. `A`'s backend creates the conversation locally and queries the
-   `register-conversation` endpoint of `B`'s backend to inform it about the new
+   ``register-conversation`` endpoint of `B`'s backend to inform it about the new
    conversation, including the conversation metadata in the request.
 8. `B`'s backend registers the conversation locally and confirms the query.
 9. `B`'s backend notifies `B`'s client of the creation of the conversation.

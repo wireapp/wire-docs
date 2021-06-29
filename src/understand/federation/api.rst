@@ -143,17 +143,20 @@ this (shown as JSON for convenience):
 
    {
      "component": "Brig",
-     "method": "GET",
-     "path": "/users/by-handle",
-     "query": [ { "key": "handle", "value": "janedoe" } ],
-     "body": null
+     "path": "federation/get-user-by-handle",
+     "body": "\"janedoe\""
+     "originDomain": "somedomain.example.com"
    }
 
-The federator connects to brig and makes an HTTP request which looks like this:
+The federator connects to Brig and makes an HTTP request which looks like this:
 
 .. code-block::
 
-   GET /federation/users/by-handle?handle=janedoe
+   > POST /federation/get-user-by-handle
+   > Wire-Origin-Domain: somedomain.example.com
+   > Content-Type: application/json
+   >
+   > "janedoe"
 
 The ``/federation`` prefix to the path allows the component to distinguish
 federated requests from requests by clients or other local components.

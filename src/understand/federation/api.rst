@@ -144,7 +144,7 @@ this (shown as JSON for convenience):
    {
      "component": "Brig",
      "path": "federation/get-user-by-handle",
-     "body": "\"janedoe\""
+     "body": "\"janedoe\"",
      "originDomain": "somedomain.example.com"
    }
 

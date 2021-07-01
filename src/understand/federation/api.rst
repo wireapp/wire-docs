@@ -267,7 +267,7 @@ Conversation Establishment
    using `B`'s user id.
 4. `B`'s backend replies with a prekey bundle for each of `B`'s clients.
 5. `A`'s backend forwards that information to `A`'s client.
-6. `A`'s client queries the ``/conversations/one2one`` endpoint of its backend
+6. `A`'s client queries the ``/conversations`` endpoint of its backend
    using `B`'s user id.
 7. `A`'s backend creates the conversation locally and queries the
    ``register-conversation`` endpoint of `B`'s backend to inform it about the new

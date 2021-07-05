@@ -11,7 +11,7 @@ from other backends are then forwarded to the `federator`, which further
 processes the requests. In addition, the `federator` also acts as *egress* point
 for requests from internal backend components to other, remote backends.
 
-.. image:: img/federated-backend-architcture.png
+.. image:: img/federated-backend-architecture.png
    :width: 100%
 
 

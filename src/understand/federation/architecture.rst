@@ -14,8 +14,6 @@ for requests from internal backend components to other, remote backends.
 .. image:: img/federated-backend-architcture.png
    :width: 100%
 
-Architecture diagram showing ingress, federator, brig TODO
-
 
 Flow of information between server components
 ------------------------------------------------

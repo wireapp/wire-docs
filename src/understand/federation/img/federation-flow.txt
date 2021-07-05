@@ -1,0 +1,47 @@
+title: Federator to Ingress/Federator Flow
+
+
+Federator @infra.a.com -> Ingress @infra.b.com: mTLS session establishment
+
+note:
+Provides the Federator's client certificate.
+
+Ingress @infra.b.com -> Federator @infra.a.com: mTLS session establishment response
+
+note: After authenticating the given client certificate using the root of trust as per RFC 8446.
+
+group: Mutually authenticated channel between infra.a.com and infra.b.com
+
+Federator @infra.a.com -> Ingress @infra.b.com: (domain: "a.com", {some_request})
+
+end
+
+//group: TLS-secured backend-internal channel
+
+Ingress @infra.b.com -> Federator @infra.b.com: (domain: "a.com", infra-domain: "infra.a.com", {some_request})
+
+//end
+
+Federator @infra.b.com -> DNS Resolver: DNS query: (service: "wire-server-federator", proto: "tcp", name: "a.com")
+
+DNS Resolver -> Federator @infra.b.com: DNS response: (target: "infra.a.com")
+
+//group: TLS-secured backend-internal channel
+
+Federator @infra.b.com -> Internal component: (domain: "a.com", {some_request})
+
+note: After checking that the content of the _target_ field in the DNS response is equivalent to that of the _infra-domain_ field in the request and that the content of the _domain_ field is on the allow list.
+
+Internal component -> Federator @infra.b.com: ({response})
+
+note: After authorizing the given request specifically relative to the local state.
+
+Federator @infra.b.com -> Ingress @infra.b.com: ({response})
+
+//end
+
+group: Mutually authenticated channel between infra.a.com and infra.b.com
+
+Ingress @infra.b.com -> Federator @infra.a.com: ({response})
+
+end

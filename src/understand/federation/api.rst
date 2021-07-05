@@ -8,6 +8,8 @@ The Federation API consists of two *layers*:
   2. Between other components
 
 
+.. _qualified-identifiers-and-names:
+
 Qualified Identifiers and Names
 -------------------------------
 

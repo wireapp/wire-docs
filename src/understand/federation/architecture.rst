@@ -4,10 +4,15 @@ Architecture and Network
 Architecture
 -------------
 
-Overview
-^^^^^^^^
+To facilitate connections between federated backends, two new components are
+added to each backend: :ref:`ingress` and :ref:`federator`. The `ingress` is, as
+the name suggests the ingress point for incoming connections, where requests
+from other backends are then forwarded to the `federator`, which further
+processes the requests. In addition, the `federator` also acts as *egress* point
+for requests from internal backend components to other, remote backends.
 
-Architecture diagram showing ingress, federator, brig TODO
+.. image:: img/federated-backend-architecture.png
+   :width: 100%
 
 
 Backend domains

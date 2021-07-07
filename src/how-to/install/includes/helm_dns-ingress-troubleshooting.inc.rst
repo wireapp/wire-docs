@@ -34,10 +34,10 @@ You may be happy with skipping the DNS setup and just make sure that the ``/etc/
 DNS setup for federation
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-To enable federation, an SRV record needs to be set up to enable discovery by
-other Wire backends. See the documentation on :ref:`discovery in
-federation<discovery>` for more information on the role of discovery in
-federation.
+To enable federation, an SRV record needs to be set up to allow the wire-server
+to be discovered by other Wire backends. See the documentation on
+:ref:`discovery in federation<discovery>` for more information on the role of
+discovery in federation.
 
 The fields of the SRV record need to be populated as follows
 * `service`:  `wire-server-federator`

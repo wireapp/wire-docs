@@ -106,3 +106,15 @@ I deployed the ``demo-smtp`` but I'm not receiving any verification emails
         smtpPassword: dummyPassword
 
 (Don't forget to apply the changes with ``helm upgrade wire-server wire/wire-server -f values.yaml -f secrets.yaml``)
+
+I am using SSL/TLS spoofing software and need to know how to configure it
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The wire client implements certificate pinning.
+
+You need to configure your software not to intercept traffic to the wire server endpoints, identified by the following regular expressions:
+
+- app.wire.com
+- (www.)?wire.com
+- prod-(assets|nginz-https|nginz-ssl).wire.com
+- [a-z0-9]{14,63}.cloudfront.net

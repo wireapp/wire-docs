@@ -133,6 +133,7 @@ objects look like this:
       string msg = 2;
     }
 
+.. _federator-component-api:
 
 API From Federator to Components
 --------------------------------

@@ -37,6 +37,10 @@ components are added to enable federation with other backends: The `Ingress` and
 the `Federator`. Other Wire components use these two components to contact other
 backends and respond to queries originating from remote backends.
 
+The following subsections briefly introduce the individual components, their
+state and their functionality. The semantics of backend-to-backend communication
+will be explained in more detail in Section 2.2.
+
 .. _ingress:
 
 Ingress
@@ -64,13 +68,19 @@ Its functions are:
 Federator
 ~~~~~~~~~
 
-The federator acts as egress point for other backend components. When receiving
-a request from an internal component, it will:
+The federator acts as egress point for other backend components. It can be
+configured to use an :ref:`allow list <allow-list>` to authorize incoming and
+outgoing connections, and it keeps an X.509 client certificate for the backend's
+infra domain to authenticate itself towards other backends. Additionally, it
+requires a connection to a DNS resolver to :ref:`discover<discovery>` other
+backends.
+
+When receiving a request from an internal component, the federator will:
 
 #. If enabled, ensure the target domain is in the :ref:`allow list <allow-list>`
-#. :ref:`discover <discovery>` the other backend
+#. :ref:`discover <discovery>` the other backend,
 #. establish a :ref:`mutually authenticated channel <authentication>` to the
-   other backend
+   other backend using its client certificate,
 #. send the request to the other backend and
 #. forward the response back to the originating component (and eventually to the
    originating Wire client).
@@ -82,7 +92,9 @@ local :ref:`ingress`):
 
 #. Discover the backend domain claimed by the other backend,
 #. if enabled, ensure that the backend domain of the other backend is in the
-   :ref:`allow list <allow-list>` and
+   :ref:`allow list <allow-list>`,
+#. normalize and sanitize the :ref:`path component <federator-component-api>` of
+   the incoming request to ensure it's recognizable as a federated request and
 #. forward requests to other wire-server components.
 
 .. _other-wire-server:

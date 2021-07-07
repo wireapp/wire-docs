@@ -162,11 +162,6 @@ This step is necessary in two scenarios:
   like to ensure the backend domain owner authorized the owner of the infra
   domain to run their Wire backend.
 
-The domain that a Wire backend represents, i.e. the domain that is present in
-the qualified UIDs of its users is simply referred to as the backend's 'domain',
-while the domain that the backend is hosted at is called `infrastructure domain`
-(or 'infra domain' for short).
-
 To make discovery possible, any party hosting a Wire backend has to announce the
 the infra domain via a DNS `SRV` record as defined in `RFC 2782
 <https://tools.ietf.org/html/rfc2782>`_ with `service = wire-server-federator, proto =

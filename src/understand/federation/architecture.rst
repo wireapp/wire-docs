@@ -18,7 +18,7 @@ for requests from internal backend components to other, remote backends.
 Backend domains
 ^^^^^^^^^^^^^^^
 
-A backend is identified by its `infrastructure domain` (of `infra domain` for
+A backend is identified by its `infrastructure domain` (or `infra domain` for
 short). This is the domain that the backend uses to authenticate towards other
 backends.
 

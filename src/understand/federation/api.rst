@@ -296,8 +296,10 @@ Conversation Establishment
 Message Sending (A)
 ^^^^^^^^^^^^^^^^^^^
 
-1. In a conversation on `A`'s backend, `A` sends a message by using the
-   ``/conversations/backend-a.com/<conversation-id>/proteus/messages`` endpoint on `A`'s backend.
+1. In a conversation `conv-1@backend-a.com` on `A`'s backend with users
+   `A@backend-a.com` and `B@backend-b.com`, `A` sends a message by using the
+   ``/conversations/backend-a.com/conv-1/proteus/messages`` endpoint
+   on `A`'s backend.
 2. `A`'s backend will check if `A` included all necessary user devices in their
    request. For that it will make a ``get-user-clients`` request to `B`'s
    backend. The returned list of clients will be checked to match against the
@@ -310,8 +312,10 @@ Message Sending (A)
 Message Sending (B)
 ^^^^^^^^^^^^^^^^^^^
 
-1. In a conversation on `A`'s backend, `B` sends a message by using the
-   ``/conversations/backend-a.com/<conversation-id>/proteus/messages`` endpoint on `B`'s backend.
+1. In a conversation `conv-1@backend-a.com` on `A`'s backend with users
+   `A@backend-a.com` and `B@backend-b.com`, `B` sends a message by using the
+   ``/conversations/backend-a.com/conv-1/proteus/messages`` endpoint
+   on `B`'s backend.
 2. `B`'s backend will query the ``send-message`` endpoint on `A`'s backend.
    *Steps 3-6 below are essentially the same as steps 2-5 in Message Sending (A)*
 3. `A`'s backend will check if `B` included all necessary user devices in their

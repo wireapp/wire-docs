@@ -19,6 +19,7 @@ M1 will have support for:
 * a way for on-premise (self-hosted) installations of wire to try out this implementation of federation by explicitly enabling it via configuration flags.
 * initially, Web and iOS will be supported
 * server2server discovery and authentication
+* a way to specify an allow list of backends to federate with
 
 Caveats:
 
@@ -28,12 +29,13 @@ Caveats:
 * Federation with the production cloud version of wire.com will not yet be supported.
 
 .. note::
-   (Backend) Implementation Status July 2021:
+   A rough (Backend) Implementation Status as of July 2021:
 
    Completed for M1 scope:
      * Federator as Egress, and Ingress support to allow backend-backend communication
      * Long-running test environments
      * Backend Discovery via SRV records
+     * Backend allow list support
      * User search via exact handle
      * Get user profile, user clients, and prekeys for their clients
      * Create conversation with remote users
@@ -43,11 +45,10 @@ Caveats:
      * client-server API changes for federation
 
    Pending:
-     * Other conversation features (removing users, archived/muted, ...)
      * Server2server authentication
+     * Other conversation features (removing users, archived/muted, ...)
      * 1on1 connections and true 1on1 conversations
      * federation API versioning strategy
-
 
 M(N) | N >1
 ------------

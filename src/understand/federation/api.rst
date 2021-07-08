@@ -250,10 +250,8 @@ to synchronize the state of the conversations of their members.
   conversation id, update the conversation details locally with the other data
   provided. This is used to alert remote backend of updates in the conversation
   metadata of conversations that one of their local users is involved in.
-* ``receive-message``: Given a sender and recipient users as well as encrypted
-  message contents, propagate a message to local users sent in a remote
-  conversation these local users are part of. This is used whenever there is a
-  remote user in a conversation.
+* ``receive-message``: Given (sender, recipients, message payloads), propagate a message to local users.
+  This is used whenever there is a remote user in a conversation (see end-to-end flows).
 * ``send-message``: Given a sender and a raw message request, send a message to
   a conversation owned by another backend. This is used when the user sending a
   message is not on the same backend as the conversation the message is sent in.
@@ -299,7 +297,7 @@ Message Sending (A)
 ^^^^^^^^^^^^^^^^^^^
 
 1. In a conversation on `A`'s backend, `A` sends a message by using the
-   `/conversations/{domain}/{cnv}/proteus/messages` endpoint on `A`'s backend.
+   ``/conversations/backend-a.com/<conversation-id>/proteus/messages`` endpoint on `A`'s backend.
 2. `A`'s backend will check if `A` included all necessary user devices in their
    request. For that it will make a ``get-user-clients`` request to `B`'s
    backend. The returned list of clients will be checked to match against the
@@ -313,8 +311,9 @@ Message Sending (B)
 ^^^^^^^^^^^^^^^^^^^
 
 1. In a conversation on `A`'s backend, `B` sends a message by using the
-   `/conversations/{domain}/{cnv}/proteus/messages` endpoint on `B`'s backend.
+   ``/conversations/backend-a.com/<conversation-id>/proteus/messages`` endpoint on `B`'s backend.
 2. `B`'s backend will query the ``send-message`` endpoint on `A`'s backend.
+   *Steps 3-6 below are essentially the same as steps 2-5 in Message Sending (A)*
 3. `A`'s backend will check if `B` included all necessary user devices in their
    request. For that it will make a ``get-user-clients`` request to `B`'s
    backend. The returned list of clients will be checked to match against the

@@ -68,7 +68,7 @@ Its functions are:
 Federator
 ~~~~~~~~~
 
-.. warning:: As of Juli 2021, authentication is not fully implemented. See the
+.. warning:: As of July 2021, authentication is not fully implemented. See the
              section on :ref:`authentication` for more details.
 
 The federator acts as egress point for other backend components. It can be

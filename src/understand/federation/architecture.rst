@@ -138,7 +138,7 @@ specifically, both backends need to ensure the following:
 Authentication
 ^^^^^^^^^^^^^^
 
-.. warning:: As of Juli 2021, the implementation of mutual backend-to-backend
+.. warning:: As of July 2021, the implementation of mutual backend-to-backend
              authentication is still work in progress. The behaviour described
              in this section should be considered a draft specification only.
 

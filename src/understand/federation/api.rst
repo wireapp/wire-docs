@@ -206,7 +206,10 @@ by other backends. For example on how these APIs are used, see the section on
 Brig
 ^^^^
 
-In its current state, the primary purpose of the Brig API is to
+See `the brig source code
+<https://github.com/wireapp/wire-server/blob/master/libs/wire-api-federation/src/Wire/API/Federation/API/Brig.hs>`_
+for a list of federated endpoints of the `Brig`, as well as their precise inputs
+and outputs. In its current state, the primary purpose of the Brig API is to
 allow users of remote backends to create conversations with the local users of
 the backend.
 
@@ -225,17 +228,16 @@ the backend.
 * ``get-user-clients``: Given a list of user ids, return the lists of clients of
   each of the users.
 
-See `the brig source code
-<https://github.com/wireapp/wire-server/blob/master/libs/wire-api-federation/src/Wire/API/Federation/API/Brig.hs>`_
-for the current list of federated endpoints of the `Brig`, as well as their
-precise inputs and outputs.
 
 Galley
 ^^^^^^
 
-Each backend keeps a record of the conversations that each of its members is a
-part of. The purpose of the Galley API is to allow backends to synchronize the
-state of the conversations of their members.
+See `the galley source code
+<https://github.com/wireapp/wire-server/blob/master/libs/wire-api-federation/src/Wire/API/Federation/API/Galley.hs>`_
+for a list of federated endpoints of the `Galley`, as well as their precise
+inputs and outputs. Each backend keeps a record of the conversations that each
+of its members is a part of. The purpose of the Galley API is to allow backends
+to synchronize the state of the conversations of their members.
 
 * ``register-conversation``: Given a name and a list of conversation members,
   create a conversation locally. This is used to inform another backend of a new
@@ -255,11 +257,6 @@ state of the conversations of their members.
   a conversation owned by another backend. This is used when the user sending a
   message is not on the same backend as the conversation the message is sent in.
 
-See `the galley source code
-<https://github.com/wireapp/wire-server/blob/master/libs/wire-api-federation/src/Wire/API/Federation/API/Galley.hs>`_
-for the current list of federated endpoints of the `Galley`, as well as their
-precise inputs and outputs.
-
 .. _end-to-end-flows:
 
 End-to-End Flows
@@ -269,9 +266,6 @@ End-to-End Flows
 
 User Discovery
 ^^^^^^^^^^^^^^
-
-In this flow, the user `A` at `backend-a.com` tries to search for user `B` at
-`backend-b.com`.
 
 1. User `A@backend-a.com` enters the qualified user name of the target user
    `B@backend-b.com` into the search field of their Wire client.
@@ -283,9 +277,6 @@ In this flow, the user `A` at `backend-a.com` tries to search for user `B` at
 
 Conversation Establishment
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-After having discovered user `B` at `backend-b.com`, user `A` at `backend-a.com`
-wants to establish a conversation with `B`.
 
 1. From the search results of a :ref:`user discovery<user-discovery>` process,
    `A` chooses to create a conversation with `B`.
@@ -306,9 +297,6 @@ wants to establish a conversation with `B`.
 Message Sending (A)
 ^^^^^^^^^^^^^^^^^^^
 
-Having established a conversation with user `B` at `backend-b.com`, user `A` at
-`backend-a.com` wants to send a message to user `B`.
-
 1. In a conversation `conv-1@backend-a.com` on `A`'s backend with users
    `A@backend-a.com` and `B@backend-b.com`, `A` sends a message by using the
    ``/conversations/backend-a.com/conv-1/proteus/messages`` endpoint
@@ -324,9 +312,6 @@ Having established a conversation with user `B` at `backend-b.com`, user `A` at
 
 Message Sending (B)
 ^^^^^^^^^^^^^^^^^^^
-
-Having received a message from user `A` at `backend-a.com`, user `B` at
-`backend-b.com` wants send a reply.
 
 1. In a conversation `conv-1@backend-a.com` on `A`'s backend with users
    `A@backend-a.com` and `B@backend-b.com`, `B` sends a message by using the

@@ -130,7 +130,7 @@ Brig has a server option for this:
 
 If `setRestrictUserCreation` is `true`, creating new personal users or new teams on your instance from outside your backend installation is impossible.  (If you want to be more technical: requests to `/register` that create a new personal account or a new team are answered with `403 forbidden`.)
 
-On instances with restricted user creation, the site operator with access to the internal REST API, you can still circumvent the restriction: just log into a brig service pod via ssh and follow the steps in https://github.com/wireapp/wire-server/blob/b9a84f9b654a69c9a296761b36c042dc993236d3/deploy/services-demo/create_test_team_admins.sh.
+On instances with restricted user creation, the site operator with access to the internal REST API can still circumvent the restriction: just log into a brig service pod via ssh and follow the steps in https://github.com/wireapp/wire-server/blob/b9a84f9b654a69c9a296761b36c042dc993236d3/deploy/services-demo/create_test_team_admins.sh.
 
 
 You may want

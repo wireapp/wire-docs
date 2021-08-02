@@ -119,7 +119,7 @@ After making this change and applying it to gundeck (ensure gundeck pods have re
 Blocking creation of personal users, new teams
 --------------------------------------------------------------------------
 
-There are some unauthenticated end-points that allow arbitrary users on the open internet to do things like create a new team.  This is desired in the cloud, and not an issue on many on-prem solutions (eg. all of those that are not exposed to the global IP address space).  However, if you run an on-prem setup that is open to the world, you may want to block this.
+There are some unauthenticated end-points that allow arbitrary users on the open internet to do things like create a new team.  This is desired in the cloud, but if you run an on-prem setup that is open to the world, you may want to block this.
 
 Brig has a server option for this:
 

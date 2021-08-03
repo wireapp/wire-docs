@@ -218,7 +218,7 @@ the backend.
   belonging to that user.
 * ``claim-prekey-bundle``: Given a user id, return a prekey for each of the
   user's clients.
-* ``claim-multi-prekey-bundle``: Given a list of user ids, return the lists of
+* ``claim-multi-prekey-bundle``: Given a list of user ids, return prekeys of
   their respective clients.
 * ``search-users``: Given a term, search the user database for matches w.r.t.
   that term.

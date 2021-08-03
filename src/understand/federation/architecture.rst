@@ -18,16 +18,26 @@ for requests from internal backend components to other, remote backends.
 Backend domains
 ^^^^^^^^^^^^^^^
 
-A backend is identified by its `infrastructure domain` (or `infra domain` for
-short). This is the domain that the backend uses to authenticate towards other
-backends.
+Each backend has two domains: an `infrastructure domain` and a `backend domain`.
+
+The former is the domain under which the backend is actually reachable via the
+network. It is also the domain as which each backend authenticates itself
+towards other backends.
 
 Similarly, there is the `backend domain`, which is used to qualify the names and
 identifiers of users local to an individual backend in the context of
-federation. See :ref:`Qualified Identifiers and Names
-<qualified-identifiers-and-names>` for more information. The owner of the
-backend domain has to specify an infra domain under which the Wire backend
-representing their domain is reachable.
+federation. For example, a user with (unqualified) user name `jane_doe` at a
+backend with backend domain `company-a.com` has the qualified user name
+`jane_doe@company-a.com`, which is visible to users of other backends in the
+context of federation.
+
+See :ref:`Qualified Identifiers and Names <qualified-identifiers-and-names>` for
+more information on qualified names and identifiers.
+
+The distinction between the two domains allows the owner of a (backend) domain
+(e.g. `company-a.com`) to host their Wire backend under a different (infra)
+domain (e.g. `wire.infra.company-a.com`).
+
 
 Backend components
 ^^^^^^^^^^^^^^^^^^

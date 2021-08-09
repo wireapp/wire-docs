@@ -101,13 +101,13 @@ API From Components to Federator
 --------------------------------
 
 Between two federated backends, the components talk to each other via their
-respective federators. When making the call to the federator, the components use
-protobuf over gRPC. They call the ``Outward`` service, which also supports one
-rpc called ``call``. This rpc requires a ``FederatedRequest`` object, which
-contains a ``Request`` object as defined above, as well as the domain of the
-destination federator. The rpc returns an ``OutwardResponse``, which can either
-contains a body with the returned information or an ``OutwardError``, these
-objects look like this:
+respective federators and ingress'. When making the call to the federator, the
+components use protobuf over gRPC. They call the ``Outward`` service, which also
+supports one rpc called ``call``. This rpc requires a ``FederatedRequest``
+object, which contains a ``Request`` object as defined above, as well as the
+domain of the destination federator. The rpc returns an ``OutwardResponse``,
+which can either contains a body with the returned information or an
+``OutwardError``, these objects look like this:
 
 .. code-block:: protobuf
 

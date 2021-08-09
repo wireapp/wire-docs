@@ -132,9 +132,9 @@ their federator, see the :ref:`federated API documentation<api-endpoints>`.
 Backend to backend communication
 --------------------------------------------
 
-We require communication between the federator of one (sending) backend and
-another (receiving) backend to be both mutually authenticated and authorized.
-More specifically, both backends need to ensure the following:
+We require communication between the federator of one (sending) backend and the
+ingress of another (receiving) backend to be both mutually authenticated and
+authorized. More specifically, both backends need to ensure the following:
 
 :Authentication: Determine the identity (infra domain name) of the other
                  backend.

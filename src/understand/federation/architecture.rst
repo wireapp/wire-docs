@@ -21,8 +21,8 @@ Backend domains
 Each backend has two domains: an `infrastructure domain` and a `backend domain`.
 
 The former is the domain under which the backend is actually reachable via the
-network. It is also the domain as which each backend authenticates itself
-towards other backends.
+network. It is also the domain that each backend uses in authenticating itself
+to other backends.
 
 Similarly, there is the `backend domain`, which is used to qualify the names and
 identifiers of users local to an individual backend in the context of

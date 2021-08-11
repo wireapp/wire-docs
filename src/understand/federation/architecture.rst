@@ -174,7 +174,7 @@ This step is necessary in two scenarios:
 * A backend would like to establish a connection to another backend that they
   only know the backend domain of. This is the case, for example, when a user of
   a local backend searchers for a :ref:`qualified username
-  <qualified-user-name>`, which only includes that user's backends's backend
+  <glossary_qualified-user-name>`, which only includes that user's backends's backend
   domain.
 * When receiving a message from another backend that authenticates with a given
   infra domain and claims to represent a given backend domain, a backend would

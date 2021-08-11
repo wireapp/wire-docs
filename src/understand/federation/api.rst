@@ -271,6 +271,10 @@ Federator and Ingress components of the backends involved, which handle the
 necessary discovery, authentication and authorization steps, we won't mention
 these steps explicitly each time to keep the flows simple.
 
+Additionally we assume that the backend domain and the infra domain of the
+respecivebackends involved are the same and each domain identifies a distinct
+backend.
+
 .. _user-discovery:
 
 User Discovery

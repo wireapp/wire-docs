@@ -160,3 +160,37 @@ If the email has already been sent out, it's possible the queue will be empty.
 
 If that is the case, simply click the "Resend Code" link in the interface, then quickly re-send the command, a new email should now be present.
   
+Obtaining Brig logs, and the format of different team/user events
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To obtain brig logs, simply run ::
+
+    kubectl logs $(kubectl get pods | grep brig | awk '{print $1;}' | head -n 1)
+
+You will get log entries for various different types of events that happen, for example:
+
+1. User creation :: 
+
+    {"user":"24bdd52e-af33-400c-8e47-d16bf8695dbd","request":"c0575ff5a2d61bfc2be21e77260fccab","msgs":["I","Creating user"]}
+
+2. Activation key creation :: 
+
+    {"activation.code":"949721","activation.key":"p8o032Ljqhjgcea9R0AAnOeiUniGm63BrY9q_aeS1Cc=","request":"c0575ff5a2d61bfc2be21e77260fccab","msgs":["I","Activating"]} 
+
+3. Activation of a new user :: 
+
+    {"user":"24bdd52e-af33-400c-8e47-d16bf8695dbd","request":"c0575ff5a2d61bfc2be21e77260fccab","msgs":["I","User activated"]} 
+
+4. User indexing :: 
+
+    {"user":"24bdd52e-af33-400c-8e47-d16bf8695dbd","logger":"index.brig","msgs":["I","Indexing user"]} 
+
+5. Team creation :: 
+
+    {"email_sha256":"a7ca34df62e3aa18e071e6bd4740009ce7a25278869badc1ad8f6afda792d427","team":"6ef03a2b-34b5-4b65-8d72-1e4fc7697553","user":"24bdd52e-af33-400c-8e47-d16bf8695dbd","module":"Brig.API.Public","fn":"Brig.API.Public.createUser","request":"c0575ff5a2d61bfc2be21e77260fccab","msgs":["I","Sucessfully created user"]}
+
+6. Invitation sent :: 
+
+    {"invitation_code":"hJuh1C1PzMkgtesAYZZ4SZrP5xO-xM_m","email_sha256":"eef48a690436699c653110387455a4afe93ce29febc348acd20f6605787956e6","team":"6ef03a2b-34b5-4b65-8d72-1e4fc7697553","module":"Brig.Team.API","fn":"Brig.Team.API.createInvitationPublic","request":"c43440074629d802a199464dd892cd92","msgs":["I","Succesfully created invitation"]} 
+
+    

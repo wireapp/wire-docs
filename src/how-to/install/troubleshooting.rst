@@ -68,8 +68,8 @@ Cassandra is *very* picky about time! Ensure that NTP is properly set up on all 
 How can I ensure that I have correctly setup NTP on my machine(s)? Have a look at `this ansible playbook <https://github.com/wireapp/wire-server-deploy/blob/develop/ansible/cassandra-verify-ntp.yml>`_
 
 
-I deployed the ``demo-smtp`` but I'm not receiving any verification emails
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+I deployed ``demo-smtp`` but I'm not receiving any verification emails
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1. Check whether brig deployed successfully (brig pod(s) should be in state *Running*) ::
 
@@ -107,10 +107,10 @@ I deployed the ``demo-smtp`` but I'm not receiving any verification emails
 
 (Don't forget to apply the changes with ``helm upgrade wire-server wire/wire-server -f values.yaml -f secrets.yaml``)
 
-I deployed the ``demo-smtp`` and I want to skip email configuration and retreive verification codes directly
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+I deployed ``demo-smtp`` and I want to skip email configuration and retrieve verification codes directly
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If the only thing you need demo-smtp for is sending yourself verification codes to create a test account, it might be simpler and faster to just skip SMTP configuration, and simply retreive the code internally right after it is sent, while it is in the outbound email queue.
+If the only thing you need demo-smtp for is sending yourself verification codes to create a test account, it might be simpler and faster to just skip SMTP configuration, and simply retrieve the code internally right after it is sent, while it is in the outbound email queue.
 
 To do this, click create a user/account/team, or if you already have, click on ``Resend Code``:
 
@@ -134,7 +134,7 @@ Which will give you a result that looks something like this ::
     NAME                         READY   STATUS    RESTARTS   AGE
     demo-smtp-85557f6877-qxk2p   1/1     Running   0          80m
 
-In which case the pod name is ``demo-smtp-85557f6877-qxk2p``, which replaces <name of pod> in the next command.
+In which case, the pod name is ``demo-smtp-85557f6877-qxk2p``, which replaces <name of pod> in the next command.
 
 2. Then get the content of emails and extract the code ::
 
@@ -193,4 +193,4 @@ You will get log entries for various different types of events that happen, for 
 
     {"invitation_code":"hJuh1C1PzMkgtesAYZZ4SZrP5xO-xM_m","email_sha256":"eef48a690436699c653110387455a4afe93ce29febc348acd20f6605787956e6","team":"6ef03a2b-34b5-4b65-8d72-1e4fc7697553","module":"Brig.Team.API","fn":"Brig.Team.API.createInvitationPublic","request":"c43440074629d802a199464dd892cd92","msgs":["I","Succesfully created invitation"]} 
 
-    
+

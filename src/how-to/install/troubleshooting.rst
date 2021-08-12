@@ -106,3 +106,57 @@ I deployed the ``demo-smtp`` but I'm not receiving any verification emails
         smtpPassword: dummyPassword
 
 (Don't forget to apply the changes with ``helm upgrade wire-server wire/wire-server -f values.yaml -f secrets.yaml``)
+
+I deployed the ``demo-smtp`` and I want to skip email configuration and retreive verification codes directly
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If the only thing you need demo-smtp for is sending yourself verification codes to create a test account, it might be simpler and faster to just skip SMTP configuration, and simply retreive the code internally right after it is sent, while it is in the outbound email queue.
+
+To do this, click create a user/account/team, or if you already have, click on ``Resend Code``:
+
+.. figure:: img/code-input.png
+
+    The code input interface
+
+Then run the following command ::
+
+    kubectl exec $(kubectl get pod -lapp=demo-smtp | grep demo | awk '{print $1;}') -- sh -c 'cat /var/spool/exim4/input/* | grep -Po "^\\d{6}$" '
+
+Or step by step:
+
+1. Get the name of the pod ::
+
+    kubectl get pod -lapp=demo-smtp
+
+Which will give you a result that looks something like this :: 
+
+    > kubectl get pod -lapp=demo-smtp            
+    NAME                         READY   STATUS    RESTARTS   AGE
+    demo-smtp-85557f6877-qxk2p   1/1     Running   0          80m
+
+In which case the pod name is ``demo-smtp-85557f6877-qxk2p``, which replaces <name of pod> in the next command.
+
+2. Then get the content of emails and extract the code ::
+
+    kubectl exec <name of pod> -- sh -c 'head -n 15 /var/spool/exim4/input/*  '
+
+Which will give you the content of sent emails, including the code ::
+
+    > kubectl exec demo-smtp-85557f6877-qxk2p -- sh -c 'head -n 15 /var/spool/exim4/input/*  '
+    ==> /var/spool/exim4/input/1mECxm-000068-28-D <==
+    1mECxm-000068-28-D
+    --Y3mymuwB5Y
+    Content-Type: text/plain; charset=utf-8
+    Content-Transfer-Encoding: quoted-printable
+    [https://wire=2Ecom/p/img/email/logo-email-black=2Epng]
+    VERIFY YOUR EMAIL
+    myemail@gmail=2Ecom was used to register on Wire=2E Enter this code to v=
+    erify your email and create your account=2E
+    022515
+
+This means the code is ``022515``, simply enter it in the interface.
+
+If the email has already been sent out, it's possible the queue will be empty. 
+
+If that is the case, simply click the "Resend Code" link in the interface, then quickly re-send the command, a new email should now be present.
+  

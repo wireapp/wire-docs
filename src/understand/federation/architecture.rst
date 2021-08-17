@@ -219,7 +219,7 @@ from the point of view of the desired federation partners. The exact scope
 strongly depends on the network architecture of the backends involved.
 
 SRV TTL and Caching
-~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 After retrieving the SRV record for a given domain, the local backend caches the
 `backend domain <--> infra domain` mapping for the duration indicated in the TTL

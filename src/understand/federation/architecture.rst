@@ -197,12 +197,32 @@ domain `wire.company-a.com` could publish
 A backend can then be discovered, given its domain, by issueing a DNS query for
 the SRV record specifying the `wire-server-federator` service.
 
-Caching
+DNS Scope
+~~~~~~~~~
+
+The network scope of the SRV record (as well as that of the DNS records for
+backend and infra domain), depends on the desired federation topology in the
+same way as other parameters such as the availability of the CA certificate that
+allows authentication of the Ingress' server certificate or the federator's
+client certificate. The general rule is that the SRV entry should be "visible"
+from the point of view of the desired federation partners. The exact scope
+strongly depends on the network architecture of the backends involved.
+
+SRV TTL and Caching
 ~~~~~~~
 
-After retrieving the SRV record for a given domain, it caches the `backend
-domain <--> infra domain` mapping for the duration indicated in the TTL field of
-the record.
+After retrieving the SRV record for a remote backend, the local backend should
+cache the `backend domain <--> infra domain` mapping for the duration indicated
+in the TTL field of the record.
+
+Due to this caching behaviour, the TTL value of the SRV record dictates at which
+intervals remote backends will refresh their mapping of the local backend's
+backend domain to infra domain. As a consequence a value in the order of
+magnitude of 24 hours will reduce the amount of ovearhead for remote backends.
+
+On the other hand in the setup phase of a backend, or when a change of infra
+domain is required, a TTL value in the magnitude of an hour allows remote
+backends to recover more quickly from a change of infra domain.
 
 .. _authorization:
 

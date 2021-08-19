@@ -28,8 +28,9 @@ Backend Domain
 
 Infrastructure Domain or Infra Domain
 
-   The domain under which the :ref:`Ingress <glossary_ingress>` of a given backend
-   is reachable on the network.
+   The domain under which the :ref:`Federator <glossary_federator>` of a given
+   backend is reachable (via that backend's :ref:`Ingress <glossary_ingress>`)
+   for other, remote backends.
 
 .. _glossary_ingress:
 

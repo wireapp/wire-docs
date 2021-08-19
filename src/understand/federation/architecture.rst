@@ -228,7 +228,7 @@ field of the record.
 Due to this caching behaviour, the TTL value of the SRV record dictates at which
 intervals remote backends will refresh their mapping of the local backend's
 backend domain to infra domain. As a consequence a value in the order of
-magnitude of 24 hours will reduce the amount of ovearhead for remote backends.
+magnitude of 24 hours will reduce the amount of overhead for remote backends.
 
 On the other hand in the setup phase of a backend, or when a change of infra
 domain is required, a TTL value in the magnitude of a few minutes allows remote

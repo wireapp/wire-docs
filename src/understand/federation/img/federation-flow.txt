@@ -15,11 +15,9 @@ Ingress @infra.b.com -> Federator @infra.a.com: mTLS session establishment respo
 
 note: After authenticating the given client certificate using the root of trust as per RFC 8446.
 
-group: Mutually authenticated channel between infra.a.com and infra.b.com
+note: The channel between infra.a.com and infra.b.com is now encrypted and mutually authenticated.
 
 Federator @infra.a.com -> Ingress @infra.b.com: (originDomain="a.com", component="brig", path="get-user-by-handle", body="alice")
-
-end
 
 //group: TLS-secured backend-internal channel
 
@@ -46,10 +44,8 @@ Federator @infra.b.com -> Ingress @infra.b.com: (UserProfile(Alice))
 
 //end
 
-group: Mutually authenticated channel between infra.a.com and infra.b.com
-
 Ingress @infra.b.com -> Federator @infra.a.com: (UserProfile(Alice))
 
-end
+note: Via the encrypted, mutually authenticated channel.
 
 Federator @infra.a.com -> Brig @infra.a.com: (UserProfile(Alice))

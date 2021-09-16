@@ -86,12 +86,12 @@ Federator
              section on :ref:`authentication` for more details.
 
 The `Federator` performs additional authorization checks after receiving
-federated requests from the Ingress and acts as egress point for other backend
-components. It can be configured to use an :ref:`allow list <allow-list>` to
-authorize incoming and outgoing connections, and it keeps an X.509 client
-certificate for the backend's infra domain to authenticate itself towards other
-backends. Additionally, it requires a connection to a DNS resolver to
-:ref:`discover<discovery>` other backends.
+federated requests from the `Federation Ingress` and acts as egress point for
+other backend components. It can be configured to use an :ref:`allow list
+<allow-list>` to authorize incoming and outgoing connections, and it keeps an
+X.509 client certificate for the backend's infra domain to authenticate itself
+towards other backends. Additionally, it requires a connection to a DNS resolver
+to :ref:`discover<discovery>` other backends.
 
 When receiving a request from an internal component, the `Federator` will:
 

@@ -253,7 +253,7 @@ contains backend domains (which is not necessarily the same) the sending backend
 also needs to provide its backend domain.
 
 To make this possible, requests to remote backends are required to contain a
-`Wire-Domain` header, which contains the remote backend's domain.
+`Wire-Origin-Domain` header, which contains the remote backend's domain.
 
 While the receiving backend has authenticated the sending backend as the infra
 domain, it is not clear that the sending backend is indeed authorized by the

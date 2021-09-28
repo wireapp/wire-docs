@@ -16,7 +16,7 @@ looking for, double-check the old.
 New docs
 --------
 
-`staging swagger https://staging-nginz-https.zinfra.io/api/swagger-ui`
+`new staging swagger <https://staging-nginz-https.zinfra.io/api/swagger-ui>`
 
 
 Old docs

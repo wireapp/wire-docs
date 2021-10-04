@@ -1,3 +1,5 @@
+.. understand-federation:
+
 +++++++++++++++++
 Wire federation
 +++++++++++++++++

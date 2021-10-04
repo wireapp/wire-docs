@@ -1,4 +1,4 @@
-.. understand-federation:
+.. _federation-understand:
 
 +++++++++++++++++
 Wire federation

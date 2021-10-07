@@ -14,7 +14,7 @@ Summary of necessary steps to configure federation
 *(the steps will be detailed in the sections below)*
 
 * Choose and set a backend domain name at the level of helm value overrides
-* Set up multiple DNS records including an ``SRV`` record
+* DNS setup for federation (including an ``SRV`` record)
 * Generate and/or configure TLS certificates:
     * server certificates
     * client certificates
@@ -80,15 +80,8 @@ Consequences of the choice of Backend Domain
     users and conversations, or otherwise exhibit unexpected behaviour. If at
     all possible, do not change this backend domain.
 
-Set up multiple DNS records including an ``SRV`` record
----------------------------------------------------------
 
-Assuming your :ref:`glossary_backend_domain` is ``example.com``, you want to set up an SRV record.
-
-
-TODO include bit from the DNS page
-
-TODO explain how to set dns to point to federator
+.. include:: ./includes/dns-federation.rst
 
 
 Configure helm charts: federator and ingress subcharts

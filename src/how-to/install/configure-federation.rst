@@ -42,12 +42,15 @@ informs other wire-server backends where to find your actual servers.
 **IMPORTANT** Once this option is set, it cannot be changed without breaking
 experience for all the users which are already using the backend.
 
+.. _consequences-backend-domain:
+
 Consequences of the choice of Backend Domain
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------------------------
 
 * You need control over a specific subdomain of this backendDomain (to set an
-  SRV DNS record). Without this control, you cannot federate with anyone.
-* This backendDomain becomes part of the underlying identify of all users on
+  SRV DNS record as explained in the next section). Without this control, you cannot federate with anyone.
+
+* This Backend Domain becomes part of the underlying identify of all users on
   your servers.
 
    * Example: Let's say you choose ``example.com`` as your backendDomain.
@@ -64,11 +67,12 @@ Consequences of the choice of Backend Domain
           }
         }
 
-* As of October 2021, this domain is used in the UI alongside user information.
+* As of October 2021, this domain is used in the User Interface alongside user information.
   (This may or may not change in the future)
 
-   * Example: Using the same as above, for backends you federate with, Alice
+   * Example: Using the same example as above, for backends you federate with, Alice
      would be displayed with the human-readable username ``@alice@example.com``
+     for users on other backends.
 
 .. warning ::
 
@@ -90,7 +94,7 @@ Configure helm charts: federator and ingress subcharts
 TODO TLS certs
 
 Configure the validation depth when handling client certificates
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 By default, ``verify_depth`` is ``1``, meaning that in order to validate an incoming request from another backend needs to have a client certificate that is directly (without any intermediate certificates) signed by a CA certificate from the trust store.
 
@@ -104,7 +108,7 @@ Example: If you trust a CA ``root`` which signs an intermediate ``intermediate-1
       verify_depth: 1 # default: 1
 
 Configure the allow list
-~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 By default, federation is turned off (allow list set to the empty list):
 

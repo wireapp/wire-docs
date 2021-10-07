@@ -2,7 +2,7 @@ DNS setup for federation
 ------------------------
 
 SRV record
-~~~~~~~~~~~
+^^^^^^^^^^
 
 One prerequisite to enable federation is an `SRV record <https://en.wikipedia.org/wiki/SRV_record>`__ as defined in `RFC
 2782 <https://datatracker.ietf.org/doc/html/rfc2782>`__ that needs to be set up to allow the wire-server to be
@@ -31,11 +31,11 @@ the SRV record would look as follows:
 
 .. code-block:: bash
 
-   # _service._proto.name.                  ttl  IN SRV priority weight port target.
-   _wire-server-federator._tcp.example.com. 600  IN  SRV 0       10     443  federator.wire.example.org.
+   # _service._proto.name.                  ttl IN SRV priority weight port target.
+   _wire-server-federator._tcp.example.com. 600 IN SRV 0        10     443  federator.wire.example.org.
 
 DNS A record for the federator
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Background: ``federator`` is the server component responsible for incoming and outgoing requests to other backend; but it is proxied on
 the incoming requests by the ingress component on kubernetes as shown in :ref:`Federation Architecture <federation-architecture>`

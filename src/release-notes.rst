@@ -32,8 +32,6 @@ Chart Release 2.116.0
 
 Upstream release notes: https://github.com/wireapp/wire-server/blob/develop/CHANGELOG.md#2021-10-01
 
-Upstream release notes for wire-server-deploy playbooks: https://github.com/wireapp/wire-server-deploy/blob/master/CHANGELOG.md#2021-08-27
-
 
 Release Notes
 -------------
@@ -190,8 +188,6 @@ Chart Release 2.115.0
 
 Upstream release notes: https://github.com/wireapp/wire-server/blob/develop/CHANGELOG.md#2021-09-14
 
-Upstream release notes for wire-server-deploy playbooks: https://github.com/wireapp/wire-server-deploy/blob/master/CHANGELOG.md#2021-08-27
-
 
 Release Notes
 -------------
@@ -253,8 +249,6 @@ Chart Release 2.114.0
 =====================
 
 Upstream release notes: https://github.com/wireapp/wire-server/blob/develop/CHANGELOG.md#2021-09-08
-
-Upstream release notes for wire-server-deploy playbooks: https://github.com/wireapp/wire-server-deploy/blob/master/CHANGELOG.md#2021-08-27
 
 
 Release Notes

@@ -6,7 +6,7 @@ Configure Wire-Server for federation
 Background
 -----------
 
-Please first understand the current scope and aim of wire-server federation by reading :ref:`Understanding federation <federation-understand>`
+Please first understand the current scope and aim of wire-server federation by reading :ref:`Understanding federation <federation-understand>`.
 
 .. warning:: As of September 2021, federation implementation is still work in progress. Many features are not implemented yet,
     and it should be considered "alpha": stability, and upgrade compatibility are not guaranteed.
@@ -14,7 +14,7 @@ Please first understand the current scope and aim of wire-server federation by r
 Summary of necessary steps to configure federation
 --------------------------------------------------
 
-*(the steps will be detailed in the sections below)*
+The steps needed to configure federation are as follows and they will be detailed in the sections below:
 
 * Choose a backend domain name
 * DNS setup for federation (including an ``SRV`` record)
@@ -43,7 +43,7 @@ servers do not need to be available on this domain, but you MUST be able to set
 an SRV record for ``_wire-server-federator._tcp.<Backend Domain>`` that
 informs other wire-server backends where to find your actual servers.
 
-**IMPORTANT** Once this option is set, it cannot be changed without breaking
+**IMPORTANT**: Once this option is set, it cannot be changed without breaking
 experience for all the users which are already using the backend.
 
 .. _consequences-backend-domain:
@@ -51,13 +51,13 @@ experience for all the users which are already using the backend.
 Consequences of the choice of Backend Domain
 --------------------------------------------
 
-* You need control over a specific subdomain of this backendDomain (to set an
+* You need control over a specific subdomain of this Backend Domain (to set an
   SRV DNS record as explained in the next section). Without this control, you cannot federate with anyone.
 
 * This Backend Domain becomes part of the underlying identify of all users on
   your servers.
 
-   * Example: Let's say you choose ``example.com`` as your backendDomain.
+   * Example: Let's say you choose ``example.com`` as your Backend Domain.
      Your user known to you as Alice, and known on your server with ID
      ``ac41a202-2555-11ec-9341-00163e5e6c00`` will become known for other
      servers you federate with as
@@ -81,8 +81,8 @@ Consequences of the choice of Backend Domain
 .. warning ::
 
     As of October 2021, *changing* this Backend Domain after existing user activity
-    with recent (versions later than ~May/June 2021) will lead to undefined
-    (untested, not accounted for during development) behaviour on some or all
+    with a recent version (versions later than ~May/June 2021) will lead to undefined
+    behaviour (untested, not accounted for during development) on some or all
     client platforms (Web, Android, iOS) for those users: It's possible your
     clients could crash, or lose part of their data about themselves or other
     users and conversations, or otherwise exhibit unexpected behaviour. If at
@@ -98,20 +98,20 @@ Generate and configure TLS server and client certificates
 ---------------------------------------------------------
 
 Are your servers on the public internet? Then you have the option of using TLS certificates from `Let's encrypt
-<https://letsencrypt.org/>`__. Go to subsection ``(A) Let's encrypt ...``. If your servers are not on the public internet
-or you would like to use your own, go to subsection ``(B) Manual ...``.
+<https://letsencrypt.org/>`__. In such a case go to subsection (A). If your servers are not on the public internet
+or you would like to use your own, go to subsection (B).
 
 (A) Let's encrypt TLS server and client certificate generation and renewal
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The following will make use of `Let's encrypt <https://letsencrypt.org/>`__ for both server certificates (used when
-someone sends a request to your ``federator.<domain-name>``` AND client certificates (used for making outgoing requests
+someone sends a request to your ``federator.<domain-name>```) and client certificates (used for making outgoing requests
 to other backends).
 
 For that, you need to have the `jetstack/cert-manager <https://github.com/jetstack/cert-manager>`__ installed. You can
 follow the helm chart installation `here <https://cert-manager.io/docs/installation/helm/>`__.
 
-Once you have cert manager, adjust the email address below, then set the following in the nginx-ingress-services overrides:
+Once you have cert-manager, adjust the email address below, then set the following in the nginx-ingress-services overrides:
 
 .. code:: yaml
 
@@ -132,7 +132,7 @@ Once you have cert manager, adjust the email address below, then set the followi
       tls:
         useSharedFederatorSecret: true
 
-You can now skip section ``(B) Manual ...`` and go to ``Configure CA certificates you trust ...``
+You can now skip section (B) and go to Configure CA certificates you trust when interacting with other backends.
 
 (B) Manual server and client certificates
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -155,7 +155,7 @@ Your certificates need to have the "Server" and "Client" key usage listed among 
         X509v3 Extended Key Usage:
             TLS Web Server Authentication, TLS Web Client Authentication
 
-And your :ref:`federation infra domain <glossary_infra_domain>` (e.g. ``federator.wire.example.com`` to use the example used previously) needs to
+And your :ref:`federation infra domain <glossary_infra_domain>` (e.g. ``federator.wire.example.com`` from the running example) needs to
 either figure explictly in the list of your SAN (Subject Alternative Name):
 
 .. code:: bash
@@ -299,7 +299,7 @@ in :ref:`dns-configure-federation` above
 Configure the validation depth when handling client certificates
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-By default, ``verify_depth`` is ``1``, meaning that in order to validate an incoming request from another backend needs to have a client certificate that is directly (without any intermediate certificates) signed by a CA certificate from the trust store.
+By default, ``verify_depth`` is ``1``, meaning that in order to validate an incoming request from another backend, this backend needs to have a client certificate that is directly (without any intermediate certificates) signed by a CA certificate from the trust store.
 
 Example: If you trust a CA ``root`` which signs an intermediate ``intermediate-1`` which in turn signs ``intermediate-2`` which finally signs ``leaf``, and ``leaf`` is used during mutual TLS when validating incoming requests, then ``verify_depth`` would need to be set to ``3``.
 
@@ -308,7 +308,7 @@ Example: If you trust a CA ``root`` which signs an intermediate ``intermediate-1
     # nginx-ingress-services/values.yaml
     tls:
       # the validation depth between a federator client certificate and tlsClientCA
-      verify_depth: 1 # default: 1
+      verify_depth: 3 # default: 1
 
 Configure the allow list
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -337,7 +337,7 @@ You can choose to federate with a specific list of allowed backends:
            - example.com
            - example.org
 
-or, you can federate with everyone:
+Alternatively, you can federate with everyone:
 
 .. code:: yaml
 
@@ -376,7 +376,7 @@ The actual target::
 
 should also point to an IP address::
 
-    1.2.3.400 # of course you should get a valid IP here
+    1.2.3.4 # of course you should get a valid IP here
 
 Ensure that the IP matches where your backend ingress runs.
 
@@ -386,8 +386,8 @@ Manually test certificates
 Refer to :ref:`how-to-see-tls-certs` and set DOMAIN to your :ref:`federation infra domain <glossary_infra_domain>`. They
 should include your domain as part of the SAN (Subject Alternative Names) and not have expired.
 
-Manually test federation "works"
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Manually test that federation "works"
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Prerequisites:
 

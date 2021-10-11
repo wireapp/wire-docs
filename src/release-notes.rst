@@ -40,9 +40,9 @@ Release notes
 ~~~~~~~~~~~~~
 
 -  Deploy brig before galley (#1811, #1818)
--  The conference call initiation feature can now be configured for
-   personal accounts in ``brig.yaml``. ``enabled`` is the default and
-   the previous behavior. If you want to change that, read
+-  You can now configure if personal accounts are allowed to initiate conference calls
+   in ``brig.yaml``. ``enabled`` is both the default and
+   the previous behavior, so if you are not sure if you need this, it's safe to do nothing. If you want to change the default, read
    `/docs/reference/config-options.md#conference-calling-1 <https://github.com/wireapp/wire-server/blob/develop/docs/reference/config-options.md#conference-calling-1>`__
    (#1811, #1818)
 -  Only if you are an early adopter of multi-team IdP issuers on release

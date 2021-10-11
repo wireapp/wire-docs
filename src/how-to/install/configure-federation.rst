@@ -8,6 +8,9 @@ Background
 
 Please first understand the current scope and aim of wire-server federation by reading :ref:`Understanding federation <federation-understand>`
 
+.. warning:: As of September 2021, federation implementation is still work in progress. Many features are not implemented yet,
+    and it should be considered "alpha": stability, and upgrade compatibility are not guaranteed.
+
 Summary of necessary steps to configure federation
 --------------------------------------------------
 
@@ -83,7 +86,8 @@ Consequences of the choice of Backend Domain
     client platforms (Web, Android, iOS) for those users: It's possible your
     clients could crash, or lose part of their data about themselves or other
     users and conversations, or otherwise exhibit unexpected behaviour. If at
-    all possible, do not change this backend domain.
+    all possible, do not change this backend domain. We do not intend to
+    provide support if you change the backend domain.
 
 
 .. _dns-configure-federation:

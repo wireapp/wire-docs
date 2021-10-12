@@ -23,11 +23,11 @@ The fields of the SRV record need to be populated as follows
 To give an example, assuming
 
 * your federation :ref:`Backend Domain <glossary_backend_domain>` is ``example.com``
-* your domains for other services already set up follow the convention ``<service>.wire.example.org``, then
+* your domains for other services already set up follow the convention ``<service>.wire.example.org``
 
-    * your federation :ref:`Infra Domain <glossary_infra_domain>` would be ``federator.wire.example.org``
+then your federation :ref:`Infra Domain <glossary_infra_domain>` would be ``federator.wire.example.org``.
 
-the SRV record would look as follows:
+The SRV record would look as follows:
 
 .. code-block:: bash
 

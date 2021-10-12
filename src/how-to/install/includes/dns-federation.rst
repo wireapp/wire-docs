@@ -40,6 +40,5 @@ DNS A record for the federator
 Background: ``federator`` is the server component responsible for incoming and outgoing requests to other backend; but it is proxied on
 the incoming requests by the ingress component on kubernetes as shown in :ref:`Federation Architecture <federation-architecture>`
 
-As mentioned in the general installation/dns setup, you also need a ``federator.<domain>`` record, which, alongside your
-other DNS records that point to the ingress component, also needs to point to the IP of your ingress, i.e. the IP you want to provide services on.
 
+As mentioned in :ref:`DNS setup for Helm<helmdns>`, you also need a ``federator.<domain>`` record, which, alongside your other DNS records that point to the ingress component, also needs to point to the IP of your ingress, i.e. the IP you want to provide services on.

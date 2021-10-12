@@ -19,9 +19,11 @@ The steps needed to configure federation are as follows and they will be detaile
 * Choose a backend domain name
 * DNS setup for federation (including an ``SRV`` record)
 * Generate and configure TLS certificates:
+
     * server certificates
     * client certificates
     * a selection of CA certificates you trust when interacting with other backends
+
 * Configure helm charts : federator and ingress subcharts
 * Test that your configurations work as expected.
 
@@ -32,9 +34,9 @@ Choose a :ref:`Backend Domain Name<glossary_backend_domain>`
 
 As of the release [helm chart 0.129.0, Wire docker version 2.94.0] from
 2020-12-15, a Backend Domain (set as ``federationDomain`` in configuration) is a
-mandatory configuration setting.  Regardless of whether a backend wants to
-enable federation or not, the operator must decide what its domain is going to
-be. This helps in keeping things simpler across all components of Wire and also
+mandatory configuration setting. Regardless of whether you want to enable
+federation for a backend or not, you must decide what its domain is going to be.
+This helps in keeping things simpler across all components of Wire and also
 enables to turn on federation in the future if required.
 
 It is highly recommended that this domain is configured as
@@ -83,7 +85,7 @@ Consequences of the choice of Backend Domain
     As of October 2021, *changing* this Backend Domain after existing user activity
     with a recent version (versions later than ~May/June 2021) will lead to undefined
     behaviour (untested, not accounted for during development) on some or all
-    client platforms (Web, Android, iOS) for those users: It's possible your
+    client platforms (Web, Android, iOS) for those users: It is possible your
     clients could crash, or lose part of their data about themselves or other
     users and conversations, or otherwise exhibit unexpected behaviour. If at
     all possible, do not change this backend domain. We do not intend to
@@ -99,16 +101,16 @@ Generate and configure TLS server and client certificates
 
 Are your servers on the public internet? Then you have the option of using TLS certificates from `Let's encrypt
 <https://letsencrypt.org/>`__. In such a case go to subsection (A). If your servers are not on the public internet
-or you would like to use your own, go to subsection (B).
+or you would like to use your own CA, go to subsection (B).
 
 (A) Let's encrypt TLS server and client certificate generation and renewal
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The following will make use of `Let's encrypt <https://letsencrypt.org/>`__ for both server certificates (used when
-someone sends a request to your ``federator.<domain-name>```) and client certificates (used for making outgoing requests
+someone sends a request to your ``federator.<domain-name>``) and client certificates (used for making outgoing requests
 to other backends).
 
-For that, you need to have the `jetstack/cert-manager <https://github.com/jetstack/cert-manager>`__ installed. You can
+For that, you need to have `jetstack/cert-manager <https://github.com/jetstack/cert-manager>`__ installed. You can
 follow the helm chart installation `here <https://cert-manager.io/docs/installation/helm/>`__.
 
 Once you have cert-manager, adjust the email address below, then set the following in the nginx-ingress-services overrides:
@@ -137,8 +139,19 @@ You can now skip section (B) and go to Configure CA certificates you trust when 
 (B) Manual server and client certificates
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Use your usual method of obtaining certificates for your :ref:`federation infra domain <glossary_infra_domain>`. You can
-use one single certificate and key for both server and client certificate.
+Use your usual method of obtaining X.509 certificates for your :ref:`federation infra domain
+<glossary_infra_domain>` (alongside the other domains needed for a wire-server installation).
+
+You can use one single certificate and key for both server and client certificate use.
+
+.. note::
+
+   Currently (October 2021), due to a limitation of the TLS library in use for federation (`hs-tls
+   <https://github.com/vincenthz/hs-tls>`__), only some ciphers are supported. Moving to an
+   openssl-based library is planned, which will provide support for a wider range of ciphers.
+
+..
+    TODO: provide a list of supported ciphers and signature algorithms.
 
 Your certificates need to have the "Server" and "Client" key usage listed among the X509 extensions:
 
@@ -155,8 +168,9 @@ Your certificates need to have the "Server" and "Client" key usage listed among 
         X509v3 Extended Key Usage:
             TLS Web Server Authentication, TLS Web Client Authentication
 
-And your :ref:`federation infra domain <glossary_infra_domain>` (e.g. ``federator.wire.example.com`` from the running example) needs to
-either figure explictly in the list of your SAN (Subject Alternative Name):
+And your :ref:`federation infra domain <glossary_infra_domain>` (e.g. ``federator.wire.example.com``
+from the running example) needs to either figure explictly in the list of your SAN (Subject
+Alternative Name):
 
 .. code:: bash
 
@@ -242,6 +256,12 @@ They need to be set both for the nginx-ingress-services and the wire-server char
         ... <another CA in PEM format goes here>
         -----END CERTIFICATE-----
 
+Tell parties you intend to federate with about your certificates
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The backends you want to federate with should add your (or Let's Encrypt's) CA
+to their store, so you should give them your CA certificate, or tell them to use
+the appropriate Let's Encrypt root certificate.
 
 Configure helm charts: federator and ingress subcharts
 -------------------------------------------------------
@@ -400,8 +420,7 @@ Create user accounts on both backends.
 With one user, search for the other user using the ``@username-1@example.com`` syntax in the UI search field of the
 webapp.
 
-FUTUREWORK
-^^^^^^^^^^
-
-* A way to validate overall helm configuration to be consistent
-* A way to test client certificates.
+..
+    FUTUREWORK
+    * A way to validate overall helm configuration to be consistent
+    * A way to test client certificates.

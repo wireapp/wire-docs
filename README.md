@@ -56,7 +56,7 @@ If another level is needed, please add the chosen symbol here.
 
 ### Dependencies
 
-Install the dependencies locally, you have two options A or B:
+Install the dependencies locally:
 
 1. Install [Nix](https://nixos.org/download.html)
    * MacOS users with a recent Mac might need to follow [these

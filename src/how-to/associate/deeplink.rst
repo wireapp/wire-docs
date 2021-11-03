@@ -58,7 +58,7 @@ Note on the meaning of the URLs used below:
    is used to disable old versions of Wire clients (mobile apps). It's a prefix URL to which e.g. `/ios` or `/android` is appended. Example URL for the wire.com production servers: ``https://clientblacklist.wire.com/prod`` and example json files: `android <https://clientblacklist.wire.com/prod/android>`_ and `iPhone <https://clientblacklist.wire.com/prod/ios>`_ .
 
 ``websiteURL``
-   Is used as a basis for a few links within the app pointing to FAQs and troubleshooting pages for end users. You can leave this as ``https://wire.com`` or host your own alternative pages and point this to your own "website" with the equivalent pages.
+   Is used as a basis for a few links within the app pointing to FAQs and troubleshooting pages for end users. You can leave this as ``https://wire.com`` or host your own alternative pages and point this to your own website with the equivalent pages references from within the app.
 
 ``title``
    Arbitrary string that may show up in a few places in the app. Should be used as an identifier of the backend servers in question.
@@ -66,7 +66,7 @@ Note on the meaning of the URLs used below:
 Host a deeplink together with your Wire installation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-As of release ``2.117.0``, you can configure your deeplink endpoints to match your installation and DNS records (see explanations above)
+As of release ``2.117.0`` from ``2021-10-29`` (see `release notes<release-notes>`), you can configure your deeplink endpoints to match your installation and DNS records (see explanations above)
 
 .. code:: yaml
 
@@ -84,17 +84,19 @@ As of release ``2.117.0``, you can configure your deeplink endpoints to match yo
             websiteURL: "https://wire.com"
           title: "My Custom Wire Backend"
 
-Followed by your usual way of updating configuration (e.g. 'helm upgrade...')
+(As with any configuration changes, you need to apply them following your usual way of updating configuration (e.g. 'helm upgrade...'))
 
 Now both static files should become accessible at the backend domain under ``/deeplink.json`` and ``deeplink.html``:
 
 * ``https://nginz-https.<domain>/deeplink.json``
 * ``https://nginz-https.<domain>/deeplink.html``
 
-Host a deeplink using minio
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Host a deeplink using minio (deprecated)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-*If you're using minio* installed using the ansible code from `wire-server-deploy <https://github.com/wireapp/wire-server-deploy/blob/develop/ansible/>`__, then the `minio ansible playbook <https://github.com/wireapp/wire-server-deploy/blob/develop/ansible/minio.yml#L75-L88>`__ (make sure to override these variables) creates a json and a html file in the right format, and makes it accessible at ``https://assets.<domain>/public/deeplink.json`` and at ``https://assets.<domain>/public/deeplink.html``
+*If possible, prefer the option in the subsection above or below. This subsection is kept for backwards compatibility.*
+
+**If you're using minio** installed using the ansible code from `wire-server-deploy <https://github.com/wireapp/wire-server-deploy/blob/master/ansible/>`__, then the `minio ansible playbook <https://github.com/wireapp/wire-server-deploy/blob/master/ansible/minio.yml#L75-L88>`__ (make sure to override these variables) creates a json and a html file in the right format, and makes it accessible at ``https://assets.<domain>/public/deeplink.json`` and at ``https://assets.<domain>/public/deeplink.html``
 
 Host a deeplink file using your own web server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

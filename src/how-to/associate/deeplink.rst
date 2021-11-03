@@ -55,7 +55,7 @@ Note on the meaning of the URLs used below:
    Use the URL to the account pages part of the webapp, by convention ``https://account.<domain>``
 
 ``blackListURL``
-   is used to disable old versions of Wire clients (mobile apps). It's a prefix URL to which e.g. `/ios` or `/android` is appended. Example URL for the wire.com production servers: ``https://clientblacklist.wire.com/prod`` and example json files: `android <https://clientblacklist.wire.com/prod/android>`_ and `iPone <https://clientblacklist.wire.com/prod/ios>`_ .
+   is used to disable old versions of Wire clients (mobile apps). It's a prefix URL to which e.g. `/ios` or `/android` is appended. Example URL for the wire.com production servers: ``https://clientblacklist.wire.com/prod`` and example json files: `android <https://clientblacklist.wire.com/prod/android>`_ and `iPhone <https://clientblacklist.wire.com/prod/ios>`_ .
 
 ``websiteURL``
    Is used as a basis for a few links within the app pointing to FAQs and troubleshooting pages for end users. You can leave this as ``https://wire.com`` or host your own alternative pages and point this to your own "website" with the equivalent pages.

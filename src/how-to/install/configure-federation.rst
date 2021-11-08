@@ -324,7 +324,7 @@ Configure the webapp to enable federation
     # (e.g. under ./helm_vars/wire-server/values.yaml)
     webapp:
       envVars:
-        FEATURE_ENABLE_DOMAIN_DISCOVERY: "true"
+        FEATURE_FEDERATION_DOMAIN: "example.com"
         FEATURE_ENABLE_FEDERATION: "true"
 
 

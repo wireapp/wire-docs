@@ -288,6 +288,17 @@ galley and brig. You also need to set ``enableFederator`` to ``true``.
         optSettings:
           setFederationDomain: example.com # your chosen "backend domain"
 
+Configure the webapp to enable federation and set your chosen backend domain one more time
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: yaml
+
+    # override values for wire-server
+    # (e.g. under ./helm_vars/wire-server/values.yaml)
+    webapp:
+      envVars:
+        FEATURE_FEDERATION_DOMAIN: "example.com" # your chosen "backend domain"
+        FEATURE_ENABLE_FEDERATION: "true"
 
 Configure federator process to run and allow incoming traffic
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -313,20 +324,7 @@ in :ref:`dns-configure-federation` above
 
     config:
       dns:
-        federator: federator.wire.example.org # set this to your domain!
-
-Configure the webapp to enable federation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. code:: yaml
-
-    # override values for wire-server
-    # (e.g. under ./helm_vars/wire-server/values.yaml)
-    webapp:
-      envVars:
-        FEATURE_FEDERATION_DOMAIN: "example.com"
-        FEATURE_ENABLE_FEDERATION: "true"
-
+        federator: federator.wire.example.org # set this to your "infra" domain
 
 Configure the validation depth when handling client certificates
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

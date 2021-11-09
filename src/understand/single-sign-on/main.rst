@@ -35,6 +35,7 @@ Definitions
 These concepts need to be understood to use the present manual:
 
 TODO: Search-and-replace all terms from plain text to : term : ` TERM `
+TODO: Clean up the mess created by doing so.
 
 .. glossary::
 
@@ -79,10 +80,7 @@ TODO: Search-and-replace all terms from plain text to : term : ` TERM `
    
        Identity providers can facilitate connections between cloud computing resources and users, thus decreasing the need for users to re-authenticate when using mobile and roaming applications.[4] 
    
-       See: `:term:`IdP` at Wikipedia <https://en.wikipedia.org/wiki/Identity_provider>`_ 
-
-       TODO: Context (in relation to :term:`SCIM`) 
-
+       See: `IdP at Wikipedia <https://en.wikipedia.org/wiki/Identity_provider>`_ 
 
    Curl
 
@@ -103,7 +101,12 @@ TODO: Search-and-replace all terms from plain text to : term : ` TERM `
 
        The Wire backend software stack is composed of different services, `running as pods </overview.html#focus-on-pods>`_ in a kubernetes cluster. 
    
-       One of those pods is the "SPAR" service. That service/pod is dedicated to the providing :term:`SSO` and :term:`SCIM` services. This page is the manual for this service.
+       One of those pods is the "SPAR" service. That service/pod is dedicated to the providing :term:`SSO` (using :term:`SAML`) and :term:`SCIM` services. This page is the manual for this service.
+
+       In the context of :term:`SCIM`, Wire's SPAR service is the `Service Provider<https://en.wikipedia.org/wiki/Service_provider_(SAML)>`_ that Identity Management Software 
+       (for example Okta, Ping Identity, SailPoint, Technology Nexus etc) uses for user account provisioning and deprovisioning.
+
+
 
 Wire comes with a backend module that provides :term:`SAML` single sign on and :term:`SCIM` user provisioning, called "Spar".
 

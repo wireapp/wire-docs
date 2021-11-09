@@ -44,9 +44,9 @@ TODO: Search-and-replace all terms from plain text to : term : ` TERM `
        One example might be that as a company onboards new employees and separates from existing employees, they are added and removed from the company's electronic employee directory. :term:`SCIM` could be used to automatically add/delete (or, provision/de-provision) accounts for those users in external systems such as G Suite, Office 365, or Salesforce.com. Then, a new user account would exist in the external systems for each new employee, and the user accounts for former employees might no longer exist in those systems.   
       
        See: `System for Cross-domain Identity Management at Wikipedia <https://en.wikipedia.org/wiki/System_for_Cross-domain_Identity_Management>`_ 
-      
-       TODO: Context
 
+       In the context of Wire, SCIM is the interface offered by the Wire service (in particular the SPAR service) that allows for single or mass automated addition/removal of user accounts.
+      
    SSO
       
        Single sign-on (:term:`SSO`) is an authentication scheme that allows a user to log in with a single ID and password to any of several related, yet independent, software systems. 
@@ -67,7 +67,7 @@ TODO: Search-and-replace all terms from plain text to : term : ` TERM `
     
        See: `:term:`SAML` at Wikipedia <https://en.wikipedia.org/wiki/Security_Assertion_Markup_Language>`_
 
-       TODO: Context
+       In the context of Wire, SAML is the standard/protocol used by the Wire services (in particular the SPAR service) to provide the Single Sign On feature.
 
    IdP
 

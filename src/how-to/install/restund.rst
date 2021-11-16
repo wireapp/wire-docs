@@ -85,8 +85,4 @@ The private subnets only need to override the RFC-defined private networks, whic
 * Etc...
 
 
-looks good, but we need to mention something about private subnets needing to only override the RFC defined private networks, which we firewall off by default. (etc)
-
-
-
 

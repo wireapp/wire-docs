@@ -77,6 +77,16 @@ You do this by setting the ``restund_allowed_private_network_cidrs`` option of t
 
 This is needed, for example, to allow talking to the logging server if it is on a separate network.
 
+The private subnets only need to override the RFC-defined private networks, which Wire firewalls off by default:
+
+* 192.168.x.x
+* 10.x.x.x
+* 172.16.x.x - 172.31.x.x 
+* Etc...
+
+
+looks good, but we need to mention something about private subnets needing to only override the RFC defined private networks, which we firewall off by default. (etc)
+
 
 
 

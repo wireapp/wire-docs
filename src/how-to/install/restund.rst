@@ -63,7 +63,9 @@ For information on setting up and using ansible-playbook to install Wire compone
 Private Subnets
 ---------------
 
-If you need to enable Restund to connect to the outside, you can specify a list of private subnets in `CIDR format <https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing>`__ .
+By default, Restund is configured with a firewall that filters-out CIDR networks.
+
+If you need to enable Restund to connect to the outside, you can specify a list of private subnets in `CIDR format <https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing>`__, which will override Restund's firewall's default settings of filtering-out CIDR networks.
 
 You do this by setting the ``restund_allowed_private_network_cidrs`` option of the ``[restund:vars]`` section of the ansible inventory file (`for example this file <https://github.com/wireapp/wire-server-deploy/blob/master/ansible/inventory/prod/hosts.example.ini#L72>`__):
 
@@ -75,7 +77,7 @@ You do this by setting the ``restund_allowed_private_network_cidrs`` option of t
     # restund_network_interface = eth0
     restund_allowed_private_network_cidrs=192.168.0.1/32
 
-This is needed, for example, to allow talking to the logging server if it is on a separate network.
+This is needed, for example, to allow talking to the logging server if it is on a separate network: 
 
 The private subnets only need to override the RFC-defined private networks, which Wire firewalls off by default:
 

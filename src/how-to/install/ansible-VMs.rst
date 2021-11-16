@@ -226,7 +226,7 @@ this step.
 Restund
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-For instructions on how to install Restund, see :ref:`this page <_install-restund>`.
+For instructions on how to install Restund, see :ref:`this page <install-restund>`.
 
 
 IMPORTANT checks

@@ -65,7 +65,7 @@ Private Subnets
 
 By default, Restund is configured with a firewall that filters-out CIDR networks.
 
-If you need to enable Restund to connect to the outside, you can specify a list of private subnets in `CIDR format <https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing>`__, which will override Restund's firewall's default settings of filtering-out CIDR networks.
+If you need to enable Restund to connect to a CIDR addressed host or network, you can specify a list of private subnets in `CIDR format <https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing>`__, which will override Restund's firewall's default settings of filtering-out CIDR networks.
 
 You do this by setting the ``restund_allowed_private_network_cidrs`` option of the ``[restund:vars]`` section of the ansible inventory file (`for example this file <https://github.com/wireapp/wire-server-deploy/blob/master/ansible/inventory/prod/hosts.example.ini#L72>`__):
 
@@ -85,6 +85,4 @@ The private subnets only need to override the RFC-defined private networks, whic
 * 10.x.x.x
 * 172.16.x.x - 172.31.x.x 
 * Etc...
-
-
 

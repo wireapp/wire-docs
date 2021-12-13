@@ -12,7 +12,7 @@ The “log4shell” vulnerability concerns a logging library “log4j” used in
 
 * Wire-server’s source code is not written in a JVM language, and as such, is not vulnerable
 
-* Wire-server makes use of Cassandra, which is running on the JVM, however as of version 2.1 no longer makes use of log4j. Since the start of Wire’s on-premise product, we have used Cassandra versions > 3 (currently 3.11), which is not vulnerable.
+* Wire-server makes use of Cassandra, which is running on the JVM, however as of version 2.1 no longer makes use of log4j (it uses logback). Since the start of Wire’s on-premise product, we have used Cassandra versions > 3 (currently 3.11), which is not vulnerable.
 
 * Wire-server makes use of Elasticsearch, which **does use log4j. See the section below for details**.
 

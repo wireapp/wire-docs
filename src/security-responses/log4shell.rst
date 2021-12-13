@@ -1,4 +1,4 @@
-Security - log4shell
+2021-12 - log4shell
 --------------------
 
 Last updated: 2021-12-13
@@ -66,7 +66,7 @@ If you have followed our official documentation on `<https://docs.wire.com>`__, 
     ./usr/share/elasticsearch/lib/log4j-1.2-api-2.11.1.jar
     ./usr/share/elasticsearch/lib/log4j-api-2.11.1.jar
 
-BSI recommends in `<https://www.bsi.bund.de/SharedDocs/Cybersicherheitswarnungen/DE/2021/2021-549032-10F2.pdf?__blob=publicationFile&v=3>` to mitigate setting the ``log4j2.formatMsgNoLookups`` to True in the JVM options. Elastic recommends the same mitigation.
+The BSI `recommends <https://www.bsi.bund.de/SharedDocs/Cybersicherheitswarnungen/DE/2021/2021-549032-10F2.pdf?__blob=publicationFile&v=3>`__ to mitigate setting the ``log4j2.formatMsgNoLookups`` to True in the JVM options. Elastic `recommends <https://discuss.elastic.co/t/apache-log4j2-remote-code-execution-rce-vulnerability-cve-2021-44228-esa-2021-31/291476>`__ the same mitigation.
 
 You can do this in the concrete Wire on-premise case using:
 

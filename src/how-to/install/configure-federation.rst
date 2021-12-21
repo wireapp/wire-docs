@@ -357,9 +357,10 @@ By default, federation is turned off (allow list set to the empty list):
     # override values for wire-server
     # (e.g. under ./helm_vars/wire-server/values.yaml)
     federator:
-      optSettings:
-        federationStrategy:
-          allowedDomains: []
+      config:
+        optSettings:
+          federationStrategy:
+            allowedDomains: []
 
 You can choose to federate with a specific list of allowed backends:
 
@@ -368,11 +369,12 @@ You can choose to federate with a specific list of allowed backends:
     # override values for wire-server
     # (e.g. under ./helm_vars/wire-server/values.yaml)
     federator:
-      optSettings:
-        federationStrategy:
-          allowedDomains:
-           - example.com
-           - example.org
+      config:
+        optSettings:
+          federationStrategy:
+            allowedDomains:
+             - example.com
+             - example.org
 
 Alternatively, you can federate with everyone:
 
@@ -381,9 +383,10 @@ Alternatively, you can federate with everyone:
     # override values for wire-server
     # (e.g. under ./helm_vars/wire-server/values.yaml)
     federator:
-      optSettings:
-        federationStrategy:
-          allowAll: true
+      config:
+        optSettings:
+          federationStrategy:
+            allowAll: true
 
 
 Applying all configuration changes

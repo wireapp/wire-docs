@@ -41,7 +41,7 @@ The following concepts need to be understood to use the present manual:
       
        See: `System for Cross-domain Identity Management at Wikipedia <https://en.wikipedia.org/wiki/System_for_Cross-domain_Identity_Management>`_ 
 
-       In the context of Wire, SCIM is the interface offered by the Wire service (in particular the SPAR service) that allows for single or mass automated addition/removal of user accounts.
+       In the context of Wire, SCIM is the interface offered by the Wire service (in particular the SPAR service) that allows for single or mass automated addition/removal of user accounts.
       
    SSO
       
@@ -160,33 +160,10 @@ Terminology and concepts
 * Service Provider-initiated Authentication Flow: This describes the SAML authentication flow initiated by the Service Provider. The authentication process from the SP is triggered when the user tries to access a
   resouce or log on to the Service Provider application. A typical example is that of a browser trying to access a protected resource from the Service Provider.
 
-* ``TODO``: How does the auth flow work (see ./design.rst)
-* ``TODO``: [Everything we discuss in /how-to/single-sign-on/trouble-shooting.html, /how-to/single-sign-on/index.html]
-* ``TODO``: [Everything that comes to mind while writing this manual]
-
 (Definitons adapted from `collab.net <http://help.collab.net/index.jsp?topic=/teamforge178/action/saml.html>`_ )
-
-IdP management (in team settings or via Curl)
----------------------------------------------
-
-* ``TODO``: CRUD: Create, Read, Update, Delete in team-settings (some of it is not implemented, also document the :term:`Curl` way for everything?)
-* ``TODO``: Deletion is tricky, but solved: the rest api end-point fails if the :term:`IdP` to be deleted is still authenticating active users in the team; but if you move all those users to other IdPs, you can delete it.  
-* ``TODO``: There is also a `force` query parameter in the delete end-point that removes all dangling users instead of failing.  
-* ``TODO``: What's to be decided is how to add that to team settings. 
-* ``TODO``: Currently we need to fall back to the rest api for all this.
-
-
-Authentication
---------------
-
-* ``TODO``: This could be kind of the user's manual.
-* ``TODO``: Or a summary of the user's manual plus a link, if we have it elsewhere. 
-* ``TODO``: (``TODO``: talk to srikant and maybe astrid about the new documentation that's to replace support.wire.com, i heard rumors about that).
 
 Setting up SSO externally
 -------------------------
-
-``TODO``: Integrate https://support.wire.com/hc/en-us/articles/360001285718-Set-up-SSO-externally
 
 To set up :term:`SSO` for a given Wire installation, the Team owner/administrator must enable it.
 
@@ -203,11 +180,7 @@ We've put together guides for registering with different providers:
 
 As you do this, make sure you take note of your :term:`IdP` metadata, which you will need for the next step.
 
-TODO: Make sure each step explains about the :term:`IdP` metadata so this isn't confusing when getting here.
-
 Once you are finished with registering Wire to your :term:`IdP`, move on to the next step, setting up :term:`SSO` internally.
-
-TODO: This page is located in understand/, but it's really more of a how-to/ right? 
 
 Setting up SSO internally
 -------------------------
@@ -227,8 +200,6 @@ On Desktop:
 * Wire will now validate the document to set up the :term:`SAML` connection.
 * If the data is valid, you will return to the Settings page.
 * The page shows the information you need to log in with :term:`SSO`. Copy the login code or URL and send it to your team members or partners. For more information see: Logging in with :term:`SSO`.
-
-TODO: Screenshots.
 
 What to expect after :term:`SSO` is enabled: 
 
@@ -251,7 +222,7 @@ SCIM user provisioning
 Terminology and concepts
 ------------------------
 
-``TODO``: - :term:`SCIM` peer (equivalent to :term:`IdP`)
+* « :term:`SCIM` peer »: Here, the SCIM peer is the part of the Wire backend the Identity Provider (:term:`IdP`), for example the LDAP server, will reach to exchange (mass) information about users. For example, thie ldap-scim-bridge tool on github (https://github.com/wireapp/ldap-scim-bridge) talks to both the LDAP server and the SCIM peer (Wire), pulling user data from the LDAP server, and pushing it to the SCIM peer (that is, the SCIM interface of the Wire backend).
 
 SCIM peer management (in team settings or via Curl)
 ---------------------------------------------------
@@ -259,13 +230,16 @@ SCIM peer management (in team settings or via Curl)
 SCIM security and authentication
 ................................
 
-* ``TODO``: We're using a very basic variant of oauth that just contains a header with a bearer token in all :term:`SCIM` requests. 
-* ``TODO``: The token is created in team settings and added to your :term:`SCIM` peer somehow (see howtos or below (wherever we end up putting it) for Azure, :term:`Curl`).
+Wire uses a very basic variant of Oauth that contains a header with a bearer token in all :term:`SCIM` requests. 
+
+The token is created in team settings and added to your :term:`SCIM` peer ( How this is done varies depending on the setup, see howtos and below (for Azure, :term:`Curl`).
 
 Generating a SCIM token 
 .......................
 
-TODO: Notes from Lennart: In the current documentation I am missing the narrative. As a reader I would prefer a couple of sentences at the start explaining what the section is useful for. Example: it just says :term:`SCIM` peer mgmt, but when does the reader need this, and for what? Example 2: it says you need to provide a :term:`SCIM` token to your :term:`IdP` for user provisioning. I would like a sentence or two about how the :term:`IdP` uses the token and what info it conveys to the :term:`IdP`, and what the token contains for info.
+In order to be able to send SCIM requests that will be accepted by the SCIM peer, we first need to generate a SCIM token. This section explains how to do this.
+
+Once the token is generated, it should be noted/remembered, and it will be used in all subsequent SCIM uses/requests to authenticate the request as valid/authenticated.
 
 These are the steps to generate a new :term:`SCIM` token, which you will need to provide to your identity provider (:term:`IdP`), along with the target API URL, to enable :term:`SCIM` provisionning.
 

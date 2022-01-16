@@ -275,25 +275,8 @@ These are the steps to generate a new :term:`SCIM` token, which you will need to
 
 Tokens are now listed in this :term:`SCIM`-related area of the screen, you can generate up to 8 such tokens.
 
-``TODO``: Add arrows/red lines to the images for even more precise instructions.
-
-CRUD in team settings
-.....................
-
-``TODO``: Did we implement this fully? I think we may have:
-
-* ``TODO``: We don't need the U in CRUD since we can just delete-and-recreate; and
-* ``TODO``: We have just enough R for it to be secure (never expose the token after it's been handed over to the admin).
-
-Using SCIM with azure
----------------------
-
-``TODO``: We have a howto for :term:`SAML` i think we'll need another one for :term:`SCIM`.
-
 Using SCIM via Curl
 -------------------
-
-``TODO``: See `wireapp/wire-server/docs/reference/provisioning/` on github.
 
 You can use the ``:term:`Curl``` command line HTTP tool to access tho wire backend (in particular the ``SPAR`` service) through the :term:`SCIM` API. 
 
@@ -534,30 +517,3 @@ Delete user
    * https://github.com/wireapp/wire-server/blob/develop/docs/reference/provisioning/SCIM-token.md
    * https://github.com/wireapp/wire-server/blob/develop/docs/reference/provisioning/SCIM-via-Curl.md
    If you want to dive into the backend code, start `reading here in our backend <https://github.com/wireapp/wire-server/blob/develop/services/spar/src/Spar/SCIM.hs>`_ and `our hSCIM library <https://github.com/wireapp/hSCIM>`_.
-
-SCIM + SSO
-==========
-
-``TODO``: Using :term:`SAML` :term:`SSO` without :term:`SCIM` is deprecated:
-
-* ``TODO``: 1. :term:`SAML` does not have a good update / deprovisioning story
-* ``TODO``: 2. Presenting users with attributes is not implemented in spar, because:
-* ``TODO``: 3. The :term:`SAML` standard is very dated and has dubious security properties (``TODO``: dig up one of the many beautiful xml-dsig rants out there), should be considered legacy, and be used a little as possible.
-
-``TODO``: So the recommended setup is :term:`SAML` + :term:`SCIM`, and Oauth + :term:`SCIM` as soon as we have released the latter.
-
-Corner cases
-------------
-
-``TODO``: Why can't i disable :term:`SSO` once it's enabled? -> need implementing.  
-
-``TODO``: In order for this to work, we need to double-check that no :term:`SSO` users are still active in this team.
-
-``TODO``: Hundreds and hundreds of corner cases:
-
-* ``TODO``: You can't auto-provision users if :term:`SCIM` tokens exist.
-* ``TODO``: What happens if a user is created with :term:`SSO` auto-provisioning, then a :term:`SCIM` token is created, and the user is now under :term:`SCIM` management?  (*probably* all sound and good.)
-* ``TODO``: What happens if the last :term:`SCIM` token is removed, and users are still under :term:`SCIM` management?  (possibly a bug.)
-* ``TODO``: ...
-
-``TODO``: IDEA: This is the section that'll potentially be most valuable, but i think the way to proceed is to cover the general idea first, publish that, and then publish incremental progress on this advanced part of the manual as we make it.

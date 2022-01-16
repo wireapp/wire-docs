@@ -8,8 +8,6 @@ Introduction
 
 This page is intended as a manual for administrator users in need of setting up :term:`SSO` and provisionning users using :term:`SCIM` on their installation of Wire.
 
-TODO: Separate non-admin content into a different page for users only. Link to it here.
-
 Historically and by default, Wire's user authentication method is via phone or password. This has security implications and does not scale.
 
 Solution: :term:`SSO` with :term:`SAML`! `(Security Assertion Markup Language) <https://en.wikipedia.org/wiki/Security_Assertion_Markup_Language>`_
@@ -32,10 +30,7 @@ This page explains how to set up :term:`SCIM` and then use it.
 Definitions
 ===========
 
-These concepts need to be understood to use the present manual:
-
-TODO: Search-and-replace all terms from plain text to : term : ` TERM `
-TODO: Clean up the mess created by doing so.
+The following concepts need to be understood to use the present manual:
 
 .. glossary::
 
@@ -139,7 +134,6 @@ Here is what this looks from a user's perspective:
 * Click Log in.
 * Wire will load your company’s login page: Log in with your company credentials.
 
-TODO: Provide screenshots 
 
 SAML/SSO
 ========
@@ -147,7 +141,9 @@ SAML/SSO
 Introduction
 ------------
 
-TODO: Do SSO introduction
+SSO (Single Sign-On) is technology allowing users to sign into multiple services with a single identity provider/credential.
+
+For example, if a company already has SSO setup for some of their services, and they start using Wire, they can use Wire's SSO support to add Wire to the set of services their users will be able to sign into with their existing SSO credentials.
 
 Terminology and concepts
 ------------------------

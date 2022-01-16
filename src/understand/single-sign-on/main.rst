@@ -1,6 +1,4 @@
 
-``TODO``: Import or reference design.rst somehow.
-
 .. contents::
  
 Introduction
@@ -12,9 +10,9 @@ Historically and by default, Wire's user authentication method is via phone or p
 
 Solution: :term:`SSO` with :term:`SAML`! `(Security Assertion Markup Language) <https://en.wikipedia.org/wiki/Security_Assertion_Markup_Language>`_
 
-:term:`SSO` systems allow users to identify on multiple systems (including Wire once configured as such) using a single ID and password.
+:term:`SSO` systems allow users to identify on multiple systems (including Wire once configured as such) using a single ID and password.
 
-You can find some of the advantages of :term:`SSO` over more traditional schemes `here <https://en.wikipedia.org/wiki/Single_sign-on>`_.
+You can find some of the advantages of :term:`SSO` over more traditional schemes `here <https://en.wikipedia.org/wiki/Single_sign-on>`_.
 
 Also historically, wire has allowed team admins and owners to manage their users in the team settings app.  
 
@@ -119,7 +117,7 @@ User login for the first time with SSO
 :term:`SSO` allows users to register and log into Wire with their company credentials that they use on other software in their workplace. 
 No need to remember another password.
 
-When a team is set up on Wire, the administrators can provide users a login code or link that they can use to go straight to their company’s login page.
+When a team is set up on Wire, the administrators can provide users a login code or link that they can use to go straight to their company's login page.
 
 Here is what this looks from a user's perspective:
 
@@ -132,7 +130,7 @@ Here is what this looks from a user's perspective:
 * Click Enterprise Login.
 * A pop-up will appear. In the text field, paste or type the code your company gave you.
 * Click Log in.
-* Wire will load your company’s login page: Log in with your company credentials.
+* Wire will load your company's login page: Log in with your company credentials.
 
 
 SAML/SSO
@@ -328,7 +326,7 @@ This token will be good for 15 minutes; after that, just repeat the command abov
 .. note::
     SCIM requests are authenticated with a SCIM token, see below. SCIM tokens and Wire tokens are different things. 
     
-    A Wire token is necessary to get a SCIM token. SCIM tokens do not expire, but need to be deleted explicitly.
+    A Wire token is necessary to get a SCIM token. SCIM tokens do not expire, but need to be deleted explicitly.
 
 You can test that you are logged in with the following command: 
 
@@ -454,7 +452,7 @@ You can create a user using the following command:
      $WIRE_BACKEND/scim/v2/Users)
     export STORED_USER_ID=$(echo $STORED_USER | jq -r .id)
 
-Note that ``$SCIM_USER`` is in the JSON format and is declared before running this commend as described in the section above.
+Note that ``$SCIM_USER`` is in the JSON format and is declared before running this commend as described in the section above.
    
 Get a specific user
 ~~~~~~~~~~~~~~~~~~~

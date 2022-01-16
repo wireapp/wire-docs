@@ -51,7 +51,7 @@ The following concepts need to be understood to use the present manual:
 
    SAML
 
-       Security Assertion Markup Language (:term:`SAML`, pronounced SAM-el, /ˈsæməl/) is an open standard for exchanging authentication and authorization data between parties, in particular, between an identity provider and a service provider. :term:`SAML` is an XML-based markup language for security assertions (statements that service providers use to make access-control decisions). :term:`SAML` is also:
+       Security Assertion Markup Language (:term:`SAML`, pronounced SAM-el, /'sæməl/) is an open standard for exchanging authentication and authorization data between parties, in particular, between an identity provider and a service provider. :term:`SAML` is an XML-based markup language for security assertions (statements that service providers use to make access-control decisions). :term:`SAML` is also:
     
        * A set of XML-based protocol messages
        * A set of protocol message bindings
@@ -108,7 +108,7 @@ You're looking at the administrator's manual for this module.
 .. note::
     Note that it is recommended to use both :term:`SSO` and :term:`SCIM` (as opposed to just :term:`SSO` alone). 
     The reason is if you only use :term:`SSO`, but do not configure/implement :term:`SCIM`, you will experience reduced functionality.
-    In particular, without :term:`SCIM` all Wire users will be named according their e-mail address and won’t have any rich profiles.
+    In particular, without :term:`SCIM` all Wire users will be named according their e-mail address and won't have any rich profiles.
     See below in the :term:`SCIM` section for a more detailled explanation.
 
 User login for the first time with SSO
@@ -183,7 +183,7 @@ Once you are finished with registering Wire to your :term:`IdP`, move on to the 
 Setting up SSO internally
 -------------------------
 
-Now that you’ve registered Wire with your identity provider (:term:`IdP`), you can enable :term:`SSO` for your team on Wire.
+Now that you've registered Wire with your identity provider (:term:`IdP`), you can enable :term:`SSO` for your team on Wire.
 
 On Desktop:
 

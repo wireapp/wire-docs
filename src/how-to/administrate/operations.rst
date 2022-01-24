@@ -25,13 +25,13 @@ First, `check the health <operations.html#health-checks>`__ of the services.
 
 Second, reboot the services:
 
-.. code:: sh 
+.. code:: sh
 
   ssh -t <ip of minio node> sudo reboot
 
 Third, wait until the service is up again by trying to connect to it via SSH :
 
-.. code:: sh 
+.. code:: sh
 
   ssh -o 'ConnectionAttempts 3600' <ip of minio node> exit
 
@@ -67,19 +67,19 @@ In short, the procedure is essentially:
 
 First, identify the name of the node you wish to drain. You can list all of the nodes in your cluster with
 
-.. code:: sh 
+.. code:: sh
 
   kubectl get nodes
 
 Next, tell Kubernetes to drain the node:
 
-.. code:: sh 
+.. code:: sh
 
   kubectl drain <node name>
 
 Once it returns (without giving an error), you can power down the node (or equivalently, if on a cloud platform, delete the virtual machine backing the node). If you leave the node in the cluster during the maintenance operation, you need to run
 
-.. code:: sh 
+.. code:: sh
 
   kubectl uncordon <node name>
 

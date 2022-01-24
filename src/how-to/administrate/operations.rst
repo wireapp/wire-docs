@@ -85,3 +85,60 @@ Once it returns (without giving an error), you can power down the node (or equiv
 
 afterwards to tell Kubernetes that it can resume scheduling new pods onto the node.
 
+Understand release tags
+-----------------------
+
+We have two major release tags that you sometimes want to map on each other: *github*, and *helm chart*.
+
+Github have a tag of the form `vYYYY-MM-DD`, and the release notes and (some build artefacts) can be found on github, eg., `here <https://github.com/wireapp/wire-server/releases/v2022-01-18>`__.  Helm chart tags have the form `N.NNN.0`.  The minor version `0` is for the development branch; non-zero values refer to unreleased intermediate states.
+
+On the command line
+~~~~~~~~~~~~~~~~~~~
+
+You can find the github tag for a helm chart tag like this:
+
+.. code:: sh
+
+  git tag --points-at v2022-01-18 | sort
+
+...  and the other way around like this:
+
+.. code:: sh
+
+  git tag --points-at chart=2.122.0,image=2.122.0 | sort
+
+Note that the actual tag has the form `chart=<release-tag>,image=<release-tag>`.
+
+Unfortunately, older releases may have more helm chart tags; you need to find the largest number that has the form `N.NNN.0` from the list yourself.
+
+A list of all releases can be produced like this:
+
+.. code:: sh
+
+  git log --decorate --first-parent origin/master
+
+If you want to find the
+
+In the github UI
+~~~~~~~~~~~~~~~~
+
+Consult `the changelog
+<https://github.com/wireapp/wire-server/blob/develop/CHANGELOG.md>`__
+to find the github tag of the release you're interested in (say,
+v2022-01-18).
+
+Visit `the release notes of that release
+<https://github.com/wireapp/wire-server/releases/v2022-01-18>`__.
+Click on the commit hash:
+
+.. image:: operations/fig1.png
+
+Click on the 3 dots:
+
+.. image:: operations/fig2.png
+
+Now you can see a (possibly rather long) list of tags, some of then
+have the form `chart=N.NNN.0,image=N.NNN.0`.  Pick the one with the
+largest number.
+
+.. image:: operations/fig3.png

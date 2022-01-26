@@ -21,9 +21,9 @@ Also historically, wire has allowed team admins and owners to manage their users
 
 This does not scale as it requires a lot of manual labor for each user.
 
-The solution we offer to solve this issue is implementing :term:`SCIM` `(System for Cross-domain Identity Management) <https://en.wikipedia.org/wiki/System_for_Cross-domain_Identity_Management>`_ (what's this?)
+The solution we offer to solve this issue is implementing :term:`SCIM` `(System for Cross-domain Identity Management) <https://en.wikipedia.org/wiki/System_for_Cross-domain_Identity_Management>`_
 
-:term:`SCIM` is an interface that allows both software (for example Active Directory) and custom scripts to manage Identities (users) in "bulk".
+:term:`SCIM` is an interface that allows both software (for example Active Directory) and custom scripts to manage Identities (users) in bulk.
 
 This page explains how to set up :term:`SCIM` and then use it.
 
@@ -42,7 +42,7 @@ The following concepts need to be understood to use the present manual:
 
        See: `System for Cross-domain Identity Management at Wikipedia <https://en.wikipedia.org/wiki/System_for_Cross-domain_Identity_Management>`_
 
-       In the context of Wire, SCIM is the interface offered by the Wire service (in particular the SPAR service) that allows for single or mass automated addition/removal of user accounts.
+       In the context of Wire, SCIM is the interface offered by the Wire service (in particular the spar service) that allows for single or mass automated addition/removal of user accounts.
 
    SSO
 
@@ -64,7 +64,7 @@ The following concepts need to be understood to use the present manual:
 
        See: `:term:`SAML` at Wikipedia <https://en.wikipedia.org/wiki/Security_Assertion_Markup_Language>`_
 
-       In the context of Wire, SAML is the standard/protocol used by the Wire services (in particular the SPAR service) to provide the Single Sign On feature.
+       In the context of Wire, SAML is the standard/protocol used by the Wire services (in particular the spar service) to provide the Single Sign On feature.
 
    IdP
 
@@ -97,9 +97,9 @@ The following concepts need to be understood to use the present manual:
 
        The Wire backend software stack is composed of different services, `running as pods </overview.html#focus-on-pods>`__ in a kubernetes cluster.
 
-       One of those pods is the "SPAR" service. That service/pod is dedicated to the providing :term:`SSO` (using :term:`SAML`) and :term:`SCIM` services. This page is the manual for this service.
+       One of those pods is the "spar" service. That service/pod is dedicated to the providing :term:`SSO` (using :term:`SAML`) and :term:`SCIM` services. This page is the manual for this service.
 
-       In the context of :term:`SCIM`, Wire's SPAR service is the `Service Provider<https://en.wikipedia.org/wiki/Service_provider_(SAML)>`__ that Identity Management Software
+       In the context of :term:`SCIM`, Wire's spar service is the `Service Provider<https://en.wikipedia.org/wiki/Service_provider_(SAML)>`__ that Identity Management Software
        (for example Okta, Ping Identity, SailPoint, Technology Nexus etc) uses for user account provisioning and deprovisioning.
 
 
@@ -279,7 +279,7 @@ Tokens are now listed in this :term:`SCIM`-related area of the screen, you can g
 Using SCIM via Curl
 ^^^^^^^^^^^^^^^^^^^
 
-You can use the ``:term:`Curl``` command line HTTP tool to access tho wire backend (in particular the ``SPAR`` service) through the :term:`SCIM` API.
+You can use the ``:term:`Curl``` command line HTTP tool to access tho wire backend (in particular the ``spar`` service) through the :term:`SCIM` API.
 
 This can be helpful both to perform single operations manually, and as a tool to learn about the :term:`SCIM` API itself.
 

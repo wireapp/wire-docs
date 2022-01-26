@@ -453,16 +453,6 @@ Note that ``$SCIM_USER`` is in the JSON format and is declared before running th
       --header 'Content-Type: application/json;charset=utf-8' \
       $WIRE_BACKEND/scim/v2/Users/$STORED_USER_ID
 
-**Get all users**
-
-.. code-block:: bash
-   :linenos:
-
-    curl -X GET \
-      --header "Authorization: Bearer $SCIM_TOKEN" \
-      --header 'Content-Type: application/json;charset=utf-8' \
-    $WIRE_BACKEND/scim/v2/Users/
-
 **Update a specific user**
 
 For each put request, you need to provide the full json object.  All omitted fields will be set to ``null``.  (If you do not have an up-to-date user present, just ``GET`` one right before the ``PUT``.)

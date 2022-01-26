@@ -155,7 +155,7 @@ Terminology and concepts
 * Service Provider-initiated Authentication Flow: This describes the SAML authentication flow initiated by the Service Provider. The authentication process from the SP is triggered when the user tries to access a
   resouce or log on to the Service Provider application. A typical example is that of a browser trying to access a protected resource from the Service Provider.
 
-(Definitons adapted from `collab.net <http://help.collab.net/index.jsp?topic=/teamforge178/action/saml.html>`_ )
+(Definitons adapted from `collab.net <http://help.collab.net/index.jsp?topic=/teamforge178/action/saml.html>`_)
 
 Setting up SSO externally
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -221,7 +221,7 @@ SCIM security and authentication
 
 Wire uses a very basic variant of Oauth that contains a header with a bearer token in all :term:`SCIM` requests.
 
-The token is created in team settings and added to your :term:`SCIM` peer ( How this is done varies depending on the setup, see howtos and below (for Azure, :term:`Curl`).
+The token is created in team settings and added to your :term:`SCIM` peer (How this is done varies depending on the setup, see howtos and below (for Azure, :term:`Curl`).
 
 Generating a SCIM token
 '''''''''''''''''''''''
@@ -232,7 +232,7 @@ Once the token is generated, it should be noted/remembered, and it will be used 
 
 These are the steps to generate a new :term:`SCIM` token, which you will need to provide to your identity provider (:term:`IdP`), along with the target API URL, to enable :term:`SCIM` provisionning.
 
-* Step 1: Go to https://teams.wire.com/settings ( Here replace "wire.com" with your own domain if you have an on-premise installation of Wire ).
+* Step 1: Go to https://teams.wire.com/settings (Here replace "wire.com" with your own domain if you have an on-premise installation of Wire).
 
 .. image:: token-step-1.png
    :align: center

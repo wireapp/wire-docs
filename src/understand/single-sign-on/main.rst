@@ -17,7 +17,7 @@ Solution: :term:`SSO` with :term:`SAML`! `(Security Assertion Markup Language) <
 
 You can find some of the advantages of :term:`SSO` over more traditional schemes `here <https://en.wikipedia.org/wiki/Single_sign-on>`_.
 
-Also historically, wire has allowed team admins and owners to manage their users in the team settings app.
+Also historically, wire has allowed team admins and owners to manage their users in the team management app.
 
 This does not scale as it requires a lot of manual labor for each user.
 
@@ -54,7 +54,7 @@ The following concepts need to be understood to use the present manual:
 
        Single sign-on (:term:`SSO`) is an authentication scheme that allows a user to log in with a single ID and password to any of several organizationally related, yet independent, software systems.
 
-       True single sign-on allows the user to log in once and access services without re-entering authentication factors.
+       True single sign-on allows the user to log in once and access different, independent services without re-entering authentication factors.
 
        See: `Single-Sign-On at Wikipedia <https://en.wikipedia.org/wiki/Single_sign-on>`_
 
@@ -74,15 +74,7 @@ The following concepts need to be understood to use the present manual:
 
    IdP
 
-       An identity provider (abbreviated :term:`IdP` or :term:`IdP`) is a system entity that creates, maintains, and manages identity information for principals and also provides authentication services to relying applications within a federation or distributed network.[1][2]
-
-       Identity providers offer user authentication as a service. Relying party applications, such as web applications, outsource the user authentication step to a trusted identity provider. Such a relying party application is said to be federated, that is, it consumes federated identity.
-
-       An identity provider is “a trusted provider that lets you use single sign-on (:term:`SSO`) to access other websites.”[3] :term:`SSO` enhances usability by reducing password fatigue. It also provides better security by decreasing the potential attack surface.
-
-       Identity providers can facilitate connections between cloud computing resources and users, thus decreasing the need for users to re-authenticate when using mobile and roaming applications.[4]
-
-       See: `IdP at Wikipedia <https://en.wikipedia.org/wiki/Identity_provider>`__
+       In the context of Wire, an identity provider (abbreviated :term:`IdP` or :term:`IdP`) is a service that provides SAML single sign-on (:term:`SSO`) credentials that give users access to Wire.
 
    Curl
 
@@ -201,32 +193,27 @@ Anyone with a login through your :term:`SAML` identity provider (:term:`IdP`) an
 
 Take care to share the code only with members of your team.
 
-If you haven't set up :term:`SCIM` (`we recommend you do <#introduction>`_), your team members can create accounts on Wire using :term:`SSO` simply by logging in, and will appear on the People tab of the team settings page.
+If you haven't set up :term:`SCIM` (`we recommend you do <#introduction>`_), your team members can create accounts on Wire using :term:`SSO` simply by logging in, and will appear on the People tab of the team management page.
 
 If team members already have Wire accounts, use :term:`SCIM` to associate them with the :term:`SAML` credentials.  If you make a mistake here, you may end up with several accounts for the same person.
 
 SCIM user provisioning
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Terminology and concepts
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-* :term:`SCIM` peer: Here, the SCIM peer is the part of the Wire backend the Identity Provider (:term:`IdP`), for example the LDAP server, will reach to exchange (mass) information about users. For example, thie ldap-scim-bridge tool on github (https://github.com/wireapp/ldap-scim-bridge) talks to both the LDAP server and the SCIM peer (Wire), pulling user data from the LDAP server, and pushing it to the SCIM peer (that is, the SCIM interface of the Wire backend).
-
-SCIM peer management (in team settings or via Curl)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+SCIM management in Wire (in Team Management)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 SCIM security and authentication
 ''''''''''''''''''''''''''''''''
 
-Wire uses a very basic variant of Oauth that contains a header with a bearer token in all :term:`SCIM` requests.
+Wire uses a very basic variant of oauth, where a *bearer token* is presented to the server in header with all :term:`SCIM` requests.
 
-The token is created in team settings and added to your :term:`SCIM` peer (How this is done varies depending on the setup, see howtos and below (for Azure, :term:`Curl`).
+You can create such bearer tokens in team management and copy them from there into your the dashboard of your SCIM data source.
 
 Generating a SCIM token
 '''''''''''''''''''''''
 
-In order to be able to send SCIM requests that will be accepted by the SCIM peer, we first need to generate a SCIM token. This section explains how to do this.
+In order to be able to send SCIM requests to Wire, we first need to generate a SCIM token. This section explains how to do this.
 
 Once the token is generated, it should be noted/remembered, and it will be used in all subsequent SCIM uses/requests to authenticate the request as valid/authenticated.
 

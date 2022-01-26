@@ -90,7 +90,7 @@ The following concepts need to be understood to use the present manual:
 
        Running this command in a terminal would cause the :term:`Curl` command to access this URL, and the API at that URL would execute the requested action.
 
-       -- `curl at Wikipedia <https://en.wikipedia.org/wiki/Curl>`__
+       See: `curl at Wikipedia <https://en.wikipedia.org/wiki/Curl>`__
 
 
    Spar

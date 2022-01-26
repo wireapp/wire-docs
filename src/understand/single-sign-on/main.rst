@@ -234,32 +234,32 @@ These are the steps to generate a new :term:`SCIM` token, which you will need to
 
 * Step 1: Go to https://teams.wire.com/settings (Here replace "wire.com" with your own domain if you have an on-premise installation of Wire).
 
-.. image:: token-step-1.png
+.. image:: token-step-01.png
    :align: center
 
-* Step 2: In the left menu, go to "Customization"
+* Step 2: In the left menu, go to "Customization".
 
-.. image:: token-step-2.png
+.. image:: token-step-02.png
    :align: center
 
-* Step 3: Go to "Automated User Management (:term:`SCIM`)"
+* Step 3: Go to "Automated User Management (:term:`SCIM`)" and click the "down" to expand
 
-.. image:: token-step-3.png
+.. image:: token-step-03.png
    :align: center
 
-* Step 4: Click the "down" arrow to expand
+* Step 4: Click "Generate token", if your password is requested, enter it.
 
-.. image:: token-step-4.png
+.. image:: token-step-04.png
    :align: center
 
-* Step 5: Click "Generate token", if your password is requested, enter it.
+* Step 5: Once the token is generated, copy it into your clipboard and store it somewhere safe (eg., in the dashboard of your SCIM data source).
 
-.. image:: token-step-5.png
+.. image:: token-step-05.png
    :align: center
 
-* Step 6: A token is generated, you can copy it
+* Step 6: You're done!  You can now view token information, delete the token, or create more tokens should you need them.
 
-.. image:: token-step-6.png
+.. image:: token-step-06.png
    :align: center
 
 Tokens are now listed in this :term:`SCIM`-related area of the screen, you can generate up to 8 such tokens.

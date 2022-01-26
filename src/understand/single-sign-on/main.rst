@@ -1,6 +1,6 @@
 
 .. contents::
- 
+
 Introduction
 ============
 
@@ -14,7 +14,7 @@ Solution: :term:`SSO` with :term:`SAML`! `(Security Assertion Markup Language) <
 
 You can find some of the advantages of :term:`SSO` over more traditional schemes `here <https://en.wikipedia.org/wiki/Single_sign-on>`_.
 
-Also historically, wire has allowed team admins and owners to manage their users in the team settings app.  
+Also historically, wire has allowed team admins and owners to manage their users in the team settings app.
 
 This does not scale as it requires a lot of manual labor for each user.
 
@@ -35,30 +35,30 @@ The following concepts need to be understood to use the present manual:
    SCIM
        System for Cross-domain Identity Management (:term:`SCIM`) is a standard for automating the exchange of user identity information between identity domains, or IT systems.
 
-       One example might be that as a company onboards new employees and separates from existing employees, they are added and removed from the company's electronic employee directory. :term:`SCIM` could be used to automatically add/delete (or, provision/de-provision) accounts for those users in external systems such as G Suite, Office 365, or Salesforce.com. Then, a new user account would exist in the external systems for each new employee, and the user accounts for former employees might no longer exist in those systems.   
-      
-       See: `System for Cross-domain Identity Management at Wikipedia <https://en.wikipedia.org/wiki/System_for_Cross-domain_Identity_Management>`_ 
+       One example might be that as a company onboards new employees and separates from existing employees, they are added and removed from the company's electronic employee directory. :term:`SCIM` could be used to automatically add/delete (or, provision/de-provision) accounts for those users in external systems such as G Suite, Office 365, or Salesforce.com. Then, a new user account would exist in the external systems for each new employee, and the user accounts for former employees might no longer exist in those systems.
+
+       See: `System for Cross-domain Identity Management at Wikipedia <https://en.wikipedia.org/wiki/System_for_Cross-domain_Identity_Management>`_
 
        In the context of Wire, SCIM is the interface offered by the Wire service (in particular the SPAR service) that allows for single or mass automated addition/removal of user accounts.
-      
+
    SSO
-      
-       Single sign-on (:term:`SSO`) is an authentication scheme that allows a user to log in with a single ID and password to any of several related, yet independent, software systems. 
-      
-       True single sign-on allows the user to log in once and access services without re-entering authentication factors. 
-      
-       See: `Single-Sign-On at Wikipedia <https://en.wikipedia.org/wiki/Single_sign-on>`_ 
+
+       Single sign-on (:term:`SSO`) is an authentication scheme that allows a user to log in with a single ID and password to any of several related, yet independent, software systems.
+
+       True single sign-on allows the user to log in once and access services without re-entering authentication factors.
+
+       See: `Single-Sign-On at Wikipedia <https://en.wikipedia.org/wiki/Single_sign-on>`_
 
    SAML
 
        Security Assertion Markup Language (:term:`SAML`, pronounced SAM-el, /'sæməl/) is an open standard for exchanging authentication and authorization data between parties, in particular, between an identity provider and a service provider. :term:`SAML` is an XML-based markup language for security assertions (statements that service providers use to make access-control decisions). :term:`SAML` is also:
-    
+
        * A set of XML-based protocol messages
        * A set of protocol message bindings
        * A set of profiles (utilizing all of the above)
-    
+
        An important use case that :term:`SAML` addresses is web-browser `single sign-on (:term:`SSO`) <https://en.wikipedia.org/wiki/Single_sign-on>`_ . Single sign-on is relatively easy to accomplish within a security domain (using cookies, for example) but extending :term:`SSO` across security domains is more difficult and resulted in the proliferation of non-interoperable proprietary technologies. The :term:`SAML` Web Browser `:term:`SSO` <https://en.wikipedia.org/wiki/Single_sign-on>`_ profile was specified and standardized to promote interoperability.
-    
+
        See: `:term:`SAML` at Wikipedia <https://en.wikipedia.org/wiki/Security_Assertion_Markup_Language>`_
 
        In the context of Wire, SAML is the standard/protocol used by the Wire services (in particular the SPAR service) to provide the Single Sign On feature.
@@ -66,37 +66,37 @@ The following concepts need to be understood to use the present manual:
    IdP
 
        An identity provider (abbreviated :term:`IdP` or :term:`IdP`) is a system entity that creates, maintains, and manages identity information for principals and also provides authentication services to relying applications within a federation or distributed network.[1][2]
-   
+
        Identity providers offer user authentication as a service. Relying party applications, such as web applications, outsource the user authentication step to a trusted identity provider. Such a relying party application is said to be federated, that is, it consumes federated identity.
-   
+
        An identity provider is “a trusted provider that lets you use single sign-on (:term:`SSO`) to access other websites.”[3] :term:`SSO` enhances usability by reducing password fatigue. It also provides better security by decreasing the potential attack surface.
-   
-       Identity providers can facilitate connections between cloud computing resources and users, thus decreasing the need for users to re-authenticate when using mobile and roaming applications.[4] 
-   
+
+       Identity providers can facilitate connections between cloud computing resources and users, thus decreasing the need for users to re-authenticate when using mobile and roaming applications.[4]
+
        See: `IdP at Wikipedia <https://en.wikipedia.org/wiki/Identity_provider>`__
 
    Curl
 
        :term:`Curl` (pronounced ":term:`Curl`") is a command line tool used to download files over the HTTP (web) protocol. For example, ``:term:`Curl` http://wire.com`` will download the ``wire.com`` web page.
-   
-       In this manual, it is used to contact API (Application Programming Interface) endpoints manually, where those endpoints would normally be accessed by code or other software. 
-   
+
+       In this manual, it is used to contact API (Application Programming Interface) endpoints manually, where those endpoints would normally be accessed by code or other software.
+
        This can be used either for illustrative purposes (to "show" how the endpoints can be used) or to allow the manual execution of some simple tasks.
-   
-       For example (not a real endpoint) ``:term:`Curl` http://api.wire.com/delete_user/thomas`` would (schematically) execute the :term:`Curl` command, which would contact the wire.com API and delete the user named "thomas". 
-   
+
+       For example (not a real endpoint) ``:term:`Curl` http://api.wire.com/delete_user/thomas`` would (schematically) execute the :term:`Curl` command, which would contact the wire.com API and delete the user named "thomas".
+
        Running this command in a terminal would cause the ``:term:`Curl``` command to access this URL, and the API at that URL would execute the requested action.
-   
+
        -- `:term:`Curl` at Wikipedia <https://en.wikipedia.org/wiki/Curl>`__
 
 
    Spar
 
-       The Wire backend software stack is composed of different services, `running as pods </overview.html#focus-on-pods>`__ in a kubernetes cluster. 
-   
+       The Wire backend software stack is composed of different services, `running as pods </overview.html#focus-on-pods>`__ in a kubernetes cluster.
+
        One of those pods is the "SPAR" service. That service/pod is dedicated to the providing :term:`SSO` (using :term:`SAML`) and :term:`SCIM` services. This page is the manual for this service.
 
-       In the context of :term:`SCIM`, Wire's SPAR service is the `Service Provider<https://en.wikipedia.org/wiki/Service_provider_(SAML)>`__ that Identity Management Software 
+       In the context of :term:`SCIM`, Wire's SPAR service is the `Service Provider<https://en.wikipedia.org/wiki/Service_provider_(SAML)>`__ that Identity Management Software
        (for example Okta, Ping Identity, SailPoint, Technology Nexus etc) uses for user account provisioning and deprovisioning.
 
 
@@ -106,7 +106,7 @@ Wire comes with a backend module that provides :term:`SAML` single sign on and :
 You're looking at the administrator's manual for this module.
 
 .. note::
-    Note that it is recommended to use both :term:`SSO` and :term:`SCIM` (as opposed to just :term:`SSO` alone). 
+    Note that it is recommended to use both :term:`SSO` and :term:`SCIM` (as opposed to just :term:`SSO` alone).
     The reason is if you only use :term:`SSO`, but do not configure/implement :term:`SCIM`, you will experience reduced functionality.
     In particular, without :term:`SCIM` all Wire users will be named according their e-mail address and won't have any rich profiles.
     See below in the :term:`SCIM` section for a more detailled explanation.
@@ -114,7 +114,7 @@ You're looking at the administrator's manual for this module.
 User login for the first time with SSO
 ======================================
 
-:term:`SSO` allows users to register and log into Wire with their company credentials that they use on other software in their workplace. 
+:term:`SSO` allows users to register and log into Wire with their company credentials that they use on other software in their workplace.
 No need to remember another password.
 
 When a team is set up on Wire, the administrators can provide users a login code or link that they can use to go straight to their company's login page.
@@ -146,11 +146,11 @@ For example, if a company already has SSO setup for some of their services, and 
 Terminology and concepts
 ------------------------
 
-* End User / Browser: The end user is generally a human, an Application (Wire Client) or a browser (agent) who accesses the Service Provider to get access to a service or a protected resource. 
+* End User / Browser: The end user is generally a human, an Application (Wire Client) or a browser (agent) who accesses the Service Provider to get access to a service or a protected resource.
   The browser carrries out all the redirections from the SP to the IdP and vice versa.
-* Service Provider (SP): The entity (here Wire software) that provides its protected resource when an end user tries to access this resource. To accomplish the SAML based SSO authentication, the Service Provider 
+* Service Provider (SP): The entity (here Wire software) that provides its protected resource when an end user tries to access this resource. To accomplish the SAML based SSO authentication, the Service Provider
   must have the Identity Provider's metadata.
-* Identity Provider (IdP): Defines the entity that provides the user identities, including the ability to authenticate a user to get access to a protected resource / application from a Service Provider. To accomplish 
+* Identity Provider (IdP): Defines the entity that provides the user identities, including the ability to authenticate a user to get access to a protected resource / application from a Service Provider. To accomplish
   the SAML based SSO authentication, the IdP must have the Service Provider's metadata.
 * SAML Request: This is the authentication request generated by the Service Provider to request an authentication from the Identity Provider for verifying the user's identity.
 * SAML Response: The SAML Response contains the actual assertion of the authenticated user and is generated by the Identity Provider. The SAML Response also consists of additional information such as user profile
@@ -199,15 +199,15 @@ On Desktop:
 * If the data is valid, you will return to the Settings page.
 * The page shows the information you need to log in with :term:`SSO`. Copy the login code or URL and send it to your team members or partners. For more information see: Logging in with :term:`SSO`.
 
-What to expect after :term:`SSO` is enabled: 
+What to expect after :term:`SSO` is enabled:
 
-Anyone with a login through your :term:`SAML` identity provider (:term:`IdP`) and with access to the Wire app will be able to register and log in to your team using the :term:`SSO` Login URL and/or Code. 
+Anyone with a login through your :term:`SAML` identity provider (:term:`IdP`) and with access to the Wire app will be able to register and log in to your team using the :term:`SSO` Login URL and/or Code.
 
 Take care to share the code only with members of your team.
 
 When your team members create accounts on Wire using :term:`SSO`, they will appear on the People tab of the team settings page.
 
-If team members already have Wire accounts, they will need to create new ones by registering with the :term:`SSO` Login URL and/or Code. 
+If team members already have Wire accounts, they will need to create new ones by registering with the :term:`SSO` Login URL and/or Code.
 
 Existing Wire accounts cannot be bound to :term:`SSO` logins.
 
@@ -228,11 +228,11 @@ SCIM peer management (in team settings or via Curl)
 SCIM security and authentication
 ................................
 
-Wire uses a very basic variant of Oauth that contains a header with a bearer token in all :term:`SCIM` requests. 
+Wire uses a very basic variant of Oauth that contains a header with a bearer token in all :term:`SCIM` requests.
 
 The token is created in team settings and added to your :term:`SCIM` peer ( How this is done varies depending on the setup, see howtos and below (for Azure, :term:`Curl`).
 
-Generating a SCIM token 
+Generating a SCIM token
 .......................
 
 In order to be able to send SCIM requests that will be accepted by the SCIM peer, we first need to generate a SCIM token. This section explains how to do this.
@@ -276,11 +276,11 @@ Tokens are now listed in this :term:`SCIM`-related area of the screen, you can g
 Using SCIM via Curl
 -------------------
 
-You can use the ``:term:`Curl``` command line HTTP tool to access tho wire backend (in particular the ``SPAR`` service) through the :term:`SCIM` API. 
+You can use the ``:term:`Curl``` command line HTTP tool to access tho wire backend (in particular the ``SPAR`` service) through the :term:`SCIM` API.
 
 This can be helpful both to perform single operations manually, and as a tool to learn about the :term:`SCIM` API itself.
 
-Creating a SCIM token 
+Creating a SCIM token
 .....................
 
 Before we can send commands to the :term:`SCIM` API/Spar service, we need to be authenticated. This is done through the creation of a :term:`SCIM` token.
@@ -294,23 +294,23 @@ First, we need a little shell environment. Run the following in your terminal/sh
     export WIRE_ADMIN=...
     export WIRE_PASSWD=...
 
-Wire's SCIM API currently supports a variant of HTTP basic auth.  
+Wire's SCIM API currently supports a variant of HTTP basic auth.
 
-In order to create a token in your team, you need to authenticate using your team admin credentials.  
+In order to create a token in your team, you need to authenticate using your team admin credentials.
 
 The way this works behind the scenes in your browser or cell phone, and in plain sight if you want to use curl, is you need to get a Wire token.
 
-First install the ``jq`` command (https://stedolan.github.io/jq/): 
+First install the ``jq`` command (https://stedolan.github.io/jq/):
 
 .. code-block:: bash
 
     sudo apt install jq
 
-.. note:: 
+.. note::
 
    If you don't want to install ``jq``, you can just call the ``curl`` command and copy the access token into the shell variable manually.
 
-Then run: 
+Then run:
 
 .. code-block:: bash
     :linenos:
@@ -324,11 +324,11 @@ Then run:
 This token will be good for 15 minutes; after that, just repeat the command above to get a new token.
 
 .. note::
-    SCIM requests are authenticated with a SCIM token, see below. SCIM tokens and Wire tokens are different things. 
-    
+    SCIM requests are authenticated with a SCIM token, see below. SCIM tokens and Wire tokens are different things.
+
     A Wire token is necessary to get a SCIM token. SCIM tokens do not expire, but need to be deleted explicitly.
 
-You can test that you are logged in with the following command: 
+You can test that you are logged in with the following command:
 
 .. code-block:: bash
 
@@ -349,7 +349,7 @@ Now you are ready to create a SCIM token:
 
 The SCIM token is now contained in the ``SCIM_TOKEN`` environment variable.
 
-You can look it up again with: 
+You can look it up again with:
 
 .. code-block:: bash
     :linenos:
@@ -402,9 +402,9 @@ You can store it in a variable using this sort of command:
 The ``externalId`` is used to construct a SAML identity.  Two cases are
 currently supported:
 
-1. ``externalId`` contains a valid email address.  
+1. ``externalId`` contains a valid email address.
    The SAML ``NameID`` has the form ``<NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress">me@example.com</NameID>``.
-2. ``externalId`` contains anything that is *not* an email address.  
+2. ``externalId`` contains anything that is *not* an email address.
    The SAML ``NameID`` has the form ``<NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">...</NameID>``.
 
 .. note::
@@ -453,7 +453,7 @@ You can create a user using the following command:
     export STORED_USER_ID=$(echo $STORED_USER | jq -r .id)
 
 Note that ``$SCIM_USER`` is in the JSON format and is declared before running this commend as described in the section above.
-   
+
 Get a specific user
 ~~~~~~~~~~~~~~~~~~~
 
@@ -511,7 +511,7 @@ Delete user
       $WIRE_BACKEND/scim/v2/Users/$STORED_USER_ID
 
 .. note::
-   To learn more, read the original Curl/SCIM documentation at: 
+   To learn more, read the original Curl/SCIM documentation at:
    * https://github.com/wireapp/wire-server/blob/develop/docs/reference/provisioning/SCIM-token.md
    * https://github.com/wireapp/wire-server/blob/develop/docs/reference/provisioning/SCIM-via-Curl.md
    If you want to dive into the backend code, start `reading here in our backend <https://github.com/wireapp/wire-server/blob/develop/services/spar/src/Spar/SCIM.hs>`_ and `our hSCIM library <https://github.com/wireapp/hSCIM>`_.

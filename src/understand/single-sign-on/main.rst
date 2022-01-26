@@ -60,9 +60,9 @@ The following concepts need to be understood to use the present manual:
        * A set of protocol message bindings
        * A set of profiles (utilizing all of the above)
 
-       An important use case that :term:`SAML` addresses is web-browser `single sign-on (:term:`SSO`) <https://en.wikipedia.org/wiki/Single_sign-on>`_ . Single sign-on is relatively easy to accomplish within a security domain (using cookies, for example) but extending :term:`SSO` across security domains is more difficult and resulted in the proliferation of non-interoperable proprietary technologies. The :term:`SAML` Web Browser `:term:`SSO` <https://en.wikipedia.org/wiki/Single_sign-on>`_ profile was specified and standardized to promote interoperability.
+       An important use case that :term:`SAML` addresses is web-browser `single sign-on (SSO) <https://en.wikipedia.org/wiki/Single_sign-on>`_ . Single sign-on is relatively easy to accomplish within a security domain (using cookies, for example) but extending :term:`SSO` across security domains is more difficult and resulted in the proliferation of non-interoperable proprietary technologies. The `SAML Web Browser SSO <https://en.wikipedia.org/wiki/Single_sign-on>`_ profile was specified and standardized to promote interoperability.
 
-       See: `:term:`SAML` at Wikipedia <https://en.wikipedia.org/wiki/Security_Assertion_Markup_Language>`_
+       See: `SAML at Wikipedia <https://en.wikipedia.org/wiki/Security_Assertion_Markup_Language>`_
 
        In the context of Wire, SAML is the standard/protocol used by the Wire services (in particular the spar service) to provide the Single Sign On feature.
 
@@ -80,22 +80,22 @@ The following concepts need to be understood to use the present manual:
 
    Curl
 
-       :term:`Curl` (pronounced ":term:`Curl`") is a command line tool used to download files over the HTTP (web) protocol. For example, ``:term:`Curl` http://wire.com`` will download the ``wire.com`` web page.
+       :term:`Curl` (pronounced ":term:`Curl`") is a command line tool used to download files over the HTTP (web) protocol. For example, `curl http://wire.com` will download the ``wire.com`` web page.
 
        In this manual, it is used to contact API (Application Programming Interface) endpoints manually, where those endpoints would normally be accessed by code or other software.
 
        This can be used either for illustrative purposes (to "show" how the endpoints can be used) or to allow the manual execution of some simple tasks.
 
-       For example (not a real endpoint) ``:term:`Curl` http://api.wire.com/delete_user/thomas`` would (schematically) execute the :term:`Curl` command, which would contact the wire.com API and delete the user named "thomas".
+       For example (not a real endpoint) `curl http://api.wire.com/delete_user/thomas` would (schematically) execute the :term:`Curl` command, which would contact the wire.com API and delete the user named "thomas".
 
-       Running this command in a terminal would cause the ``:term:`Curl``` command to access this URL, and the API at that URL would execute the requested action.
+       Running this command in a terminal would cause the :term:`Curl` command to access this URL, and the API at that URL would execute the requested action.
 
-       -- `:term:`Curl` at Wikipedia <https://en.wikipedia.org/wiki/Curl>`__
+       -- `curl at Wikipedia <https://en.wikipedia.org/wiki/Curl>`__
 
 
    Spar
 
-       The Wire backend software stack is composed of different services, `running as pods </overview.html#focus-on-pods>`__ in a kubernetes cluster.
+       The Wire backend software stack is composed of different services, `running as pods <../overview.html#focus-on-pods>`__ in a kubernetes cluster.
 
        One of those pods is the "spar" service. That service/pod is dedicated to the providing :term:`SSO` (using :term:`SAML`) and :term:`SCIM` services. This page is the manual for this service.
 

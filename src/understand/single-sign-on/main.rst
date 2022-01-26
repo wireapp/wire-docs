@@ -211,7 +211,7 @@ SCIM user provisioning
 Terminology and concepts
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-* « :term:`SCIM` peer »: Here, the SCIM peer is the part of the Wire backend the Identity Provider (:term:`IdP`), for example the LDAP server, will reach to exchange (mass) information about users. For example, thie ldap-scim-bridge tool on github (https://github.com/wireapp/ldap-scim-bridge) talks to both the LDAP server and the SCIM peer (Wire), pulling user data from the LDAP server, and pushing it to the SCIM peer (that is, the SCIM interface of the Wire backend).
+* :term:`SCIM` peer: Here, the SCIM peer is the part of the Wire backend the Identity Provider (:term:`IdP`), for example the LDAP server, will reach to exchange (mass) information about users. For example, thie ldap-scim-bridge tool on github (https://github.com/wireapp/ldap-scim-bridge) talks to both the LDAP server and the SCIM peer (Wire), pulling user data from the LDAP server, and pushing it to the SCIM peer (that is, the SCIM interface of the Wire backend).
 
 SCIM peer management (in team settings or via Curl)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -237,22 +237,22 @@ These are the steps to generate a new :term:`SCIM` token, which you will need to
 .. image:: token-step-1.png
    :align: center
 
-* Step 2: In the left menu, go to «Customization»
+* Step 2: In the left menu, go to "Customization"
 
 .. image:: token-step-2.png
    :align: center
 
-* Step 3: Go to «Automated User Management (:term:`SCIM`)»
+* Step 3: Go to "Automated User Management (:term:`SCIM`)"
 
 .. image:: token-step-3.png
    :align: center
 
-* Step 4: Click the «down» arrow to expand
+* Step 4: Click the "down" arrow to expand
 
 .. image:: token-step-4.png
    :align: center
 
-* Step 5: Click «Generate token», if your password is requested, enter it.
+* Step 5: Click "Generate token", if your password is requested, enter it.
 
 .. image:: token-step-5.png
    :align: center

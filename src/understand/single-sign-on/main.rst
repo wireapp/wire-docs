@@ -118,16 +118,16 @@ When a team is set up on Wire, the administrators can provide users a login code
 
 Here is what this looks from a user's perspective:
 
-* Download Wire.
-* Select and copy the code that your company gave you / the administrator generated
-* Open Wire.
-  * Wire may detect the code on your clipboard and open a pop-up window with a text field. Wire will automatically put the code into the text field.
-  * If so, click Log in and go to step 8.
-* If no pop-up: click Login on the first screen.
-* Click Enterprise Login.
-* A pop-up will appear. In the text field, paste or type the code your company gave you.
-* Click Log in.
-* Wire will load your company's login page: Log in with your company credentials.
+1. Download Wire.
+2. Select and copy the code that your company gave you / the administrator generated
+3. Open Wire.  Wire may detect the code on your clipboard and open a pop-up window with a text field.
+   Wire will automatically put the code into the text field.
+   If so, click Log in and go to step 8.
+4. If no pop-up: click Login on the first screen.
+5. Click Enterprise Login.
+6. A pop-up will appear. In the text field, paste or type the code your company gave you.
+7. Click Log in.
+8. Wire will load your company's login page: log in with your company credentials.
 
 
 SAML/SSO

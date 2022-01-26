@@ -130,9 +130,17 @@ Introduction
 
 SSO (Single Sign-On) is technology allowing users to sign into multiple services with a single identity provider/credential.
 
+SSO is about `authentication`, not `provisioning` (create, update, remove user accounts).  To learn more about the latter, continue  `below <main.html#user-provisioning-scim-ldap>`_.
+
 For example, if a company already has SSO setup for some of their services, and they start using Wire, they can use Wire's SSO support to add Wire to the set of services their users will be able to sign into with their existing SSO credentials.
 
-SSO is about `authentication`, not `provisioning` (create, update, remove user accounts).  To learn more about the latter, continue  `below <main.html#user-provisioning-scim-ldap>`_.
+Here is a blog post we like about how SAML works: https://duo.com/blog/the-beer-drinkers-guide-to-saml
+
+And here is a diagram that explains it in slightly more technical terms:
+
+.. image:: Wire_SAML_Flow.png
+
+Here is a critique of XML/DSig security (which SAML relies on): https://www.cs.auckland.ac.nz/~pgut001/pubs/xmlsec.txt
 
 Terminology and concepts
 ^^^^^^^^^^^^^^^^^^^^^^^^

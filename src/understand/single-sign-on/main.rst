@@ -184,14 +184,13 @@ Now that you've registered Wire with your identity provider (:term:`IdP`), you c
 
 On Desktop:
 
-* Click Settings.
-* Click Manage Team or go directly to teams.wire.com, or if you have an on-premise install, go to teams.<your-domain>.com
+* Click Settings and click "Manage Team"; or go directly to teams.wire.com, or if you have an on-premise install, go to teams.<your-domain>.com
 * Login with your account credentials.
-* Click Customization. Here you will see the section for :term:`SSO`.
+* Click "Customization". Here you will see the section for :term:`SSO`.
 * Click the blue down arrow.
-* Click Add :term:`SAML` Connection.
+* Click "Add :term:`SAML` Connection".
 * Provide the :term:`IdP` metadata. To find out more about retrieving this for your provider, see the guides in the "Setting up :term:`SSO` externally" step just above.
-* Click Save.
+* Click "Save".
 * Wire will now validate the document to set up the :term:`SAML` connection.
 * If the data is valid, you will return to the Settings page.
 * The page shows the information you need to log in with :term:`SSO`. Copy the login code or URL and send it to your team members or partners. For more information see: Logging in with :term:`SSO`.
@@ -202,14 +201,9 @@ Anyone with a login through your :term:`SAML` identity provider (:term:`IdP`) an
 
 Take care to share the code only with members of your team.
 
-When your team members create accounts on Wire using :term:`SSO`, they will appear on the People tab of the team settings page.
+If you haven't set up :term:`SCIM` (`we recommend you do <#introduction>`_), your team members can create accounts on Wire using :term:`SSO` simply by logging in, and will appear on the People tab of the team settings page.
 
-If team members already have Wire accounts, they will need to create new ones by registering with the :term:`SSO` Login URL and/or Code.
-
-Existing Wire accounts cannot be bound to :term:`SSO` logins.
-
-.. note::
-   This section is a port of original instructions found at https://support.wire.com/hc/en-us/articles/360001285638-Set-up-SSO-internally
+If team members already have Wire accounts, use :term:`SCIM` to associate them with the :term:`SAML` credentials.  If you make a mistake here, you may end up with several accounts for the same person.
 
 SCIM user provisioning
 ~~~~~~~~~~~~~~~~~~~~~~

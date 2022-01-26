@@ -34,6 +34,20 @@ This page explains how to set up :term:`SCIM` and then use it.
     See below in the :term:`SCIM` section for a more detailled explanation.
 
 
+Futher reading
+~~~~~~~~~~~~~~
+
+If you can't find the answers to your questions here, we have a few
+more documents.  Some of them are very technical, some may not be up
+to date any more, and we are planning to move many of them into this
+page.  But for now they may be worth checking out.
+
+- :ref:`Trouble shooting & FAQ <trouble-shooting-faq>`
+- https://support.wire.com/hc/en-us/sections/360000580658-Authentication
+- https://github.com/wireapp/wire-server/blob/1753b790e5cfb2d35e857648c88bcad3ac329f01/docs/reference/spar-braindump.md
+- https://github.com/wireapp/wire-server/tree/1753b790e5cfb2d35e857648c88bcad3ac329f01/docs/reference/provisioning/
+
+
 Definitions
 ~~~~~~~~~~~
 

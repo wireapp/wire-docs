@@ -269,7 +269,7 @@ Using SCIM via Curl
 
 You can use the term:`Curl` command line HTTP tool to access tho wire backend (in particular the ``spar`` service) through the :term:`SCIM` API.
 
-This can be helpful both to perform single operations manually, and as a tool to learn about the :term:`SCIM` API itself.
+This can be helpful to write your own tooling to interface with wire.
 
 Creating a SCIM token
 '''''''''''''''''''''

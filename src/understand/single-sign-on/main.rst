@@ -1,8 +1,11 @@
 
+Single sign-on and user provisioning
+------------------------------------
+
 .. contents::
 
 Introduction
-============
+~~~~~~~~~~~~
 
 This page is intended as a manual for administrator users in need of setting up :term:`SSO` and provisionning users using :term:`SCIM` on their installation of Wire.
 
@@ -26,7 +29,7 @@ This page explains how to set up :term:`SCIM` and then use it.
 
 
 Definitions
-===========
+~~~~~~~~~~~
 
 The following concepts need to be understood to use the present manual:
 
@@ -112,7 +115,7 @@ You're looking at the administrator's manual for this module.
     See below in the :term:`SCIM` section for a more detailled explanation.
 
 User login for the first time with SSO
-======================================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :term:`SSO` allows users to register and log into Wire with their company credentials that they use on other software in their workplace.
 No need to remember another password.
@@ -134,17 +137,17 @@ Here is what this looks from a user's perspective:
 
 
 SAML/SSO
-========
+~~~~~~~~
 
 Introduction
-------------
+^^^^^^^^^^^^
 
 SSO (Single Sign-On) is technology allowing users to sign into multiple services with a single identity provider/credential.
 
 For example, if a company already has SSO setup for some of their services, and they start using Wire, they can use Wire's SSO support to add Wire to the set of services their users will be able to sign into with their existing SSO credentials.
 
 Terminology and concepts
-------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 * End User / Browser: The end user is generally a human, an Application (Wire Client) or a browser (agent) who accesses the Service Provider to get access to a service or a protected resource.
   The browser carrries out all the redirections from the SP to the IdP and vice versa.
@@ -161,7 +164,7 @@ Terminology and concepts
 (Definitons adapted from `collab.net <http://help.collab.net/index.jsp?topic=/teamforge178/action/saml.html>`_ )
 
 Setting up SSO externally
--------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To set up :term:`SSO` for a given Wire installation, the Team owner/administrator must enable it.
 
@@ -181,7 +184,7 @@ As you do this, make sure you take note of your :term:`IdP` metadata, which you 
 Once you are finished with registering Wire to your :term:`IdP`, move on to the next step, setting up :term:`SSO` internally.
 
 Setting up SSO internally
--------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Now that you've registered Wire with your identity provider (:term:`IdP`), you can enable :term:`SSO` for your team on Wire.
 
@@ -215,25 +218,25 @@ Existing Wire accounts cannot be bound to :term:`SSO` logins.
    This section is a port of original instructions found at https://support.wire.com/hc/en-us/articles/360001285638-Set-up-SSO-internally
 
 SCIM user provisioning
-======================
+~~~~~~~~~~~~~~~~~~~~~~
 
 Terminology and concepts
-------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 * « :term:`SCIM` peer »: Here, the SCIM peer is the part of the Wire backend the Identity Provider (:term:`IdP`), for example the LDAP server, will reach to exchange (mass) information about users. For example, thie ldap-scim-bridge tool on github (https://github.com/wireapp/ldap-scim-bridge) talks to both the LDAP server and the SCIM peer (Wire), pulling user data from the LDAP server, and pushing it to the SCIM peer (that is, the SCIM interface of the Wire backend).
 
 SCIM peer management (in team settings or via Curl)
----------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 SCIM security and authentication
-................................
+''''''''''''''''''''''''''''''''
 
 Wire uses a very basic variant of Oauth that contains a header with a bearer token in all :term:`SCIM` requests.
 
 The token is created in team settings and added to your :term:`SCIM` peer ( How this is done varies depending on the setup, see howtos and below (for Azure, :term:`Curl`).
 
 Generating a SCIM token
-.......................
+'''''''''''''''''''''''
 
 In order to be able to send SCIM requests that will be accepted by the SCIM peer, we first need to generate a SCIM token. This section explains how to do this.
 
@@ -274,14 +277,14 @@ These are the steps to generate a new :term:`SCIM` token, which you will need to
 Tokens are now listed in this :term:`SCIM`-related area of the screen, you can generate up to 8 such tokens.
 
 Using SCIM via Curl
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 You can use the ``:term:`Curl``` command line HTTP tool to access tho wire backend (in particular the ``SPAR`` service) through the :term:`SCIM` API.
 
 This can be helpful both to perform single operations manually, and as a tool to learn about the :term:`SCIM` API itself.
 
 Creating a SCIM token
-.....................
+'''''''''''''''''''''
 
 Before we can send commands to the :term:`SCIM` API/Spar service, we need to be authenticated. This is done through the creation of a :term:`SCIM` token.
 
@@ -366,12 +369,11 @@ And you can delete it with:
     $WIRE_BACKEND/scim/auth-tokens?id=$SCIM_TOKEN_ID
 
 Using a SCIM token to Create Read Update and Delete (CRUD) users
-................................................................
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 Now that you have your SCIM token, you can use it to talk to the SCIM API to manipulate (create, read, update, delete) users, either individually or in bulk.
 
-JSON encoding of SCIM Users
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**JSON encoding of SCIM Users**
 
 In order to manipulate users using commands, you need to specify user data.
 
@@ -437,8 +439,7 @@ We also support custom fields that are used in rich profiles in this form (see: 
       }
     }'
 
-How to create a user
-~~~~~~~~~~~~~~~~~~~~
+**How to create a user**
 
 You can create a user using the following command:
 
@@ -454,8 +455,7 @@ You can create a user using the following command:
 
 Note that ``$SCIM_USER`` is in the JSON format and is declared before running this commend as described in the section above.
 
-Get a specific user
-~~~~~~~~~~~~~~~~~~~
+**Get a specific user**
 
 .. code-block:: bash
    :linenos:
@@ -465,8 +465,7 @@ Get a specific user
       --header 'Content-Type: application/json;charset=utf-8' \
       $WIRE_BACKEND/scim/v2/Users/$STORED_USER_ID
 
-Get all users
-~~~~~~~~~~~~~
+**Get all users**
 
 .. code-block:: bash
    :linenos:
@@ -476,8 +475,7 @@ Get all users
       --header 'Content-Type: application/json;charset=utf-8' \
     $WIRE_BACKEND/scim/v2/Users/
 
-Update a specific user
-~~~~~~~~~~~~~~~~~~~~~~
+**Update a specific user**
 
 For each put request, you need to provide the full json object.  All omitted fields will be set to ``null``.  (If you do not have an up-to-date user present, just ``GET`` one right before the ``PUT``.)
 
@@ -500,8 +498,7 @@ For each put request, you need to provide the full json object.  All omitted fie
      -d "$SCIM_USER" \
      $WIRE_BACKEND/scim/v2/Users/$STORED_USER_ID
 
-Delete user
-~~~~~~~~~~~
+**Delete user**
 
 .. code-block:: bash
    :linenos:

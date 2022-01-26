@@ -267,7 +267,7 @@ Tokens are now listed in this :term:`SCIM`-related area of the screen, you can g
 Using SCIM via Curl
 ^^^^^^^^^^^^^^^^^^^
 
-You can use the ``:term:`Curl``` command line HTTP tool to access tho wire backend (in particular the ``spar`` service) through the :term:`SCIM` API.
+You can use the term:`Curl` command line HTTP tool to access tho wire backend (in particular the ``spar`` service) through the :term:`SCIM` API.
 
 This can be helpful both to perform single operations manually, and as a tool to learn about the :term:`SCIM` API itself.
 

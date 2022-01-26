@@ -484,9 +484,3 @@ For each put request, you need to provide the full json object.  All omitted fie
     curl -X DELETE \
       --header "Authorization: Bearer $SCIM_TOKEN" \
       $WIRE_BACKEND/scim/v2/Users/$STORED_USER_ID
-
-.. note::
-   To learn more, read the original Curl/SCIM documentation at:
-   * https://github.com/wireapp/wire-server/blob/develop/docs/reference/provisioning/SCIM-token.md
-   * https://github.com/wireapp/wire-server/blob/develop/docs/reference/provisioning/SCIM-via-Curl.md
-   If you want to dive into the backend code, start `reading here in our backend <https://github.com/wireapp/wire-server/blob/develop/services/spar/src/Spar/SCIM.hs>`_ and `our hSCIM library <https://github.com/wireapp/hSCIM>`_.

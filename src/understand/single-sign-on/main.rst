@@ -99,7 +99,7 @@ The following concepts need to be understood to use the present manual:
 
        One of those pods is the "spar" service. That service/pod is dedicated to the providing :term:`SSO` (using :term:`SAML`) and :term:`SCIM` services. This page is the manual for this service.
 
-       In the context of :term:`SCIM`, Wire's spar service is the `Service Provider<https://en.wikipedia.org/wiki/Service_provider_(SAML)>`__ that Identity Management Software
+       In the context of :term:`SCIM`, Wire's spar service is the `Service Provider <https://en.wikipedia.org/wiki/Service_provider_(SAML)>`__ that Identity Management Software
        (for example Okta, Ping Identity, SailPoint, Technology Nexus etc) uses for user account provisioning and deprovisioning.
 
 

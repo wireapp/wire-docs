@@ -132,6 +132,8 @@ SSO (Single Sign-On) is technology allowing users to sign into multiple services
 
 For example, if a company already has SSO setup for some of their services, and they start using Wire, they can use Wire's SSO support to add Wire to the set of services their users will be able to sign into with their existing SSO credentials.
 
+SSO is about `authentication`, not `provisioning` (create, update, remove user accounts).  To learn more about the latter, continue  `below <main.html#user-provisioning-scim-ldap>`_.
+
 Terminology and concepts
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -197,8 +199,10 @@ If you haven't set up :term:`SCIM` (`we recommend you do <#introduction>`_), you
 
 If team members already have Wire accounts, use :term:`SCIM` to associate them with the :term:`SAML` credentials.  If you make a mistake here, you may end up with several accounts for the same person.
 
-SCIM user provisioning
-~~~~~~~~~~~~~~~~~~~~~~
+User provisioning (SCIM/LDAP)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+SCIM/LDAP is about `provisioning` (create, update, remove user accounts), not `authentication`.  To learn more about the latter, continue `above <main.html#saml-sso>`_.
 
 SCIM management in Wire (in Team Management)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

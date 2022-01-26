@@ -27,6 +27,12 @@ The solution we offer to solve this issue is implementing :term:`SCIM` `(System 
 
 This page explains how to set up :term:`SCIM` and then use it.
 
+.. note::
+    Note that it is recommended to use both :term:`SSO` and :term:`SCIM` (as opposed to just :term:`SSO` alone).
+    The reason is if you only use :term:`SSO`, but do not configure/implement :term:`SCIM`, you will experience reduced functionality.
+    In particular, without :term:`SCIM` all Wire users will be named according their e-mail address and won't have any rich profiles.
+    See below in the :term:`SCIM` section for a more detailled explanation.
+
 
 Definitions
 ~~~~~~~~~~~
@@ -101,18 +107,6 @@ The following concepts need to be understood to use the present manual:
 
        In the context of :term:`SCIM`, Wire's spar service is the `Service Provider <https://en.wikipedia.org/wiki/Service_provider_(SAML)>`__ that Identity Management Software
        (for example Azure, Okta, Ping Identity, SailPoint, Technology Nexus, etc.) uses for user account provisioning and deprovisioning.
-
-
-
-Wire comes with a backend module that provides :term:`SAML` single sign on and :term:`SCIM` user provisioning, called "Spar".
-
-You're looking at the administrator's manual for this module.
-
-.. note::
-    Note that it is recommended to use both :term:`SSO` and :term:`SCIM` (as opposed to just :term:`SSO` alone).
-    The reason is if you only use :term:`SSO`, but do not configure/implement :term:`SCIM`, you will experience reduced functionality.
-    In particular, without :term:`SCIM` all Wire users will be named according their e-mail address and won't have any rich profiles.
-    See below in the :term:`SCIM` section for a more detailled explanation.
 
 User login for the first time with SSO
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

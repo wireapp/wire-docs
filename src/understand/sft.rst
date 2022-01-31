@@ -44,8 +44,8 @@ Establishing a call
 3. The SFT server tests which of the connection candidates actually work. Meaning, it
    goes through all the candidates until one leads to a successful media connection
    between itself and *client A*
-4. *Client A* sends an OTR [2]_ message ``CONFSTART`` (to all members of chat), which contains
-   the IP address of the SFT server that is being used for the call.
+4. *Client A* sends an end-to-end encrypted message [2]_ ``CONFSTART`` to all members of chat, which contains
+   the URL of the SFT server that is being used for the call.
 5. Any other client that wants to join the call, does 1. + 2. with the exception of **only**
    contacting one SFT server i.e. the one that *client A* chose and told all other
    potential participants about via ``CONFSTART`` message
@@ -56,7 +56,7 @@ connection (i.e. no more HTTPS at that point). There are just 2 HTTPS request/re
 sequences per participant.
 
 .. [1] STUN & TURN are both part of a :ref:`Restund server <understand-restund>`
-.. [2] Off The Record - an encrypted message sent in a conversation hidden from user's view but
+.. [2] This encrypted message is sent in a conversation hidden from user's view but
        interpreted by user's clients. It is sent via backend servers and forwarded to other
        conversation participants, not to or via SFT.
 

@@ -72,7 +72,7 @@ via UDP (see :ref:`Firewall rules <install-sft-firewall-rules>`).
 If that is not possible, then at least SFT servers and Restund servers should be able to reach each
 other via UDP - and clients may connect via UDP and/or TCP to Restund servers
 (see :ref:`Protocols and open ports <understand-restund-protocal-and-ports>`), which in
-turn will connect to SFT server.
+turn will connect to the SFT server.
 In the unlikely scenario where no UDP is allowed whatsoever or SFT servers may not be able to reach
 the Restund servers that clients are using to make themselves reachable, an SFT server itself can
 also choose to proxy itself by a Restund server, which could be different from the Restund servers

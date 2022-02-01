@@ -26,6 +26,7 @@ M2 federation with calling/conferencing and assets
 --------------------------------------------------
 
 The second milestone **M2** focused on:
+
 * federated calling
 * federated conferencing
 * basic federated asset support. 
@@ -42,8 +43,9 @@ Caveats:
 
 * Message delivery guarantees are weak if any backends are temporarily unavailable.
 * If any backends are unavailable, data inconsistencies may occur.
-* Federation with the production cloud version of wire.com will not yet be supported.
+* Federation with the production cloud version of wire.com is not yet supported.
 * Federated conferencing requires an SFT in each domain represented in the conversation. The caller's SFT is the "anchor" SFT, to which federated SFTs connect:
+
   * SFTs must have valid certificates suitable for mutual authentication with federated SFTs. 
   * Currently all video streams are exchanged between the anchor SFT and each federated SFT. The SFTs select the relevant streams for each client as today, but inter-SFT traffic could use substantially more bandwidth than an SFT to client stream.
   * The administrator needs to open ports between their SFTs and federated SFTs for signalling and media.

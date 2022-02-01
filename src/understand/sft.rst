@@ -17,6 +17,11 @@ then the SFT fans it out to the other clients. Because connections are not end-t
 With SFT it is thus possible to have conference calls with many participants
 without compromising end-to-end security.
 
+.. note::
+   We will describe conferencing first in a single domain in this section. 
+   Conferencing in an environment with Federation is described in the
+   :ref:`federated conferencing<federated-sft>` section.
+
 
 Architecture
 ------------
@@ -86,3 +91,20 @@ Due to this `hostNetwork` limitation only one SFT instance can run per node so i
 As a rule of thumb you will need 1vCPU of compute per 50 participants. SFT will utilise multiple cores. You can use this rule of thumb to decide how many kubernetes nodes you need to provision.
 
 For more information about capacity planning and networking please refer to the `technical documentation <https://github.com/wireapp/wire-server/blob/eab0ce1ff335889bc5a187c51872dfd0e78cc22b/charts/sftd/README.md>`__
+
+.. _federated-sft:
+
+Federated Conference Calling 
+============================
+
+Conferencing in a federated environment assumes that each domain participating in a 
+conference will use an SFT in its own domain. The SFT in the caller's domain is called
+the `anchor SFT`. 
+
+Multi-SFT Architecture
+----------------------
+
+TODO: add new diagram
+
+
+

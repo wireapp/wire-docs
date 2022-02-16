@@ -15,8 +15,6 @@ ECDHE-ECDSA-AES256-GCM-SHA384 TLSv1.2 **yes**           intermediate
 ECDHE-RSA-AES256-GCM-SHA384   TLSv1.2 **yes**           intermediate
 ECDHE-ECDSA-CHACHA20-POLY1305 TLSv1.2 no                intermediate
 ECDHE-RSA-CHACHA20-POLY1305   TLSv1.2 no                intermediate
-DHE-RSA-AES128-GCM-SHA256     TLSv1.2 **yes**           intermediate
-DHE-RSA-AES256-GCM-SHA384     TLSv1.2 **yes**           intermediate
 TLS_AES_128_GCM_SHA256        TLSv1.3 **yes**           **modern**
 TLS_AES_256_GCM_SHA384        TLSv1.3 **yes**           **modern**
 TLS_CHACHA20_POLY1305_SHA256  TLSv1.3 no                **modern**

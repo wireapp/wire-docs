@@ -467,3 +467,23 @@ webapp.
     FUTUREWORK
     * A way to validate overall helm configuration to be consistent
     * A way to test client certificates.
+
+
+Troubleshooting
+---------------
+
+Check for the federationDomain consistency across services:
+
+.. code:: bash
+
+   for service in brig galley cargohold; do echo $service; kubectl -n wire get configmap $service -o jsonpath="{.data.$service\.yaml}" | grep -i federation; done
+
+should yield something like::
+
+   brig
+     setFederationDomain: wire.example.com
+   galley
+     federationDomain: wire.example.com
+   cargohold
+     federationDomain: wire.example.com
+

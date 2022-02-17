@@ -75,11 +75,21 @@ Install the dependencies locally:
 
 Now, whenever you cd to wire-docs, you will have the relevant binaries (make, sphinx, rst2pdf, ...) in your PATH.
 
-### Generating html output
+### Generating html output (one-off)
 
 ```
 make html
 ```
+
+### Generating html output continuously (recommended) with file watching
+
+Enter a *development mode* by running
+
+```
+make dev-run
+```
+
+to start a local server and file watcher. Then, point your browser at `http://localhost:3000`. (or, alternatively, look at results by opening `build/html/index.html`) which will auto-update whenever files under `./src` change.
 
 ### Generating a PDF file
 
@@ -89,11 +99,9 @@ Run `make pdf` and look at files in `./build/pdf/`.
 
 You can use the `make dev-pdf` target to get auto-refreshing PDF files as you save source files. (requires a PDF viewer installed globally)
 
-### Local development environment for file watching
+<details>
 
-Enter a *development mode* by running `make dev-run` to start a local server and file watcher.
-
-Look at results by opening build/html/index.html which will auto-update whenever files under ./src change.
+<summary> Alternative ways to build the documentation for preview without nix+direnv </summary>
 
 ## Building the docs with docker
 
@@ -118,7 +126,15 @@ make docs-pdf
 
 Then see build/pdf/
 
+</details>
+
 ## For maintainers (Wire employees)
+
+### CI/CD configuration
+
+On a Pull request, the script inside [pr.yml](ci/pr.yml) will run. On a commit to master, the script inside [compile-and-upload.yml](ci/compile-and-upload.yml) will run.
+
+The actual concourse pipeline doing so is configured in [this private repository only available for Wire employees](https://github.com/zinfra/cailleach/blob/master/wire-server-private/ci/pipelines/wire_docs.yml)
 
 ### Upload to S3
 

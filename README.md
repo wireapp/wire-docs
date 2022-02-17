@@ -52,8 +52,6 @@ If another level is needed, please add the chosen symbol here.
 
 ## Building the docs
 
-*Note: when switching from a docker-based building to a local building, you might encounter permission issues due to the build directory being owned by root. These can be solved by cleaning the build directory: `sudo rm -rf ./build/`*
-
 ### Dependencies
 
 Install the dependencies locally:
@@ -102,6 +100,8 @@ You can use the `make dev-pdf` target to get auto-refreshing PDF files as you sa
 <details>
 
 <summary> Alternative ways to build the documentation for preview without nix+direnv </summary>
+
+*Note: when switching from a docker-based building to a local building, you might encounter permission issues due to the build directory being owned by root. These can be solved by cleaning the build directory: `sudo rm -rf ./build/*`
 
 ## Building the docs with docker
 

@@ -322,3 +322,55 @@ This is an example adapted for Cannon:
    curl -v http://127.0.0.1:7777/i/metrics
 
 In the output of this command, ``net_websocket_clients`` is roughly the number of connected clients.
+
+.. _identify sso users:
+
+Identify all users using SSO
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Collect all teams configured with an IdP:
+
+.. code:: sh
+
+   ssh <name or IP of spar-cassandra>
+   # within the ssh session start cqlsh
+   cqlsh
+   # within the cqlsh shell export all teams with idp
+   copy spar.idp (team) TO 'teams_with_idp.csv' with header=false;
+
+Close the session and proceed locally:
+
+.. code:: sh
+
+   # download csv file
+   scp <name or IP of spar-cassandra>:teams_with_idp.csv .
+   # convert to a single line, coma separated list
+   tr '\n' ',' < teams_with_idp.csv; echo
+
+And use this list to get all team members in these teams:
+
+.. code:: sh
+
+   ssh <name or IP of galley-cassandra>
+   # within the ssh session start cqlsh
+   cqlsh
+   -- within the cqlsh shell select all members of previous identified teams
+   -- <output of tr> should look like this: f2207d98-8ab3-11ec-b689-07fc1fd409c9, ...
+   select user from galley.team_member where team in (<output of tr>);
+   -- export the list of users from previous selected teams
+   copy galley.team_member (user) TO 'users_with_idp.csv' with header=false;
+
+Close the session and proceed locally to generate the list of all users from teams with IdP:
+
+.. code:: sh
+
+   # download csv file
+   scp <name or IP of brig-cassandra>:users_with_idp.csv .
+   # convert to a single line, coma separated list
+   tr '\n' ',' < users_with_idp.csv; echo
+
+
+.. note::
+   Don't forget to dellete the created csv files after you have downloaded/processed them.
+
+.. _reset session cookies:

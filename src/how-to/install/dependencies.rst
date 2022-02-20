@@ -13,6 +13,14 @@ In order to operate a wire-server installation, you'll need a bunch of software
 like Ansible, ``kubectl`` and Helm. We provide a way to get all the needed
 dependencies for setting up and interacting with a wire-server cluster.
 
+Before anything else, we need to install the tools we will need:
+
+.. test-step {name: apt update and install git, commands: from-next-code-block, on: client, execute: true}
+.. code:: shell
+
+   sudo apt update
+   sudo apt install git
+
 All dependencies for the ``wire-server-deploy`` project are managed using Git submodules,
 `Nix <https://nixos.org>`__ and `Direnv <https://direnv.net>`__.
 We also provide a pre-built Docker container image with all the dependencies.
@@ -20,7 +28,8 @@ We also provide a pre-built Docker container image with all the dependencies.
 Step one is to fetch a release of ``wire-server-deploy`` and make sure all submodules are
 updated. This fetches all the required Ansible roles needed to run the wire Ansible playbooks.
 
-::
+.. test-step {name: git clone and init, commands: from-next-code-block, on: client, in: wire-server-deploy, execute: true}
+.. code:: shell
 
    git clone --branch master https://github.com/wireapp/wire-server-deploy.git
    cd wire-server-deploy
@@ -39,7 +48,7 @@ Next, there are two ways to get all the required binaries for operating Wire.
 Now, enabling ``direnv`` should install all the dependencies and add them to your ``PATH``. Every time you ``cd`` into
 the ``wire-server-deploy`` directory, the right dependencies will be available.
 
-::
+.. code:: shell
 
    direnv allow
 
@@ -53,7 +62,8 @@ the ``wire-server-deploy`` directory, the right dependencies will be available.
 We provide a Docker container image containing all the dependencies.
 On your machine you need to have the ``docker`` binary available. Run:
 
-::
+.. test-step {name: apt install of docker, commands: from-next-code-block, on: client, in: wire-server-deploy, execute: true}
+.. code:: shell
 
    sudo apt install docker.io
 
@@ -62,7 +72,7 @@ Or see `how to install docker <https://docker.com>`__.
 Then, after downloading your copy of ``wire-server-deploy``, you can run the container when you're in the ``wire-server-deploy``
 directory to have all the dependencies and commands available needed for the deployment.
 
-::
+.. code:: shell
 
    WSD_CONTAINER=quay.io/wire/wire-server-deploy:cdc1c84c1a10a4f5f1b77b51ee5655d0da7f9518
 

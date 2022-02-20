@@ -11,6 +11,8 @@ Assuming a single virtual machine with a public IP address running Ubuntu 18.04,
 
 Move to ``wire-server-deploy/ansible``:
 
+.. test-step {name: cd to ansible, commands: from-next-code-block, on: client, in: wire-server-deploy, execute: true}
+
 .. code:: shell
 
   cd ansible/

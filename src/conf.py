@@ -34,11 +34,8 @@ release = version
 # ones.
 extensions = [
     'sphinxcontrib.kroki',
-    # 'recommonmark' is for markdown support. Deprecated.
-    # See https://github.com/readthedocs/recommonmark/issues/221
-    # Should be replaced by 'myst_parser' at some point
-    # (requires building the relevant nix package)
-    'recommonmark',
+    # 'myst_parser' is for markdown support.
+    'myst_parser',
     'rst2pdf.pdfbuilder',
     'sphinx_multiversion'
 ]

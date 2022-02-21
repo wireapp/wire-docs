@@ -33,11 +33,11 @@ release = version
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinxcontrib.kroki',
+    # 'sphinxcontrib.kroki',
     # 'myst_parser' is for markdown support.
     'myst_parser',
-    'rst2pdf.pdfbuilder',
-    'sphinx_multiversion'
+    # 'rst2pdf.pdfbuilder',
+    # 'sphinx_multiversion'
 ]
 
 # Grouping the document tree into PDF files. List of tuples

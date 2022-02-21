@@ -37,7 +37,7 @@ in
       pkgs.entr
       pkgs.texlive.combined.scheme-full
 
-      (pkgs.python3.withPackages (ps: with ps; [ sphinx recommonmark rst2pdf sphinx-autobuild sphinxcontrib-fulltoc sphinxcontrib-kroki sphinx-multiversion sphinx_rtd_theme]))
+      (pkgs.python3.withPackages (ps: with ps; [ sphinx recommonmark rst2pdf sphinx-autobuild sphinxcontrib-fulltoc sphinxcontrib-kroki sphinx-multiversion sphinx_rtd_theme ])) # python-on-nix]))
     ];
     # ++ [pythonOnNixEnv.dev ];
   };

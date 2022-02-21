@@ -24,5 +24,22 @@ let
   };
 
 in
+pkgs.stdenv.mkDerivation {
+  # Let's use the activation script as build input:
+  buildInputs = [ env.dev ];
+  virtualEnvironment = env.out;
 
-env.out
+  builder = builtins.toFile "builder.sh" ''
+    source $stdenv/setup
+
+    set -x
+
+    ls $virtualEnvironment
+    python --version
+
+    touch $out
+
+    set +x
+  '';
+  name = "example";
+}

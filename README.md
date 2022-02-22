@@ -11,7 +11,7 @@ Visit https://docs.wire.com/
 The structure of this document has been heavily inspired by [this blog
 post](https://www.divio.com/blog/documentation/).
 
-We use [sphinx](https://sphinx-doc.org/) for rendering documentation.
+We use [sphinx](https://www.sphinx-doc.org/) for rendering documentation.
 
 Most documentation is written in RestructuredText (with `.rst` file extension).
 The reason for that is A) the default support from sphinx and B) some of the

@@ -378,7 +378,7 @@ Close the session and proceed locally:
 
    # download csv file
    scp <name or IP of spar-cassandra>:teams_with_idp.csv .
-   # convert to a single line, coma separated list
+   # convert to a single line, comma separated list
    tr '\n' ',' < teams_with_idp.csv; echo
 
 And use this list to get all team members in these teams:
@@ -400,7 +400,7 @@ Close the session and proceed locally to generate the list of all users from tea
 
    # download csv file
    scp <name or IP of brig-cassandra>:users_with_idp.csv .
-   # convert to a single line, coma separated list
+   # convert to a single line, comma separated list
    tr '\n' ',' < users_with_idp.csv; echo
 
 

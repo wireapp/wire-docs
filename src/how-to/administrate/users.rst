@@ -323,6 +323,40 @@ This is an example adapted for Cannon:
 
 In the output of this command, ``net_websocket_clients`` is roughly the number of connected clients.
 
+.. _reset session cookies:
+
+Reset session cookies
+~~~~~~~~~~~~~~~~~~~~~
+
+Remove session cookies on your system to force users to login again within the next 15 minutes (or whenever they come back online):
+
+.. warning::
+   This will cause interruptions to ongoing calls and should be timed properly.
+
+Reset cookies of all users
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: sh
+
+   ssh <name or IP of brig-cassandra>
+   # from the ssh session
+   cqlsh
+   # from the cqlsh shell
+   truncate brig.user_cookies;
+
+Reset cookies for a defined list of users
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: sh
+
+   ssh <name or IP of brig-cassandra>
+   # within the ssh session
+   cqlsh
+   # within the cqlsh shell: delete all users by userId
+   delete from brig.user_cookies where user in (c0d64244-8ab4-11ec-8fda-37788be3a4e2, ...);
+
+(Keep reading if you want to find out which users on your system are using SSO.)
+
 .. _identify sso users:
 
 Identify all users using SSO
@@ -372,35 +406,3 @@ Close the session and proceed locally to generate the list of all users from tea
 
 .. note::
    Don't forget to dellete the created csv files after you have downloaded/processed them.
-
-.. _reset session cookies:
-
-Reset session cookies
-~~~~~~~~~~~~~~~~~~~~~
-
-Remove session cookies on your system to force users to login again within the next 15 minutes (or whenever they come back online):
-
-.. warning::
-   This will cause interruptions to ongoing calls and should be timed properly.
-
-Reset cookies of all users
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. code:: sh
-
-   ssh <name or IP of brig-cassandra>
-   # from the ssh session
-   cqlsh
-   # from the cqlsh shell
-   truncate brig.user_cookies;
-
-Reset cookies for a defined list of users
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. code:: sh
-
-   ssh <name or IP of brig-cassandra>
-   # within the ssh session
-   cqlsh
-   # within the cqlsh shell: delete all users by userId
-   delete from brig.user_cookies where user in (c0d64244-8ab4-11ec-8fda-37788be3a4e2, ...);

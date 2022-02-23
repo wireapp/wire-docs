@@ -391,8 +391,8 @@ And use this list to get all team members in these teams:
    # within the cqlsh shell select all members of previous identified teams
    # <output of tr> should look like this: f2207d98-8ab3-11ec-b689-07fc1fd409c9, ...
    select user from galley.team_member where team in (<output of tr>);
-   # export the list of users from previous selected teams
-   copy galley.team_member (user) TO 'users_with_idp.csv' with header=false;
+   # alternatively, export the list of all users (for filterling locally in eg. excel)
+   copy galley.team_member (user, team, sso_id) TO 'users_with_idp.csv' with header=true;
 
 Close the session and proceed locally to generate the list of all users from teams with IdP:
 

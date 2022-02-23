@@ -354,10 +354,10 @@ And use this list to get all team members in these teams:
    ssh <name or IP of galley-cassandra>
    # within the ssh session start cqlsh
    cqlsh
-   -- within the cqlsh shell select all members of previous identified teams
-   -- <output of tr> should look like this: f2207d98-8ab3-11ec-b689-07fc1fd409c9, ...
+   # within the cqlsh shell select all members of previous identified teams
+   # <output of tr> should look like this: f2207d98-8ab3-11ec-b689-07fc1fd409c9, ...
    select user from galley.team_member where team in (<output of tr>);
-   -- export the list of users from previous selected teams
+   # export the list of users from previous selected teams
    copy galley.team_member (user) TO 'users_with_idp.csv' with header=false;
 
 Close the session and proceed locally to generate the list of all users from teams with IdP:
@@ -402,5 +402,5 @@ Reset cookies for a defined list of users
    ssh <name or IP of brig-cassandra>
    # within the ssh session
    cqlsh
-   -- within the cqlsh shell: delete all users by userId
+   # within the cqlsh shell: delete all users by userId
    delete from brig.user_cookies where user in (c0d64244-8ab4-11ec-8fda-37788be3a4e2, ...);

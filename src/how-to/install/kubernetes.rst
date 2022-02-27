@@ -11,6 +11,7 @@ Assuming a single virtual machine with a public IP address running Ubuntu 18.04,
 
 Move to ``wire-server-deploy/ansible``:
 
+.. test-step {name: cd to ansible, commands: from-next-code-block, on: client, after_should_be_in: /wire-server-deploy/ansible, execute: true}
 .. code:: shell
 
   cd ansible/
@@ -18,6 +19,7 @@ Move to ``wire-server-deploy/ansible``:
 Then:
 
 .. include:: includes/ansible-authentication-blob.rst
+
 
 Passwordless authentication
 ---------------------------

@@ -16,6 +16,7 @@ dependencies for setting up and interacting with a wire-server cluster.
 Before anything else, we need to install the tools we will need:
 
 .. note: this is only used when running the test script repeatedly, to clean up the workspace so the commands can cleanly be run again, this should be removed once we have a way to properly "zero" the servers before each run
+.. test-step {name: exiting in case we are still in the docker container, commands: [exit], on: client, execute: true}
 .. test-step {name: clean up before running commands, commands: [rm -rf /root/*], on: client, execute: true}
 
 .. note: should this be visible as an actual step? it's required in the script only for re-runs so we don't go to root@arthur2:~/wire-server-deploy/ansible/wire-server-deploy/ansible/wire-server
@@ -94,10 +95,17 @@ directory to have all the dependencies and commands available needed for the dep
 
 Once inside the container, make sure everything is working and you have the right version of ansible by running:
 
+.. test-step {name: checking ansible version, commands: from-next-code-block, on: client, must_contain: ansible 2.9.12, execute: true}
+
 .. code:: shell
 
    # Inside the container
-   bash-4.4# ansible --version
+   ansible --version
+
+The answer should be:
+
+.. code:: shell
+
    ansible 2.9.12
 
 Once you have gone through with either of these options, you can move on to `installing kubernetes </how-to/install/kubernetes.html>`__

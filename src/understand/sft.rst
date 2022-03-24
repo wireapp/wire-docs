@@ -61,7 +61,7 @@ connection (i.e. no more HTTPS at that point). There are just 2 HTTPS request/re
 sequences per participant.
 
 .. [1] STUN & TURN are both part of a :ref:`Restund server <understand-restund>`
-.. [2] This encrypted message is sent in a conversation hidden from user's view but
+.. [2] This encrypted message is sent in the same conversation, hidden from user's view but
        interpreted by user's clients. It is sent via backend servers and forwarded to other
        conversation participants, not to or via SFT.
 

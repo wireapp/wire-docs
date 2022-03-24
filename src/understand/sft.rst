@@ -104,7 +104,60 @@ the `anchor SFT`.
 Multi-SFT Architecture
 ----------------------
 
-TODO: add new diagram
+With support for federation, each domain participating in a conference is responsible to
+make available an SFT for users in that domain.  The SFT in the domain of the caller is
+called the `anchor SFT`. SFTs in other domains (in the same conference) connect to the
+anchor SFT.  Non-anchor SFTs drop their connection to the anchor SFT when no local
+participants are present. The anchor SFT does not destroy the conference until there are
+no participants (federated SFTs or local clients).
 
+The following diagram shows SFTs in two different domains. In this example, Alice
+initiates a call in a federated conversation which contains herself, Adam also in domain
+A, and Bob and Beth in domain B. Alice's client first creates a conference and is
+assigned a conference URL on SFT A2. Because the SFT is configured for federation, it
+assumes the role of anchor and also returns an IP address and port (the `anchor SFT tuple`)
+which can be used by any federated SFTs which need to connect. (Alice sets up her media 
+connection with SFT A2 as normal).
 
+Alice's client forwards the conference URL and the anchor SFT tuple to the other
+participants in the conversation, end-to-end encrypted.  Bob's client examines the
+conference URL. Realizing this URL is not an SFT in its own domain, Bob's client opens
+a connection to its SFTs as if creating a new connection, but passes an additional
+parameter containing the anchor SFT URL and tuple. SFT B1 establishes a DTLS connection
+to the anchor SFT using the anchor SFT tuple and provides the SFT URL. (Bob's client
+also sets up media with SFT B1 normally.)  At this point all paths are established
+and the conference call can happen normally.
+
+.. figure:: img/multi-sft-noturn.png
+
+    Basic Multi-SFT conference initiated by Alice in domain A, with Bob in domain B
+
+Because some customers do not wish to expose their SFTs directly to hosts on the public
+Internet, the SFTs can allocate a port on a TURN server. In this way, only the IP
+addresses and ports of the TURN server are exposed to the Internet. This can be a separate
+set of TURN servers from those used for ordinary client calling. The diagram below shows
+this scenario.  In this configuration, SFT A2 requests an allocation from the federation
+TURN server in domain A before responding to Alice. The anchor SFT tuple is the address
+allocated on the federation TURN server in domain A.
+
+.. figure:: img/multi-sft-turn.png
+
+    Multi-SFT conference with TURN servers between federated SFTs
+
+Finally, for extremely restrictive firewall environments, the TURN servers used for
+federated SFT traffic can be further secured with a TURN to TURN mutually
+authenticated DTLS connection. The SFTs allocate a channel inside this DTLS connection
+per conference.  The channel number is included along with the anchor SFT tuple
+returned to Alice, which Alice shares with the conversation, which Bob sends to SFT B1,
+and which SFT B1 uses when forming its DTLS connection to SFT A2. This DTLS connection 
+runs on a dedicated port number which is not used for regular TURN traffic. Under this
+configuration, only that single IP address and port is exposed for each federated TURN
+server with all SFT traffic multiplexed over the connection. The diagram below shows
+this scenario.  Note that this TURN DTLS multiplexing is only used for SFT to SFT
+communication and does not affect the connectivity requirements for normal one-on-one
+calls.
+
+.. figure:: img/multi-sft-turn-dtls.png
+
+    Multi-SFT conference with federated TURN servers with DTLS multiplexing
 

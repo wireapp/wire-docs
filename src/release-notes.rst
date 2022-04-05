@@ -39,7 +39,7 @@ Release notes
 
 * Deploy galley before brig (#2248)
 
-* Wire cloud operators: [Update brig's ES index mapping before deploying. After deploying run a reindex](https://github.com/wireapp/wire-server/blob/master/docs/reference/elastic-search.md). (#2241)
+* Wire cloud operators: `Update brig's ES index mapping before deploying. After deploying run a reindex <https://github.com/wireapp/wire-server/blob/master/docs/reference/elastic-search.md>`_. (#2241)
 
 * Upgrade webapp version to 2022-03-30-production.0-v0.29.2-0-d144552 (#2246)
 
@@ -61,7 +61,7 @@ Features
 
    - welcome messages are now being propagated (#2175)
 
-* The bot API will be blocked if the 2nd factor authentication team feature is enabled. Please refer to [/docs/reference/config-options.md#2nd-factor-password-challenge](https://github.com/wireapp/wire-server/blob/develop/docs/reference/config-options.md#2nd-factor-password-challenge). (#2207)
+* The bot API will be blocked if the 2nd factor authentication team feature is enabled. Please refer to `/docs/reference/config-options.md#2nd-factor-password-challenge <https://github.com/wireapp/wire-server/blob/develop/docs/reference/config-options.md#2nd-factor-password-challenge>`_. (#2207)
 
 * Translations for 2nd factor authentication email templates (#2235)
 

@@ -7,4 +7,4 @@ To migrate a PR:
 ```
 cp -r * ../wire-server/docs
 ```
-3. Review updated files.
+3. Review updated files

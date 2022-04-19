@@ -139,6 +139,26 @@ On instances with restricted user creation, the site operator with access to the
 .. note::
     Once the creation of new users and teams has been disabled, it will still be possible to use the `team creation process <https://support.wire.com/hc/en-us/articles/115003858905-Create-a-team>`__ (enter the new team name, email, password, etc), but it will fail/refuse creation late in the creation process (after the «Create team» button is clicked).
 
+I have a team larger than 500 users
+-----------------------------------
+
+By default, the maximum number of users in a team is set at 500.
+
+This can be changed in the Brig config, with this option:
+
+.. code:: yaml
+
+    optSettings:
+      setMaxTeamSize: 501
+
+.. note::
+   Note however that some messages need to be fanned out to all members of a team, and due to End to End Encryption (E2EE), this is very computationally expensive for large numbers of recipients.
+   
+   Therefore, it is recommended to leave the maximum number of users at 500, and to instead create additional teams.
+   
+   Very large teams could cause issues with dropped messages and with Legal Hold being unavailable.
+
+
 You may want
 --------------
 

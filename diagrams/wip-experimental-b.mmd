@@ -1,0 +1,25 @@
+%% The message sending flow as implemented for M1 (Oct 2021) federation
+sequenceDiagram
+    actor Alice as Alice-0@A
+    participant C as Cassandra@A
+    participant A as Backend@A
+    participant B as Backend@B
+    participant CB as Cassandra@B
+
+    Note over Alice,CB: Carlie sends a message in a conversation@A with Alice@A, Alex@A, Bob@B, Charlie@C, Chris@C. Alex has client Alex-1, Bob has clients Bob-2, Bob-3
+    %% the logic in code here can be found in Galley's src/Galley/API/Message.hs
+    Alice->>+A: Message to Alex-1, Bob-2
+    A->>B: what are Bob's clients?
+    B->>A: clients Bob-2, Bob-3
+    A->>-Alice: 412: you forgot to encrypt for Bob-3
+    Alice->>+A: Message to Alex-1 and Bob-2, Bob-3
+    %% this order is random in Galley's 'sendMessages' ?!?
+    Note over A: The order of remote(s)-first, local-next or vice-versa is not deterministic (this should probably be deterministic or done in parallel).
+    A->>B: /federation/on-message-sent: Message for Bob-2, Bob-3
+    B->>+CB: store one messages in Bob's notification stream for client 2,3
+    CB->>-B: storage successful
+    A->>+C: store one messages in Alex's notification stream for client 1
+    C->>-A: storage successful
+    %% A->>+C: store two messages in Bob's notification stream for client 1,2
+    A->>-Alice: 200 OK Message 'Sent'
+    Note over A: For asynchronous message delivery to clients, see details in the diagram for the non-federation case.

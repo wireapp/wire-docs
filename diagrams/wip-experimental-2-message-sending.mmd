@@ -1,0 +1,36 @@
+%% The message sending
+sequenceDiagram
+    actor A as Alice-Client0
+    participant C as Cassandra
+    participant G as Galley+Gundeck+Cannon+Redis
+    actor B1 as Bob-Client1
+    actor B2 as Bob-Client2
+    actor C3 as Charlie-Client3
+
+    Note right of A: Alice sends a message in a conversation with Alice, Bob and Charlie
+    A->>+G: Message to Bob's client 1 and Charlie's clients 3 and 4
+    G->>-A: 412: you forgot to encrypt for client 2 of Bob, and Charlie no longer has client 4
+    A->>+G: Message to Bob's clients 1,2 and Charlie's client 3
+    %%this logic is encoded inside Gundeck's Push.hs
+    G->>+C: store two messages in Bob's notification stream for client 1,2
+    G->>C: store one messages in Charlie's notification stream for client 3
+    C->>-G: storage successful (TTL=28 days)
+    G->>-A: 200 OK Message 'Sent'
+    Note over G: The following happens asynchronously from Alice's request.
+    Note over B1: Bob's client 1 has a websocket connection
+    G-->>B1: deliver encrypted message via websocket
+    Note over B2: Bob's client 2 has no websocket connection, but it has a registered push token
+    G-->>B2: deliver via Native Push (AWS_SNS + APNS/FCM) 'you have *some* message from *someone*'
+    B2->>+G: GET /notifications?since=UUIDv1
+    G->>C: lookup messages
+    C->>G: messages for Bob's client 2
+    G->>-B2: deliver message(s), including the message from Alice.
+    Note over C3: Charlie's client is offline. We do nothing here until Charlie comes online.
+    Note over C3: When she does, her client will call GET /notifications.
+
+
+
+%% edge case: if transient=true (I think maybe used for calling (?), do NOT store in cassandra (isnt' this, uh, a proteus problem actually if you get lots of calls)
+
+
+

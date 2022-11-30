@@ -323,6 +323,23 @@ set ``enableFederator`` to ``true``.
 Configure the webapp to enable federation and set your chosen backend domain one more time
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+You always have to set the following:
+
+.. code:: yaml
+
+    # override values for wire-server
+    # (e.g. under ./helm_vars/wire-server/values.yaml)
+    webapp:
+      envVars:
+        FEATURE_ENABLE_FEDERATION: "true"
+
+If you install a version of wire-server helm charts <= 2.117.0, then you also
+need to explicitly set the backend domain one more time. Releases from 2.118.0
+
+(TODO: confirm the change from webapp 2021-11-09 has made it into that release)
+
+onwards no longer need this environment variable.
+
 .. code:: yaml
 
     # override values for wire-server
@@ -330,7 +347,6 @@ Configure the webapp to enable federation and set your chosen backend domain one
     webapp:
       envVars:
         FEATURE_FEDERATION_DOMAIN: "example.com" # your chosen "backend domain"
-        FEATURE_ENABLE_FEDERATION: "true"
 
 Configure federator process to run and allow incoming traffic
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

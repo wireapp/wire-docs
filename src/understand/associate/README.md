@@ -1,0 +1,16 @@
+# Connecting Wire Clients
+
+*  [How to associate a wire client to a custom backend using a deep link](deeplink.md)
+  * [Introduction](deeplink.md#introduction)
+  * [Connecting to a custom backend utilizing a Deep Link](deeplink.md#connecting-to-a-custom-backend-utilizing-a-deep-link)
+  * [From a user’s perspective:](deeplink.md#from-a-user-s-perspective)
+  * [From the administrator’s (your) perspective:](deeplink.md#from-the-administrator-s-your-perspective)
+  * [Next steps](deeplink.md#next-steps)
+*  [How to use custom root certificates with wire clients](custom-certificates.md)
+*  [How to use a custom backend with the desktop client](custom-backend-for-desktop-client.md)
+  * [Introduction](custom-backend-for-desktop-client.md#introduction)
+  * [Prerequisites](custom-backend-for-desktop-client.md#prerequisites)
+  * [Using start-up parameters](custom-backend-for-desktop-client.md#using-start-up-parameters)
+  * [Using an initialization file](custom-backend-for-desktop-client.md#using-an-initialization-file)
+*  [How to redirect email domains from cloud (or any other backend) to a custom backend](sso-domain-redirect.md)
+  * [Where do I find my config URL and welcome URL as a redirect target?](sso-domain-redirect.md#where-do-i-find-my-config-url-and-welcome-url-as-a-redirect-target)

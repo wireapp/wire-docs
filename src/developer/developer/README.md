@@ -1,0 +1,23 @@
+# Developer
+
+## Contents
+  - [API versioning](api-versioning.md)
+  - [How to build wire-server](building.md)
+  - [Writing code interacting with cassandra](cassandra-interaction.md)
+  - [Changelog](changelog.md)
+  - [Coding conventions](coding-conventions.md)
+  - [Dependencies](dependencies.md)
+  - [Editor setup](editor-setup.md)
+  - [Features](features.md)
+  - [Federation API Conventions](federation-api-conventions.md)
+  - [Federation Design Aspects](federation-design-aspects.md)
+  - [Developer how-to’s](how-to.md)
+  - [Refactoring galley to support large conversations](large-conversations.md)
+  - [Linting](linting.md)
+  - [OpenTelemetry Instrumentation](open-telemetry.md)
+  - [PR Guidelines](pr-guidelines.md)
+  - [Internal processes](processes.md)
+  - [Storing SCIM-related data](scim/storage.md)
+  - [Servant](servant.md)
+  - [Testing the wire-server Haskell code base](testing.md)
+  - [Upgrading](upgrading.md)

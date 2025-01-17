@@ -145,5 +145,5 @@ EOF
 docker build -t docs_multi_version .
 
 # Run Docker Container and Start MkDocs Server
-docker run -ti --net host docs_multi_version
+docker run -d --net host docs_multi_version -a 0.0.0.0:8000
 ```

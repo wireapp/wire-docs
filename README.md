@@ -55,7 +55,7 @@ CMD ["mkdocs", "serve"]
 EOF
 
 # Build Docker Image
-docker build -t python_mkdocs .
+docker build --no-cache -t python_mkdocs .
 
 # Run Docker Container and Start MkDocs Server
 docker run -d --net host python_mkdocs
@@ -85,34 +85,30 @@ cd wire-docs/
 git config --global user.name "Your Name"
 git config --global user.email "youremail@example.com"
 
-# Fetch all branches
-git fetch --all
+# Fetch all tags
+git fetch --tags
 
-# Get remote branches without HEAD
-BRANCHES=\$(git branch -r | grep -v 'HEAD' | sed 's|origin/||')
+# Get all tags
+TAGS=\$(git tag | head -n 1)
 
-# Calculate default and latest branches
-DEFAULT_BRANCH=\$(echo "\$BRANCHES" | sort | tail -n 1)
-LATEST_BRANCH="main"
+# Calculate the latest and default tags
+DEFAULT_TAG=\$(echo "\$TAGS" | sort -V | head -n 1)
 
-for BRANCH in \$BRANCHES; do
-    echo "Deploying branch: \$BRANCH"
+for TAG in \$TAGS; do
+    echo "Deploying tag: \$TAG"
     
-    # Checkout the branch
-    git checkout -b \$BRANCH origin/\$BRANCH || git checkout \$BRANCH
+    # Checkout the tag
+    git checkout \$TAG
 
-    # Deploy with mike
-    if [ "\$BRANCH" == "\$LATEST_BRANCH" ]; then
-        mike deploy --update-aliases \$BRANCH latest
-    elif [ "\$BRANCH" == "\$DEFAULT_BRANCH" ]; then
-        mike deploy --update-aliases \$BRANCH stable
+    if [ "\$TAG" == "\$DEFAULT_TAG" ]; then
+        mike deploy --update-aliases \$TAG stable || true
     else
-        mike deploy \$BRANCH || true
+        mike deploy \$TAG || true
     fi
 done
 
 mike list --json > src/versions.json
-mike set-default \$DEFAULT_BRANCH
+mike set-default \$DEFAULT_TAG
 EOF
 
 chmod +x deploy_multiple_versions.sh
@@ -142,8 +138,8 @@ CMD ["mike", "serve"]
 EOF
 
 # Build Docker Image
-docker build -t docs_multi_version .
+docker build --no-cache -t docs_multi_version .
 
 # Run Docker Container and Start MkDocs Server
-docker run -d --net host docs_multi_version -a 0.0.0.0:8000
+docker run -d --net host docs_multi_version mike serve -a 0.0.0.0:8000
 ```

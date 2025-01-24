@@ -14,6 +14,7 @@ Wire documentation is hosted on <https://docs.wire.com>. This project is made us
     - Nix
     - Docker (optional)
 
+
         ### Makefile Targets
 
         - `make run`

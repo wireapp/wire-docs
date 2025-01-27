@@ -39,7 +39,7 @@ build: prepare
 # Build the docker image
 .PHONY: docker
 docker: 
-	@docker build -t wire-docs . -f build/Dockerfile
+	@docker build --no-cache -t wire-docs . -f build/Dockerfile
 
 # clean the temporary directories and tarball
 .PHONY: clean

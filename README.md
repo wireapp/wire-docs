@@ -29,8 +29,7 @@ Wire documentation is hosted on <https://docs.wire.com>. This project is made us
         - `main docker`
             - This target builds a Docker image for the documentation site. It uses the Dockerfile present in the repository to create an image. It processes the tags present in the `online` [repo](https://github.com/wireapp/wire-docs.git). To run and test the image locally, we recommend the following command:
                 ```bash
-                docker run -d --network=host --health-cmd="curl --fail http://localhost:8000 || exit 1" --health-interval=30s --health-retries=3 --health-timeout=5s wire-docs mike serve --dev-addr 0.0.0.0:8000
+                docker run -d p 8000:8000 --health-cmd="curl --fail http://localhost:8000 || exit 1" --health-interval=30s --health-retries=3 --health-timeout=5s wire-docs
                 ```
-
         - `make clean`
             - This target cleans up the generated tarball files and directories from the build process.

@@ -72,5 +72,3 @@ else
     $mike set-default $CURRENT
 fi
 
-git checkout gh-pages
-echo "$CURRENT" > .current_branch

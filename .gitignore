@@ -1,3 +1,4 @@
 .tmpdir
 wire-docs*.tar.gz
 site/
+.current_branch

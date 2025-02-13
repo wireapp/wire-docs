@@ -5,16 +5,19 @@ mike="pipenv run mike"
 
 CURRENT=$(git branch --show-current)
 
-if [ -f ".current_branch" ]; then
-  PREVIOUS=$(<.current_branch)
-  # to let local user know that the branch has been while developing locally
-  # this will lead to a new tag creation for the branch
-  if [ "$CURRENT" != "$PREVIOUS" ]; then
-    echo "Branch changed from '$PREVIOUS' to '$CURRENT'"
-    echo "$CURRENT" > .current_branch
-  fi
-else
-  echo "$CURRENT" > .current_branch
+# it will work only when building from branches which is expected to run in local setup
+if [ -n "$CURRENT" ]; then
+    if [ -f ".current_branch" ]; then
+      PREVIOUS=$(<.current_branch)
+      # to let local user know that the branch has been while developing locally
+      # this will lead to a new tag creation for the branch, it will not be used when running in github actions
+      if [ "$CURRENT" != "$PREVIOUS" ]; then
+        echo "Branch changed from '$PREVIOUS' to '$CURRENT'"
+        echo "$CURRENT" > .current_branch
+      fi
+    else
+      echo "$CURRENT" > .current_branch
+    fi
 fi
 
 # using dummy values for user.name and user.email as they are not required for git operations but a requirement for mike to have gh-pages branch
@@ -24,27 +27,22 @@ git config --local user.email "wire-docs-author@wire.com"
 # Checking if we are in github actions environment or working locally
 if [ -n "${GITHUB_REF}" ]; then
   CURRENT_TAG="${GITHUB_REF##*/}"
-elif [ -n "${GITHUB_REF_NAME}" ]; then
-  CURRENT_TAG="$GITHUB_REF_NAME"
-else
-  CURRENT_TAG="$CURRENT"
 fi
-
-echo "TAG used for current commit would be: $CURRENT_TAG"
-
-# to avoid considering the changes in the following files
-echo ".current_branch" >> .gitignore
 
 # useful for local users to see their diffs with each mike deploy
 git --no-pager diff
 
-# Check if there are any uncommitted changes
+# Check if there are any uncommitted changes, expected when building locally
 if [[ -n $(git status --porcelain) ]]; then
+  echo "TAG used for current commit would be: $CURRENT_TAG"
   echo "Uncommitted changes detected. Commiting them temporarily and creating a tag for $CURRENT_TAG Tag/branch with same name"
   git add -A
   git commit -m "Temporary commit: required to work on other branches"
   # forcing here for tag creaion as the tag might already exist but new commits should be tagged
   git tag -f $CURRENT_TAG || true
+
+  # when building locally and there are changes locally, the current tag will be the branch name
+  CURRENT_TAG="$CURRENT"
 fi
 
 # Fetch all tags
@@ -84,4 +82,12 @@ git show-ref --tags | while read -r commit tag; do
 done
 
 # Set the default tag
-$mike set-default $CURRENT_TAG
+# CURRENT_TAG is set when building locally from a branch with changes 
+# or when building in github actions environment
+if [ -n "$CURRENT_TAG" ]; then
+  $mike set-default $CURRENT_TAG
+# DEFAULT_TAG is set when building locally from a branch without changes
+# it also means that to build either we need an existing tag or a branch with changes
+else
+  $mike set-default $DEFAULT_TAG
+fi

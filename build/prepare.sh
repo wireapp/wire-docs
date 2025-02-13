@@ -15,6 +15,7 @@ fi
 TEMP_DIR=$(cat .tmpdir)
 echo "Using temporary directory: $TEMP_DIR"
 
+# only used when working locally
 if [ -f $TEMP_DIR/.current_branch ]; then 
 	cd $TEMP_DIR;
     # reverting to the branch that was being worked on

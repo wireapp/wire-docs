@@ -3,7 +3,7 @@ FROM python:3.12-slim
 RUN apt-get update && apt-get install -y build-essential git curl
 RUN pip install pipenv
 RUN git clone https://github.com/wireapp/wire-docs.git
-WORKDIR wire-docs
+WORKDIR /wire-docs
 ENV PIPENV_PIPFILE="build/Pipfile"
 RUN pipenv install --ignore-pipfile
 RUN bash build/build_versions.sh

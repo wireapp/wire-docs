@@ -1,0 +1,38 @@
+name: Build and Release Artifact
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  
+
+      - name: Setup Nix
+        uses: cachix/install-nix-action@v16
+
+      - name: Build Archive
+        id: build_archive
+        run: |
+          make archive
+          if [ ! -f "wire-docs-${GITHUB_REF##*/}.tar.gz" ]; then
+            echo "Artifact not found!"
+            ls
+            exit 1
+          fi
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./wire-docs-${{ github.ref_name }}.tar.gz
+          asset_name: wire-docs-${{ github.ref_name }}.tar.gz
+          asset_content_type: application/gzip

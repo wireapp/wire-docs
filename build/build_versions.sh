@@ -1,32 +1,50 @@
 #!/bin/bash
 
-set -e
+set -ex
 mike="pipenv run mike"
 
 CURRENT=$(git branch --show-current)
-echo "$CURRENT" > .current_branch
+
+if [ -f ".current_branch" ]; then
+  PREVIOUS=$(<.current_branch)
+  # to let local user know that the branch has been while developing locally
+  # this will lead to a new tag creation for the branch
+  if [ "$CURRENT" != "$PREVIOUS" ]; then
+    echo "Branch changed from '$PREVIOUS' to '$CURRENT'"
+    echo "$CURRENT" > .current_branch
+  fi
+else
+  echo "$CURRENT" > .current_branch
+fi
 
 # using dummy values for user.name and user.email as they are not required for git operations but a requirement for mike to have gh-pages branch
-git config user.name "Wire Docs"
-git config user.email "wire-docs-author@wire.com"
+git config --local user.name "Wire Docs"
+git config --local user.email "wire-docs-author@wire.com"
+
+# Checking if we are in github actions environment or working locally
+if [ -n "${GITHUB_REF_NAME}" ]; then
+  CURRENT_TAG="$GITHUB_REF_NAME"
+elif [ -n "${GITHUB_REF}" ]; then
+  CURRENT_TAG="${GITHUB_REF##*/}"
+else
+  CURRENT_TAG="$CURRENT"
+fi
+
+echo "TAG used for current commit would be: $CURRENT_TAG"
 
 # to avoid considering the changes in the following files
-echo ".gitignore" >> .gitignore
 echo ".current_branch" >> .gitignore
-#echo "build" >> .gitignore
+
+# useful for local users to see their diffs with each mike deploy
+git --no-pager diff
 
 # Check if there are any uncommitted changes
 if [[ -n $(git status --porcelain) ]]; then
-  echo "Uncommitted changes detected. Commiting them temporarily and creating a tag for $CURRENT branch with same name"
+  echo "Uncommitted changes detected. Commiting them temporarily and creating a tag for $CURRENT_TAG Tag/branch with same name"
   git add -A
   git commit -m "Temporary commit: required to work on other branches"
   # forcing here for tag creaion as the tag might already exist but new commits should be tagged
-  git tag -f $CURRENT || true
-fi
-
-# tag the current branch only if it is not main
-if [ $CURRENT != "main" ] ; then
-    git tag $CURRENT || true
+  git tag -f $CURRENT_TAG || true
 fi
 
 # Fetch all tags
@@ -36,7 +54,7 @@ git fetch --tags
 TAGS=$(git tag)
 
 # Calculate the latest and default tags
-DEFAULT_TAG=$(echo "$TAGS" | sort -V | head -n 1)
+DEFAULT_TAG=$(echo "$TAGS" | sort -V | tail -n 1)
 
 # Fetch the existing tags and their commits from mike
 declare -A existing_tags
@@ -49,10 +67,10 @@ git show-ref --tags | while read -r commit tag; do
     TAG=${tag#refs/tags/}
 
     # Check if tag exists in mike
-    if [[ -n "${existing_tags[$TAG]}" ]]; then
+    if [ -n "${existing_tags[$TAG]}" ]; then
         existing_commit="${existing_tags[$TAG]}"
 
-        if [[ "$commit" != "$existing_commit" ]]; then
+        if [ "$commit" != "$existing_commit" ]; then
             echo "Tag $TAG exists but with a different commit ($existing_commit). Updating..."
             $mike delete "$TAG"
             $mike deploy --update-aliases "$TAG" "$commit"
@@ -65,10 +83,5 @@ git show-ref --tags | while read -r commit tag; do
     fi
 done
 
-# mark the current branch as default only if it is not main
-if [ $CURRENT != "main" ] ; then
-    $mike set-default $DEFAULT_TAG
-else
-    $mike set-default $CURRENT
-fi
-
+# Set the default tag
+$mike set-default $CURRENT_TAG

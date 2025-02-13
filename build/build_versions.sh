@@ -22,10 +22,10 @@ git config --local user.name "Wire Docs"
 git config --local user.email "wire-docs-author@wire.com"
 
 # Checking if we are in github actions environment or working locally
-if [ -n "${GITHUB_REF_NAME}" ]; then
-  CURRENT_TAG="$GITHUB_REF_NAME"
-elif [ -n "${GITHUB_REF}" ]; then
+if [ -n "${GITHUB_REF}" ]; then
   CURRENT_TAG="${GITHUB_REF##*/}"
+elif [ -n "${GITHUB_REF_NAME}" ]; then
+  CURRENT_TAG="$GITHUB_REF_NAME"
 else
   CURRENT_TAG="$CURRENT"
 fi

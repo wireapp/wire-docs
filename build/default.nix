@@ -1,13 +1,13 @@
 let
   nixpkgs = import (builtins.fetchTarball {
-    url = "https://github.com/NixOS/nixpkgs/archive/4e96537f163fad24ed9eb317798a79afc85b51b7.tar.gz";
-    sha256 = "1hzn20sc1n2jwkim8ms300dp56f0hrpj3y2h477mlxykkk2cyp0q";
+    url = "https://github.com/NixOS/nixpkgs/archive/057f9aecfb71c4437d2b27d3323df7f93c010b7e.tar.gz";
+    sha256 = "1ndiv385w1qyb3b18vw13991fzb9wg4cl21wglk89grsfsnra41k";
   }) {};
 in
 
 nixpkgs.mkShell {
   buildInputs = [
-    nixpkgs.python312
+    nixpkgs.python311
     nixpkgs.pipenv
     nixpkgs.bashInteractive
     nixpkgs.coreutils

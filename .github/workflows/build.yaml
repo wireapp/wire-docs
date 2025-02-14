@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - 'README.md'
+      - '.github/workflows/release.yaml'
 
 jobs:
   build:

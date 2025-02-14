@@ -5,9 +5,14 @@ mike="pipenv run mike"
 
 CURRENT=$(git branch --show-current)
 
+# using dummy values for user.name and user.email as they are not required for git operations but a requirement for mike to have gh-pages branch
+git config --local user.name "Wire Docs"
+git config --local user.email "wire-docs-author@wire.com"
+
 # it will work only when building from branches which is expected to run in local setup
 if [ -n "$CURRENT" ]; then
   CURRENT_TAG="$CURRENT"
+
   if [ -f ".current_branch" ]; then
     PREVIOUS=$(<.current_branch)
     # to let local user know that the branch has been while developing locally
@@ -19,14 +24,24 @@ if [ -n "$CURRENT" ]; then
   else
     echo "$CURRENT" > .current_branch
   fi
-fi
 
-# using dummy values for user.name and user.email as they are not required for git operations but a requirement for mike to have gh-pages branch
-git config --local user.name "Wire Docs"
-git config --local user.email "wire-docs-author@wire.com"
+# useful for local users to see their diffs with each mike deploy
+git --no-pager diff
+
+# Check if there are any uncommitted changes, expected when building locally
+  if [[ -n $(git status --porcelain) ]]; then
+    echo "TAG used for current commit would be: $CURRENT_TAG"
+    echo "Uncommitted changes detected. Commiting them temporarily and creating a tag for $CURRENT_TAG Tag/branch with same name"
+    git add -A
+    git commit -m "Temporary commit: required to work on other branches"
+    # forcing here for tag creaion as the tag might already exist but new commits should be tagged
+    git tag -f $CURRENT_TAG || true
+  else
+    git tag -f $CURRENT_TAG || true
+  fi
 
 # Checking if we are in GitHub Actions environment or working locally, if CURRENT is set then it is local
-if [ -z "$CURRENT" ]; then
+else
   if [ -n "${GITHUB_REF}" ]; then
     if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
       # For a tag, strip the "refs/tags/" prefix.
@@ -39,21 +54,6 @@ if [ -z "$CURRENT" ]; then
   fi
 fi
 
-# useful for local users to see their diffs with each mike deploy
-git --no-pager diff
-
-# Check if there are any uncommitted changes, expected when building locally
-if [[ -n $(git status --porcelain) ]]; then
-  echo "TAG used for current commit would be: $CURRENT_TAG"
-  echo "Uncommitted changes detected. Commiting them temporarily and creating a tag for $CURRENT_TAG Tag/branch with same name"
-  git add -A
-  git commit -m "Temporary commit: required to work on other branches"
-  # forcing here for tag creaion as the tag might already exist but new commits should be tagged
-  git tag -f $CURRENT_TAG || true
-
-  # when building locally and there are changes locally, the current tag will be the branch name
-  CURRENT_TAG="$CURRENT"
-fi
 
 # Fetch all tags
 git fetch --tags

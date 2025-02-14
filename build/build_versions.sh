@@ -7,26 +7,36 @@ CURRENT=$(git branch --show-current)
 
 # it will work only when building from branches which is expected to run in local setup
 if [ -n "$CURRENT" ]; then
-    if [ -f ".current_branch" ]; then
-      PREVIOUS=$(<.current_branch)
-      # to let local user know that the branch has been while developing locally
-      # this will lead to a new tag creation for the branch, it will not be used when running in github actions
-      if [ "$CURRENT" != "$PREVIOUS" ]; then
-        echo "Branch changed from '$PREVIOUS' to '$CURRENT'"
-        echo "$CURRENT" > .current_branch
-      fi
-    else
+  CURRENT_TAG="$CURRENT"
+  if [ -f ".current_branch" ]; then
+    PREVIOUS=$(<.current_branch)
+    # to let local user know that the branch has been while developing locally
+    # this will lead to a new tag creation for the branch, it will not be used when running in github actions
+    if [ "$CURRENT" != "$PREVIOUS" ]; then
+      echo "Branch changed from '$PREVIOUS' to '$CURRENT'"
       echo "$CURRENT" > .current_branch
     fi
+  else
+    echo "$CURRENT" > .current_branch
+  fi
 fi
 
 # using dummy values for user.name and user.email as they are not required for git operations but a requirement for mike to have gh-pages branch
 git config --local user.name "Wire Docs"
 git config --local user.email "wire-docs-author@wire.com"
 
-# Checking if we are in github actions environment or working locally
-if [ -n "${GITHUB_REF}" ]; then
-  CURRENT_TAG="${GITHUB_REF##*/}"
+# Checking if we are in GitHub Actions environment or working locally, if CURRENT is set then it is local
+if [ -z "$CURRENT" ]; then
+  if [ -n "${GITHUB_REF}" ]; then
+    if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+      # For a tag, strip the "refs/tags/" prefix.
+      CURRENT_TAG="${GITHUB_REF#refs/tags/}"
+    elif [[ "${GITHUB_REF}" == refs/pull/* ]]; then
+      # For a pull request, remove "refs/pull/" then replace "/" with "-" to get "11-merge"
+      pr_part="${GITHUB_REF#refs/pull/}"s
+      CURRENT_TAG="${pr_part//\//-}"
+    fi
+  fi
 fi
 
 # useful for local users to see their diffs with each mike deploy

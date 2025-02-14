@@ -50,6 +50,7 @@ else
       # For a pull request, remove "refs/pull/" then replace "/" with "-" to get "11-merge"
       pr_part="${GITHUB_REF#refs/pull/}"s
       CURRENT_TAG="${pr_part//\//-}"
+      git tag -f $CURRENT_TAG || true
     fi
   fi
 fi

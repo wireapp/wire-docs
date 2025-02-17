@@ -8,6 +8,7 @@ all: run
 check-deps:
 	@command -v nix-shell >/dev/null 2>&1 || { echo "nix-shell required but not installed"; exit 1; }
 	@command -v git >/dev/null 2>&1 || { echo "git required but not installed"; exit 1; }
+	@make --version | grep -iq "^GNU Make 4" || { echo "GNU Make 4.x required"; exit 1; }
 
 # creating temporary directory and copying the files - also ensuring that the current branch is checked out
 .PHONY: prepare

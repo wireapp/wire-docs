@@ -74,7 +74,7 @@ done < <($mike list | awk -F '[][]' '{print $1, $2}')
 # Iterate over git tags
 git show-ref --tags | while read -r commit tag; do
     TAG=${tag#refs/tags/}
-
+    git checkout $TAG
     # Check if tag exists in mike
     if [ -n "${existing_tags[$TAG]}" ]; then
         existing_commit="${existing_tags[$TAG]}"

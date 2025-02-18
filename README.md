@@ -6,6 +6,15 @@ Wire documentation is hosted on <https://docs.wire.com>. This project is made us
 - src 
     - It contains the files and directories for actual source of the documentation. The `src` directory has been processed based on [docs](https://github.com/wireapp/wire-server/tree/develop/docs). The earlier version was based on Sphinx, so it was converted to markdown and then ported for Mkdocs. Find the process for doing in `build/old-docs.md`.
 
+- Pull the modules from the submodule set for [wire-server](https://github.com/wireapp/wire-server/tree/develop) with sparse checkout
+    - We want to store some of the documents along with the wire-server documentation. Currently, we are only tracking the following files from the wire-server repository and their linked files:
+        - CHANGELOG.md -> src/changelog/changelog.md
+        - cassandra-schema.cql -> src/developer/reference/cassandra-schema.cql
+    - To fetch the latest changes, use the following command:
+        `git submodule update --remote`
+    - To optionally update the src/changelog/README.md based on the new changelog.md, run the following command:
+        `rm src/changelog/README.md && grep '^# ' src/changelog/changelog.md | sed 's/^# //' | while IFS= read -r heading; do anchor=$(echo "$heading" | sed -E 's/^\[?([0-9-]+)\]? *(\(([^)]+)\)|# *([0-9]+))$/\1-\3\4/' | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g;s/\.//g'); echo "* [$heading](changelog.md#$anchor)"; done > src/changelog/README.md`
+
 - build 
     - It contains scripts used by Makefile to support different usecases for builds. It is designed to run one build process at a time. All the local targets use a temporary directory stored in `.tmpdir` file for building/serving the changes. This is due to git-operations by tools like `mike` for mkdocs.
     ### Prerequisites

@@ -1,0 +1,3 @@
+[submodule "wire-server"]
+	path = wire-server
+	url = https://github.com/wireapp/wire-server.git

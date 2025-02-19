@@ -49,7 +49,7 @@ remove_if_exists() {
   done
 }
 
-cp -r --no-preserve=mode,ownership "${ORIGINAL_DIR}/." $TEMP_DIR
+cp -a "${ORIGINAL_DIR}/." $TEMP_DIR
 
 # removing the files not required in the temporary directory but got copied; rsync works better but rsync availability before nix can't be assured
 remove_if_exists $TEMP_DIR/.tmpdir

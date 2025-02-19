@@ -1,1 +1,1 @@
-wire-server/docs/src/how-to/install/infrastructure-configuration.md
+../../../wire-server/docs/src/how-to/install/infrastructure-configuration.md

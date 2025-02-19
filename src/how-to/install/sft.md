@@ -1,1 +1,1 @@
-wire-server/docs/src/how-to/install/sft.md
+../../../wire-server/docs/src/how-to/install/sft.md

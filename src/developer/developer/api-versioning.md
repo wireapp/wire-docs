@@ -1,1 +1,1 @@
-wire-server/docs/src/developer/developer/api-versioning.md
+../../../wire-server/docs/src/developer/developer/api-versioning.md

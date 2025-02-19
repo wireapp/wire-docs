@@ -1,1 +1,1 @@
-wire-server/docs/src/how-to/install/troubleshooting.md
+../../../wire-server/docs/src/how-to/install/troubleshooting.md

@@ -1,1 +1,1 @@
-wire-server/docs/src/developer/reference/user/registration.md
+../../../../wire-server/docs/src/developer/reference/user/registration.md

@@ -1,1 +1,1 @@
-wire-server/docs/src/understand/single-sign-on/understand/main.md
+../../../../wire-server/docs/src/understand/single-sign-on/understand/main.md

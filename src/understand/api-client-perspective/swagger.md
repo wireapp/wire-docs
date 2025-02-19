@@ -1,1 +1,1 @@
-wire-server/docs/src/understand/api-client-perspective/swagger.md
+../../../wire-server/docs/src/understand/api-client-perspective/swagger.md

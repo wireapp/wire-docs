@@ -1,1 +1,1 @@
-wire-server/docs/src/understand/mls.md
+../../wire-server/docs/src/understand/mls.md

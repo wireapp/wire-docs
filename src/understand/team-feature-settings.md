@@ -1,1 +1,1 @@
-wire-server/docs/src/understand/team-feature-settings.md
+../../wire-server/docs/src/understand/team-feature-settings.md

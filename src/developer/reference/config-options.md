@@ -1,1 +1,1 @@
-wire-server/docs/src/developer/reference/config-options.md
+../../../wire-server/docs/src/developer/reference/config-options.md

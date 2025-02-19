@@ -1,1 +1,1 @@
-wire-server/docs/src/understand/single-sign-on/trouble-shooting.md
+../../../wire-server/docs/src/understand/single-sign-on/trouble-shooting.md

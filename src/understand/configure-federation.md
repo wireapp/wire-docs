@@ -1,1 +1,1 @@
-wire-server/docs/src/understand/configure-federation.md
+../../wire-server/docs/src/understand/configure-federation.md

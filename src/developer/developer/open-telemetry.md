@@ -1,1 +1,1 @@
-wire-server/docs/src/developer/developer/open-telemetry.md
+../../../wire-server/docs/src/developer/developer/open-telemetry.md

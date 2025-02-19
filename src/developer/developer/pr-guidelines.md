@@ -1,1 +1,1 @@
-wire-server/docs/src/developer/developer/pr-guidelines.md
+../../../wire-server/docs/src/developer/developer/pr-guidelines.md

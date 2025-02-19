@@ -1,1 +1,1 @@
-wire-server/docs/src/how-to/install/web-app-settings.md
+../../../wire-server/docs/src/how-to/install/web-app-settings.md

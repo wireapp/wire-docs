@@ -1,1 +1,1 @@
-wire-server/docs/src/developer/developer/federation-api-conventions.md
+../../../wire-server/docs/src/developer/developer/federation-api-conventions.md

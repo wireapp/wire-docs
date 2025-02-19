@@ -1,1 +1,1 @@
-wire-server/docs/src/developer/developer/how-to.md
+../../../wire-server/docs/src/developer/developer/how-to.md

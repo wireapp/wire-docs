@@ -1,1 +1,1 @@
-wire-server/docs/src/understand/searchability.md
+../../wire-server/docs/src/understand/searchability.md

@@ -1,1 +1,1 @@
-wire-server/docs/src/developer/developer/coding-conventions.md
+../../../wire-server/docs/src/developer/developer/coding-conventions.md

@@ -19,9 +19,11 @@ Wire documentation is hosted on <https://docs.wire.com>. This project is made us
     - It contains scripts used by Makefile to support different usecases for builds. It is designed to run one build process at a time. All the local targets use a temporary directory stored in `.tmpdir` file for building/serving the changes. This is due to git-operations by tools like `mike` for mkdocs.
     ### Prerequisites
     
-    - Make
-    - Nix
-    - Docker (optional) - if building  a docker image
+    - make
+    - nix-shell
+    - git
+    - rsync
+    - Docker (optional) - if building  a docker image, useful when testing without installing nix-shell
 
         ### Makefile Targets
 

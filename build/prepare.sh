@@ -25,32 +25,29 @@ else
 	echo "no .current_branch file found"; 
 fi; 
 
-echo "Copying files from $ORIGINAL_DIR to $TEMP_DIR"
+if [ -d "$TEMP_DIR/.git" ]; then
+    current_remote=$(git config --get remote.origin.url)
+    if [ "$current_remote" = "$ORIGINAL_DIR" ]; then
+      cd $TEMP_DIR
 
-# to remove undesired files from the temporary directory
-remove_if_exists() {
-  local pattern="$1"
-  local files=()
-  local exit_code=0
+      EXPECTED_AUTHOR="Wire Docs <wire-docs-author@wire.com>"
+      LAST_COMMIT_AUTHOR=$(git log -1 --pretty=format:"%an <%ae>")
+      if [ "$LAST_COMMIT_AUTHOR" = "$EXPECTED_AUTHOR" ]; then
+          echo "Last commit by $EXPECTED_AUTHOR detected. Removing it..."
+          git reset --hard HEAD~1
+          git pull origin $(cat .current_branch)
+      else
+          echo "Last commit was not by $EXPECTED_AUTHOR. No action taken."
+      fi
 
-  # Enable nullglob so non-matching patterns expand to an empty array
-  shopt -s nullglob
-  files=( $pattern )
-  shopt -u nullglob
-
-  if [ ${#files[@]} -eq 0 ]; then
-    return 0
-  fi
-
-  for file in "${files[@]}"; do
-    if [ -e "$file" ]; then
-        rm -f "$file"
+    else
+        echo "${TEMP_DIR} exists and the remote ${ORIGINAL_DIR} has changed from previous source. Clean and try again."
+        exit 1
     fi
-  done
-}
+else
+    echo "Cloning repository to ${TEMP_DIR}"
+    git clone "${ORIGINAL_DIR}" "${TEMP_DIR}"
+fi
 
-cp -a "${ORIGINAL_DIR}/." $TEMP_DIR
-
-# removing the files not required in the temporary directory but got copied; rsync works better but rsync availability before nix can't be assured
-remove_if_exists $TEMP_DIR/.tmpdir
-remove_if_exists $TEMP_DIR/wire-docs*.tar.gz
+echo "Syncing all the other files changes from ${ORIGINAL_DIR}/ to ${TEMP_DIR}, to have uncommited changes, if any"
+rsync -a --exclude='/.git' --exclude="/wire-server" --exclude='wire-docs*.tar.gz' --exclude=".tmpdir" "${ORIGINAL_DIR}/" "$TEMP_DIR/"

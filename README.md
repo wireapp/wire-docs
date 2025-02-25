@@ -60,3 +60,21 @@ Wire documentation is hosted on <https://docs.wire.com>. This project is made us
 
         - `make SHELL="/bin/bash -x" target`
             - To increase verbosity for make commands.
+
+## Versioning criteria:
+  - The version number will follow a three-part format: **A.B.C**
+
+    - **A (Major Version)**: This indicates the minimum API contract version supported by the release. When this number increases, it signals the deprecation of an older API contract version. For example, V5.0.0 means the release supports API V5 and newer. Major versions can include breaking changes, such as database migrations or changes to the backend service structure.
+
+    - **B (Feature Iteration)**: This number reflects feature updates that don’t affect API contract compatibility or introduce breaking changes. For example, V5.1.0 means the release supports API V5 and newer, and includes new features or improvements without altering the compatibility matrix.
+
+    - **C (Fix Iteration)**: This is incremented for bug fixes or security updates that don’t introduce new features or modify compatibility. There are no breaking changes in a fix iteration.
+
+    - The *first release*, `v0.0.0`, indicates that the documentation supports all API versions.
+
+## Relationship Between Versions and Tags:
+  - We plan to offer multiple versions of our documentation, with each version corresponding to a specific release in the wire-docs repository.
+
+  - Each version release includes all built documents from previous releases. Releases are based on Git tags, which mark a specific point in your repository's history.
+
+  - Once a new version or tag is released, it becomes immutable; future updates will require creating new versions, and no further edits will be permitted on that tag.

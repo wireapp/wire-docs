@@ -37,11 +37,25 @@ current: prepare
 .PHONY: archive
 archive: build
 	@cd $$(cat .tmpdir) && git checkout gh-pages && \
-	nix-shell ${ORIGINAL_DIR}/build/default.nix --run "tar --exclude=.git --exclude=.current_branch -czf ${ORIGINAL_DIR}/wire-docs.tar.gz ."
-# renaming the tarball with the default version set from build_versions.sh in index.html by mike 
-	@cd $$(cat .tmpdir) && version=$$(grep -oE 'url=[^"]+' index.html | head -1 | sed 's/url=//' | cut -d '/' -f 1 ); \
-	  mv ${ORIGINAL_DIR}/wire-docs.tar.gz ${ORIGINAL_DIR}/wire-docs-$${version}.tar.gz; \
+	grep -oE 'url=[^"]+' index.html | head -1 | sed 's/url=//' | cut -d '/' -f 1 > version
+	@cd $$(cat .tmpdir) && { \
+	    find . -type d -regextype posix-extended -regex '.*\/v[0-9]+\.[0-9]+(\.[0-9]+)?$$'; \
+	    echo ".nojekyll"; \
+	    echo "site"; \
+	    echo "versions.json"; \
+	    echo "index.html"; \
+	    cat version; \
+	} | sed 's|^\./||' | sort -u > archived_files
+	@cd $$(cat .tmpdir) && \
+	  nix-shell ${ORIGINAL_DIR}/build/default.nix --run "tar -czf ${ORIGINAL_DIR}/wire-docs.tar.gz -T archived_files"
+	@cd $$(cat .tmpdir) && \
+	  version=$$(cat version) && \
+	  mv ${ORIGINAL_DIR}/wire-docs.tar.gz ${ORIGINAL_DIR}/wire-docs-$${version}.tar.gz
+	@cd $$(cat .tmpdir) && \
+	  version=$$(cat version) && \
 	  echo "Built ${ORIGINAL_DIR}/wire-docs-$${version}.tar.gz"
+	@cd $$(cat .tmpdir) && \
+	  rm -f archived_files version
 
 # Build the docker image
 .PHONY: docker

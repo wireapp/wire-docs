@@ -37,3 +37,16 @@ jobs:
           asset_path: ./wire-docs-${{ github.ref_name }}.tar.gz
           asset_name: wire-docs-${{ github.ref_name }}.tar.gz
           asset_content_type: application/gzip
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: eu-west-1
+
+      - name: Extract and Deploy docs to S3
+        run: |
+          mkdir -p tmp_extracted
+          tar -xzf ./wire-docs-${{ github.ref_name }}.tar.gz -C tmp_extracted
+          aws s3 sync tmp_extracted/ s3://origin-docs.zinfradev.com/
+          rm -rf tmp_extracted

@@ -1,6 +1,11 @@
 site_name: Wire Docs
 docs_dir: src
-
+site_url: "https://docs.zinfrdev.com"
+repo_url: https://github.com/wireapp/wire-docs
+edit_uri: edit/main/src/
+site_author: Wire Authors
+site_description: "Wire Documentation"
+use_directory_urls: true
 nav:
   - Home: README.md
   - Installation:
@@ -124,6 +129,19 @@ theme:
     - search.share
     - search.suggest
     - tabs
+  palette:
+    - scheme: "default"
+      accent: "deep orange"
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - scheme: "slate"
+      accent: "red"
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
 
 plugins:
   - search
@@ -140,6 +158,7 @@ plugins:
       canonical_version:
         null # the version for <link rel="canonical">; `null`
         # uses the version specified via `mike deploy`
+
 markdown_extensions:
   - admonition
   - attr_list
@@ -168,3 +187,8 @@ extra:
   version:
     provider: mike
     default: latest  # Default version to load
+  social:
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/company/wire-secure-communication
+    - icon: fontawesome/brands/github
+      link: https://github.com/wireapp

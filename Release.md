@@ -2,6 +2,8 @@
 
   - We follow GitHub's standard process for creating a `release`, as described in [GitHub's documentation](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository#creating-a-release). We use the UI to create a release with the `Create new tag` option, which synchronizes the release creation with tag creation.
 
+  **NOTE:** Each release should initially be marked as `Set as a pre-release` to allow for verification of the release notes and artifacts. If the release workflow fails, you can fix the issues and create a new release before publishing the final release.
+
   - In the release notes, you can either specify the changes based on commits or use the `Generate release notes` feature to automatically compile a history of commits on the main branch.
 
   - All releases should be based on the *main* branch. For each release, changes to the main branch are aggregated through *pull requests*.

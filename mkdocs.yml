@@ -1,6 +1,6 @@
 site_name: Wire Docs
 docs_dir: src
-site_url: "https://docs.zinfrdev.com"
+site_url: "https://docs.wire.com"
 repo_url: https://github.com/wireapp/wire-docs
 edit_uri: edit/main/src/
 site_author: Wire Authors

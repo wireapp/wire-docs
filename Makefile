@@ -21,8 +21,15 @@ prepare: check-deps
 build: prepare
 	@cd $$(cat .tmpdir) && nix-shell build/default.nix --run "bash build/build_versions.sh"
 
+.PHONY: check-port
+check-port:
+	@if lsof -i :8000 >/dev/null 2>&1; then \
+		echo "Port 8000 is already in use"; \
+		exit 1; \
+	fi
+
 .PHONY: run
-run: build
+run: check-port build
 	@cd $$(cat .tmpdir) && git checkout gh-pages && \
 	nix-shell ${ORIGINAL_DIR}/build/default.nix --run "python -m http.server 8000"
 

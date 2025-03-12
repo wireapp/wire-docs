@@ -6,7 +6,7 @@ endeavor.
 
 ## Call hierarchy
 
-See [large-conversations.yaml](https://github.com/wireapp/wire-server/blob/develop/docs/src/developer/developer/large-conversations.yaml) for
+See [large-conversations.yaml](https://github.com/wireapp/wire-docs/blob/main/src/developer/developer/large-conversations.yaml) for
 call hierarchy of functions that load the full member list into memory.
 
 ## Galley Endpoints

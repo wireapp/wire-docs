@@ -227,11 +227,11 @@ This script does not create users or causes them to join a team by itself, inste
 
 Input is a [CSV file](https://en.wikipedia.org/wiki/Comma-separated_values), in comma-separated format, in the form `'Email,Suggested User Name'`.
 
-You also need to specify the inviting admin user, the team, the URI for the Brig ([API](../../understand/federation/api#brig)) service (Host), and finally the input (CSV) file containing the users to invite.
+You also need to specify the inviting admin user, the team, the URI for the Brig ([API](../../understand/federation/api.md#brig)) service (Host), and finally the input (CSV) file containing the users to invite.
 
 The exact format for the parameters passed to the script is [as follows](https://github.com/wireapp/wire-server/blob/develop/hack/bin/create_team_members.sh#L17):
 
-- `-a <admin uuid>`: [User ID](../../understand/federation/api#qualified-identifiers-and-names) in [UUID format](https://en.wikipedia.org/wiki/Universally_unique_identifier) of the inviting admin. For example `9122e5de-b4fb-40fa-99ad-1b5d7d07bae5`.
+- `-a <admin uuid>`: [User ID](../../understand/federation/api.md#qualified-identifiers-and-names) in [UUID format](https://en.wikipedia.org/wiki/Universally_unique_identifier) of the inviting admin. For example `9122e5de-b4fb-40fa-99ad-1b5d7d07bae5`.
 - `-t <team uuid>`: ID of the inviting team, same format.
 - `-h <host>`: Base URI of brig’s internal endpoint.
 - `-c <input file>`: file containing info on the invitees in format ‘Email,UserName’.
@@ -299,7 +299,7 @@ Some of the pods allow you to grab metrics by accessing their `/i/metrics` endpo
 - `gundeck`: Push Notifications API
 - `spar`: Single-Sign-ON and SCIM
 
-For more details on the various services/pods, you can check out [this link](../../understand#overview).
+For more details on the various services/pods, you can check out [this link](../../understand/overview.md#focus-on-pods).
 
 Before you can grab metrics from a pod, you need to find its IP address. You do this by running the following command:
 

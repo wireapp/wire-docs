@@ -13,9 +13,9 @@ documentation answering your questions, look here!
 ## related documentation
 
 - [list of howtos for supported SAML IdP vendors](../../understand/single-sign-on/README)
-- [fragment](../../understand/single-sign-on/understand/main)  (TODO: clean up the section “common misconceptions” below and move it here.)
+- [fragment](../../understand/single-sign-on/understand/main.md)  (TODO: clean up the section “common misconceptions” below and move it here.)
 - [official docs for team admin from customer support](https://support.wire.com/hc/en-us/categories/360000248538?section=administration%3Fsection%3Dadministration)  (skip to “Authentication”)
-- [talk scim using curl](../../understand/single-sign-on/understand/main#using-scim-via-curl)
+- [talk scim using curl](../../understand/single-sign-on/understand/main.md#using-scim-via-curl)
 - if you want to work on our saml/scim implementation and do not have access to [https://github.com/zinfra/backend-issues/issues?q=is%3Aissue+is%3Aopen+label%3Aspar] and [https://github.com/wireapp/design-specs/tree/master/Single%20Sign%20On], please get in touch with us.
 
 ## operations

@@ -496,7 +496,7 @@ Where:
 
 You might also need to edit the admin email and admin passwords at lines `48` and `49` of the script.
 
-To learn more about the different pods and how to identify them, see [this page](../../understand/overview#focus-on-pods).
+To learn more about the different pods and how to identify them, see [this page](../../understand/overview.md#focus-on-pods).
 
 You can list your pods with `kubectl get pods --namespace wire`.
 

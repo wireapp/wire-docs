@@ -12,7 +12,7 @@ documentation answering your questions, look here!
 
 ## related documentation
 
-- [list of howtos for supported SAML IdP vendors](../../understand/single-sign-on/README)
+- [list of howtos for supported SAML IdP vendors](../../understand/single-sign-on/README.md)
 - [fragment](../../understand/single-sign-on/understand/main.md)  (TODO: clean up the section “common misconceptions” below and move it here.)
 - [official docs for team admin from customer support](https://support.wire.com/hc/en-us/categories/360000248538?section=administration%3Fsection%3Dadministration)  (skip to “Authentication”)
 - [talk scim using curl](../../understand/single-sign-on/understand/main.md#using-scim-via-curl)

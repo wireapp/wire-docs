@@ -12,8 +12,10 @@ check-deps:
 	@command -v rsync >/dev/null 2>&1 || { echo "nix-shell required but not installed"; exit 1; }
 
 # creating temporary directory and copying the files - also ensuring that the current branch is checked out
+# fetch all the tags from the remote
 .PHONY: prepare
 prepare: check-deps
+	@git fetch --tags
 	@bash build/prepare.sh
 
 # Run the all versions of the documentation
@@ -43,26 +45,23 @@ current: prepare
 # Build the documentation tarball with all versions
 .PHONY: archive
 archive: build
+    # trying to consider the current branch from local envs
 	@cd $$(cat .tmpdir) && git checkout gh-pages && \
-	grep -oE 'url=[^"]+' index.html | head -1 | sed 's/url=//' | cut -d '/' -f 1 > version
+	    cat .current_branch > branch | true
 	@cd $$(cat .tmpdir) && { \
 	    find . -type d -regextype posix-extended -regex '.*\/v[0-9]+\.[0-9]+(\.[0-9]+)?$$'; \
 	    echo ".nojekyll"; \
 	    echo "site"; \
 	    echo "versions.json"; \
 	    echo "index.html"; \
-	    cat version; \
+		cat branch; \
+		echo "latest"; \
 	} | sed 's|^\./||' | sort -u > archived_files
 	@cd $$(cat .tmpdir) && \
 	  nix-shell ${ORIGINAL_DIR}/build/default.nix --run "tar -czf ${ORIGINAL_DIR}/wire-docs.tar.gz -T archived_files"
+	@echo "Built ${ORIGINAL_DIR}/wire-docs.tar.gz"
 	@cd $$(cat .tmpdir) && \
-	  version=$$(cat version) && \
-	  mv ${ORIGINAL_DIR}/wire-docs.tar.gz ${ORIGINAL_DIR}/wire-docs-$${version}.tar.gz
-	@cd $$(cat .tmpdir) && \
-	  version=$$(cat version) && \
-	  echo "Built ${ORIGINAL_DIR}/wire-docs-$${version}.tar.gz"
-	@cd $$(cat .tmpdir) && \
-	  rm -f archived_files version
+	  rm -f archived_files branch
 
 # Build the docker image
 .PHONY: docker

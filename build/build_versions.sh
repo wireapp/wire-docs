@@ -25,22 +25,22 @@ if [ -n "$CURRENT" ]; then
     echo "$CURRENT" > .current_branch
   fi
 
-# useful for local users to see their diffs with each mike deploy
-git --no-pager diff
+  # useful for local users to see their diffs with each mike deploy
+  git --no-pager diff
 
-# Check if there are any uncommitted changes, expected when building locally
+  # Check if there are any uncommitted changes, expected when building locally
   if [[ -n $(git status --porcelain) ]]; then
     echo "TAG used for current commit would be: $CURRENT_TAG"
     echo "Uncommitted changes detected. Commiting them temporarily and creating a tag for $CURRENT_TAG Tag/branch with same name"
     git add -A
     git commit -m "Temporary commit: required to work on other branches"
-    # forcing here for tag creaion as the tag might already exist but new commits should be tagged
-    git tag -f $CURRENT_TAG || true
-  else
-    git tag -f $CURRENT_TAG || true
   fi
 
-# Checking if we are in GitHub Actions environment or working locally, if CURRENT is set then it is local
+  # forcing here for tag creaion as the tag might already exist but new commits should be tagged
+  git tag -f $CURRENT_TAG || true
+  git tag -f latest || true
+
+# Confirming if we are in GitHub Actions environment
 else
   if [ -n "${GITHUB_REF}" ]; then
     if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
@@ -51,19 +51,13 @@ else
       pr_part="${GITHUB_REF#refs/pull/}"s
       CURRENT_TAG="${pr_part//\//-}"
       git tag -f $CURRENT_TAG || true
+      git tag -f latest || true
     fi
   fi
 fi
 
-
-# Fetch all tags
-git fetch --tags
-
 # Get all tags
 TAGS=$(git tag)
-
-# Calculate the latest and default tags
-DEFAULT_TAG=$(echo "$TAGS" | sort -V | tail -n 1)
 
 # Fetch the existing tags and their commits from mike
 declare -A existing_tags
@@ -96,13 +90,5 @@ git show-ref --tags | while read -r commit tag; do
     fi
 done
 
-# Set the default tag
-# CURRENT_TAG is set when building locally from a branch with changes 
-# or when building in github actions environment
-if [ -n "$CURRENT_TAG" ]; then
-  $mike set-default $CURRENT_TAG
-# DEFAULT_TAG is set when building locally from a branch without changes
-# it also means that to build either we need an existing tag or a branch with changes
-else
-  $mike set-default $DEFAULT_TAG
-fi
+# Set the default tag and create an alias to latest
+$mike set-default latest

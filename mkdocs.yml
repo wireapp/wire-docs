@@ -115,6 +115,7 @@ nav:
 
 theme:
   name: material
+  custom_dir: .overrides/
   logo: _static/image/Wire_logo.svg
   favicon: _static/favicon/favicon.ico
   features:

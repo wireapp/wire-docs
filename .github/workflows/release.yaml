@@ -23,9 +23,9 @@ jobs:
         id: build_archive
         run: |
           make archive
-          if [ ! -f "wire-docs-${GITHUB_REF##*/}.tar.gz" ]; then
+          if [ ! -f "wire-docs.tar.gz" ]; then
             echo "Artifact not found!"
-            ls
+            mv wire-docs.tar.gz wire-docs-${{ github.ref_name }}.tar.gz
             exit 1
           fi
 

@@ -33,6 +33,8 @@ jobs:
       - name: Deploy latest docs to S3
         run: |
           temp_dir=$(cat .tmpdir)
+          cd $temp_dir
           git checkout gh-pages
           ls -la $temp_dir
-          #aws s3 sync $temp_dir/latest s3://origin-docs.zinfradev.com/latest
+          ls -al .
+          #aws s3 sync latest s3://origin-docs.zinfradev.com/latest

@@ -9,21 +9,9 @@ CURRENT=$(git branch --show-current)
 git config --local user.name "Wire Docs"
 git config --local user.email "wire-docs-author@wire.com"
 
-# it will work only when building from branches which is expected to run in local setup
+# checking if it is building from a branch
 if [ -n "$CURRENT" ]; then
   CURRENT_TAG="$CURRENT"
-
-  if [ -f ".current_branch" ]; then
-    PREVIOUS=$(<.current_branch)
-    # to let local user know that the branch has been while developing locally
-    # this will lead to a new tag creation for the branch, it will not be used when running in github actions
-    if [ "$CURRENT" != "$PREVIOUS" ]; then
-      echo "Branch changed from '$PREVIOUS' to '$CURRENT'"
-      echo "$CURRENT" > .current_branch
-    fi
-  else
-    echo "$CURRENT" > .current_branch
-  fi
 
   # useful for local users to see their diffs with each mike deploy
   git --no-pager diff
@@ -36,25 +24,25 @@ if [ -n "$CURRENT" ]; then
     git commit -m "Temporary commit: required to work on other branches"
   fi
 
-  # forcing here for tag creaion as the tag might already exist but new commits should be tagged
-  git tag -f $CURRENT_TAG || true
-  git tag -f latest || true
-
 # Confirming if we are in GitHub Actions environment
 else
   if [ -n "${GITHUB_REF}" ]; then
     if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
       # For a tag, strip the "refs/tags/" prefix.
       CURRENT_TAG="${GITHUB_REF#refs/tags/}"
+      # creating a tag when releasing a tag
+      git tag -f $CURRENT_TAG || true
     elif [[ "${GITHUB_REF}" == refs/pull/* ]]; then
       # For a pull request, remove "refs/pull/" then replace "/" with "-" to get "11-merge"
       pr_part="${GITHUB_REF#refs/pull/}"s
       CURRENT_TAG="${pr_part//\//-}"
-      git tag -f $CURRENT_TAG || true
-      git tag -f latest || true
     fi
   fi
+
 fi
+
+# always build the latest tag
+git tag -f latest || true
 
 # Get all tags
 TAGS=$(git tag)

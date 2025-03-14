@@ -45,16 +45,13 @@ current: prepare
 # Build the documentation tarball with all versions
 .PHONY: archive
 archive: build
-    # trying to consider the current branch from local envs
-	@cd $$(cat .tmpdir) && git checkout gh-pages && \
-	    cat .current_branch > branch | true
+	@cd $$(cat .tmpdir) && git checkout gh-pages
 	@cd $$(cat .tmpdir) && { \
 	    find . -type d -regextype posix-extended -regex '.*\/v[0-9]+\.[0-9]+(\.[0-9]+)?$$'; \
 	    echo ".nojekyll"; \
 	    echo "site"; \
 	    echo "versions.json"; \
 	    echo "index.html"; \
-		cat branch; \
 		echo "latest"; \
 	} | sed 's|^\./||' | sort -u > archived_files
 	@cd $$(cat .tmpdir) && \

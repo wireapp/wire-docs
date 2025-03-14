@@ -22,3 +22,16 @@ jobs:
 
       - name: Run make build
         run: make build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: eu-west-1
+
+      - name: Deploy latest docs to S3
+        run: |
+          temp_dir=$(cat .tmpdir)
+          git checkout gh-pages
+          ls -la $temp_dir
+          #aws s3 sync $temp_dir/latest s3://origin-docs.zinfradev.com/latest

@@ -21,8 +21,15 @@ jobs:
       - name: Setup Nix
         uses: cachix/install-nix-action@v16
 
-      - name: Run make build
-        run: make build
+      - name: Build Archive
+        id: build_archive
+        run: |
+          make archive
+          if [ ! -f "wire-docs.tar.gz" ]; then
+            echo "Artifact not found!"
+            mv wire-docs.tar.gz wire-docs-${{ github.ref_name }}.tar.gz
+            exit 1
+          fi
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -32,9 +39,8 @@ jobs:
 
       - name: Deploy latest docs to S3
         run: |
-          temp_dir=$(cat .tmpdir)
-          cd $temp_dir
-          git checkout gh-pages
-          ls -la $temp_dir
+          mkdir -p tmp_extracted
+          tar -xzf ./wire-docs-${{ github.ref_name }}.tar.gz -C tmp_extracted
+          ls -la tmp_extracted
           ls -al .
-          #aws s3 sync latest s3://origin-docs.zinfradev.com/latest
+          #aws s3 sync tmp_extracted/latest s3://origin-docs.zinfradev.com/latest

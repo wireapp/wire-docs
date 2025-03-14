@@ -27,7 +27,6 @@ jobs:
           make archive
           if [ ! -f "wire-docs.tar.gz" ]; then
             echo "Artifact not found!"
-            mv wire-docs.tar.gz wire-docs-${{ github.ref_name }}.tar.gz
             exit 1
           fi
 
@@ -40,7 +39,7 @@ jobs:
       - name: Deploy latest docs to S3
         run: |
           mkdir -p tmp_extracted
-          tar -xzf ./wire-docs-${{ github.ref_name }}.tar.gz -C tmp_extracted
+          tar -xzf ./wire-docs.tar.gz -C tmp_extracted
           ls -la tmp_extracted
           ls -al .
           #aws s3 sync tmp_extracted/latest s3://origin-docs.zinfradev.com/latest

@@ -8,6 +8,7 @@ CURRENT=$(git branch --show-current)
 # using dummy values for user.name and user.email as they are not required for git operations but a requirement for mike to have gh-pages branch
 git config --local user.name "Wire Docs"
 git config --local user.email "wire-docs-author@wire.com"
+git config --local submodule.recurse false
 
 # checking if it is building from a branch
 if [ -n "$CURRENT" ]; then
@@ -59,7 +60,7 @@ git show-ref --tags | while read -r commit tag; do
     git checkout $TAG
     
     # pull the submodule
-    git submodule update --init
+    git submodule update --init wire-server
     
     # Check if tag exists in mike
     if [ -n "${existing_tags[$TAG]}" ]; then
@@ -76,6 +77,9 @@ git show-ref --tags | while read -r commit tag; do
         echo "Tag $TAG does not exist. Deploying..."
         $mike deploy --update-aliases "$TAG" "$commit"
     fi
+
+    # deinit the submodule to avoid issues with the next iteration
+    git submodule deinit -f wire-server
 done
 
 # Set the default tag and create an alias to latest

@@ -1,4 +1,4 @@
 [submodule "wire-server"]
 	path = wire-server
-	url = https://github.com/wire-server/wire-server.git
+	url = https://github.com/wireapp/wire-server.git
 	branch = develop

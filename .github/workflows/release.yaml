@@ -25,9 +25,9 @@ jobs:
           make archive
           if [ ! -f "wire-docs.tar.gz" ]; then
             echo "Artifact not found!"
-            mv wire-docs.tar.gz wire-docs-${{ github.ref_name }}.tar.gz
             exit 1
           fi
+          mv wire-docs.tar.gz wire-docs-${{ github.ref_name }}.tar.gz
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1

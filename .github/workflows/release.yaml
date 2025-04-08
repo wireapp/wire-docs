@@ -1,5 +1,4 @@
 name: Build and Release Artifact
-
 on:
   release:
     types: [published]

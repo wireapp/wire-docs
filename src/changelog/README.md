@@ -1,3 +1,6 @@
+* [[2025-04-07] (Chart Release 5.14.0)](changelog.md#2025-04-07-chart-release-5140)
+* [[2025-03-07] (Chart Release 5.13.0)](changelog.md#2025-03-07-chart-release-5130)
+* [[2025-03-06] (Chart Release 5.12.0)](changelog.md#2025-03-06-chart-release-5120)
 * [[2025-02-07] (Chart Release 5.11.0)](changelog.md#2025-02-07-chart-release-5110)
 * [[2025-01-28] (Chart Release 5.10.0)](changelog.md#2025-01-28-chart-release-5100)
 * [[2024-12-30] (Chart Release 5.9.0)](changelog.md#2024-12-30-chart-release-590)

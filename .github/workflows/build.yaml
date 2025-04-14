@@ -8,6 +8,7 @@ on:
       - 'README.md'
       - 'Release.md'
       - '.github/workflows/release.yaml'
+      - '.github/workflows/test.yaml'
 
 jobs:
   build:
@@ -40,7 +41,7 @@ jobs:
         run: |
           mkdir -p tmp_extracted
           tar -xzf ./wire-docs.tar.gz -C tmp_extracted
-          aws s3 sync tmp_extracted/latest s3://origin-docs.wire.com/latest
-          aws s3 sync tmp_extracted/site s3://origin-docs.wire.com/site
-          aws s3 cp tmp_extracted/versions.json s3://origin-docs.wire.com/versions.json
+          aws s3 sync tmp_extracted/latest s3://${{ secrets.BUCKET }}/latest
+          aws s3 sync tmp_extracted/site s3://${{ secrets.BUCKET }}/site
+          aws s3 cp tmp_extracted/versions.json s3://${{ secrets.BUCKET }}/versions.json
           rm -rf tmp_extracted

@@ -15,8 +15,18 @@ Wire documentation is hosted on <https://docs.wire.com>. This project is made us
     - To fetch the latest updates from wire-server, run the following command. Note: Execute this command only when the remote repository has been updated with new changes.
 
     ```
-    git submodule update --remote
+    git submodule update --remote --checkout --depth 1 -- wire-server
     ```
+
+    - To checkout to a specific commit:
+        ```
+        cd wire-server && git fetch --depth=1 origin <commit-id> && git checkout <commit-id>
+        ```
+    
+    - To verify the submodule status:
+        ```
+        git submodule status
+        ```
 
     - To optionally update the src/changelog/README.md based on the new changelog.md, run the following command:
     ``` 

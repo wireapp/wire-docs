@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="md-main md-content">
+    <h1>Page moved or not found</h1>
+    <p>
+      We've recently introduced versioning in our documentation.
+      The page you're looking for may have moved under a versioned path.
+    </p>
+    <p>
+      You’ll be automatically redirected to the latest version of this page, if it exists.
+    </p>
+    <p>
+      👉 <a id="redirect-link" href="/latest/">Redirect to /latest/...</a>
+    </p>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    (function () {
+      const path = window.location.pathname;
+      const isVersioned = path.startsWith("/latest") || /^\/v\d/.test(path);
+      if (!isVersioned) {
+        const newPath = "/latest" + path;
+        const link = document.getElementById("redirect-link");
+        link.href = newPath;
+        link.textContent = newPath; // Set both href and visible text
+        window.location.replace(newPath);
+      }
+    })();
+  </script>
+{% endblock %}

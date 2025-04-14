@@ -10,7 +10,7 @@ on:
       - '.github/workflows/release.yaml'
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -30,13 +30,13 @@ jobs:
             exit 1
           fi
 
-      - name: Configure AWS credentials
+      - name: Configure AWS credentials for DEV
         uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: ${{ secrets.DEV_AWS_ROLE_TO_ASSUME }}
           aws-region: eu-west-1
 
-      - name: Deploy latest docs to S3
+      - name: Deploy latest docs to S3 DEV account
         run: |
           mkdir -p tmp_extracted
           tar -xzf ./wire-docs.tar.gz -C tmp_extracted

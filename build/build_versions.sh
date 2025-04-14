@@ -60,7 +60,7 @@ git show-ref --tags | while read -r commit tag; do
     git checkout $TAG
     
     # pull the submodule
-    git submodule update --init wire-server
+    git submodule update --init --depth 1 wire-server
     
     # Check if tag exists in mike
     if [ -n "${existing_tags[$TAG]}" ]; then

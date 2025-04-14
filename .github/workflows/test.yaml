@@ -1,0 +1,46 @@
+name: CI Build
+
+on:
+  pull_request:
+    branches:
+      - test-dev
+    paths-ignore:
+      - 'README.md'
+      - 'Release.md'
+      - '.github/workflows/release.yaml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Nix
+        uses: cachix/install-nix-action@v16
+
+      - name: Build Archive
+        id: build_archive
+        run: |
+          make archive
+          if [ ! -f "wire-docs.tar.gz" ]; then
+            echo "Artifact not found!"
+            exit 1
+          fi
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.DEV_AWS_ROLE_TO_ASSUME }}
+          aws-region: eu-west-1
+
+      - name: Deploy latest docs to S3
+        run: |
+          mkdir -p tmp_extracted
+          tar -xzf ./wire-docs.tar.gz -C tmp_extracted
+          aws s3 sync tmp_extracted/latest s3://${{ secrets.DEV_BUCKET }}/latest
+          aws s3 sync tmp_extracted/site s3://${{ secrets.DEV_BUCKET }}/site
+          aws s3 cp tmp_extracted/versions.json s3://${{ secrets.DEV_BUCKET }}/versions.json
+          rm -rf tmp_extracted

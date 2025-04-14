@@ -26,16 +26,16 @@ else
 fi; 
 
 if [ -d "$TEMP_DIR/.git" ]; then
-    current_remote=$(git config --get remote.origin.url)
+    current_remote=$(git -C $TEMP_DIR config --get remote.origin.url)
     if [ "$current_remote" = "$ORIGINAL_DIR" ]; then
       cd $TEMP_DIR
 
       EXPECTED_AUTHOR="Wire Docs <wire-docs-author@wire.com>"
-      LAST_COMMIT_AUTHOR=$(git log -1 --pretty=format:"%an <%ae>")
+      LAST_COMMIT_AUTHOR=$(git -C $TEMP_DIR log -1 --pretty=format:"%an <%ae>")
       if [ "$LAST_COMMIT_AUTHOR" = "$EXPECTED_AUTHOR" ]; then
           echo "Last commit by $EXPECTED_AUTHOR detected. Removing it..."
-          git reset --hard HEAD~1
-          git pull origin $(cat .current_branch)
+          git -C $TEMP_DIR reset --hard HEAD~1
+          git -C $TEMP_DIR pull origin $(cat .current_branch)
       else
           echo "Last commit was not by $EXPECTED_AUTHOR. No action taken."
       fi

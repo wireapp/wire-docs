@@ -1,5 +1,3 @@
-<a id="understand-sft"></a>
-
 # Conference Calling 2.0 (aka SFT)
 
 ## Background

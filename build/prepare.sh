@@ -1,5 +1,5 @@
 #!/bin/bash
-set -xeuo pipefail
+set -euo pipefail
 
 # Get the current directory (i.e. the original working directory)
 ORIGINAL_DIR=$(pwd)
@@ -47,6 +47,7 @@ if [ -d "$TEMP_DIR/.git" ]; then
 else
     echo "Cloning repository to ${TEMP_DIR}"
     git clone "${ORIGINAL_DIR}" "${TEMP_DIR}"
+    git branch --show-current > "${TEMP_DIR}/.current_branch"
 fi
 
 echo "Syncing all the other files changes from ${ORIGINAL_DIR}/ to ${TEMP_DIR}, to have uncommited changes, if any"

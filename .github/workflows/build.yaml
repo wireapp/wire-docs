@@ -1,4 +1,4 @@
-name: CI Build
+name: Prod Env Latest Build
 
 on:
   pull_request:
@@ -41,7 +41,13 @@ jobs:
         run: |
           mkdir -p tmp_extracted
           tar -xzf ./wire-docs.tar.gz -C tmp_extracted
+
+          # removing old objects from the bucket to ensure, we don't keep objects at old path
+          aws s3 rm s3://${{ secrets.BUCKET }}/latest --recursive
           aws s3 sync tmp_extracted/latest s3://${{ secrets.BUCKET }}/latest
-          aws s3 sync tmp_extracted/site s3://${{ secrets.BUCKET }}/site
+
+          # will be removed in the next commit
+          aws s3 rm s3://${{ secrets.BUCKET }}/site --recursive
+
           aws s3 cp tmp_extracted/versions.json s3://${{ secrets.BUCKET }}/versions.json
           rm -rf tmp_extracted

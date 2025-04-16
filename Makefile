@@ -15,7 +15,6 @@ check-deps:
 # fetch all the tags from the remote
 .PHONY: prepare
 prepare: check-deps
-	@git fetch --tags
 	@bash build/prepare.sh
 
 # Run the all versions of the documentation

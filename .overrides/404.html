@@ -20,13 +20,14 @@
   <script>
     (function () {
       const path = window.location.pathname;
+      const hash = window.location.hash;
       const isVersioned = path.startsWith("/latest") || /^\/v\d/.test(path);
       if (!isVersioned) {
-        const newPath = "/latest" + path;
+        const newPath = "/latest" + path + hash;
         const link = document.getElementById("redirect-link");
         link.href = newPath;
-        link.textContent = newPath; // Set both href and visible text
-        //window.location.replace(newPath);
+        link.textContent = newPath;
+        // window.location.replace(newPath);
       }
     })();
   </script>

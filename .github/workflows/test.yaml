@@ -46,7 +46,5 @@ jobs:
           aws s3 rm s3://${{ secrets.DEV_BUCKET }}/latest --recursive
           aws s3 sync tmp_extracted/latest s3://${{ secrets.DEV_BUCKET }}/latest
 
-          aws s3 rm s3://${{ secrets.DEV_BUCKET }}/site --recursive
-
           aws s3 cp tmp_extracted/versions.json s3://${{ secrets.DEV_BUCKET }}/versions.json
           rm -rf tmp_extracted

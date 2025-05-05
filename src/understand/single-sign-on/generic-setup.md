@@ -15,8 +15,10 @@
 ## Setting up your IdP
 
 - The SP Metadata URL: [https://prod-nginz-https.wire.com/sso/metadata](https://prod-nginz-https.wire.com/sso/metadata)
-- The SSO Login URL: [https://prod-nginz-https.wire.com/sso/finalize-login](https://prod-nginz-https.wire.com/sso/finalize-login)
+- The SSO Login URL: will be shown after your initial configuration, but generally looks like account.wire.com/start-sso/wire-UUIDv4
 - SP Entity ID (aka Request Issuer ID): [https://prod-nginz-https.wire.com/sso/finalize-login](https://prod-nginz-https.wire.com/sso/finalize-login)
+- IdP Entity ID: [https://prod-nginz-https.wire.com/sso/finalize-login](https://prod-nginz-https.wire.com/sso/finalize-login)
+- ACS URL: [https://prod-nginz-https.wire.com/sso/finalize-login](https://prod-nginz-https.wire.com/sso/finalize-login)
 
 How you need to use this information during setting up your IdP
 depends on the vendor.  Let us know if you run into any trouble!

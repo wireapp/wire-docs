@@ -4,6 +4,12 @@ This section will cover various administrative tasks that one might need when ru
 
 ## Test an ingress is working from inside the cluster
 
+Source the [d](https://github.com/wireapp/wire-server-deploy/blob/master/offline/docs_ubuntu_22.04.md#making-tooling-available-in-your-environment) alias from our script if you haven't done so already.
+
+```
+source ./bin/offline-env.sh
+```
+
 List out
 Fetch the IP address of your `ingress-nginx-controller-controller` LoadBalancer with:
 

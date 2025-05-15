@@ -95,8 +95,7 @@
 
 ## 11. Manuals
 
-- [Manuals](manuals.md)
-  - [Test an ingress is working from inside the cluster](manuals.md#test-an-ingress-is-working-from-inside-the-cluster)
-  - [Load an image into containerd in an offline/airgapped environment](manuals.md#load-an-image-into-containerd-in-an-offlineairgapped-environment)
+- [Test an ingress is working from inside the cluster](manuals.md#test-an-ingress-is-working-from-inside-the-cluster)
+- [Load an image into containerd in an offline/airgapped environment](manuals.md#load-an-image-into-containerd-in-an-offlineairgapped-environment)
 
 <!-- TODO: .. include:: administration/redis.rst -->

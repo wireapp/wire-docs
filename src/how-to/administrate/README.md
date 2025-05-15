@@ -1,6 +1,7 @@
 # Administration Guide
 
 ## 1. Kubernetes
+
 - [Kubernetes](kubernetes/README.md)
   - [Certificate renewal](kubernetes/certificate-renewal/README.md)
   - [How to restart a machine that is part of a Kubernetes cluster?](kubernetes/restart-machines/README.md)
@@ -8,18 +9,21 @@
   - [Troubleshooting problems arising after Kubernetes cluster upgrades](kubernetes/upgrade-cluster/README.md#troubleshooting-problems-arising-after-kubernetes-cluster-upgrades)
 
 ## 2. Backup and Disaster Recovery
+
 - [Backup and disaster recovery](backup-disaster-recovery.md)
   - [Introduction](backup-disaster-recovery.md#introduction)
   - [Backing up](backup-disaster-recovery.md#backing-up)
   - [Recovery procedure](backup-disaster-recovery.md#recovery-procedure)
 
 ## 3. Cassandra
+
 - [Cassandra](cassandra.md)
   - [Check the health of a Cassandra node](cassandra.md#check-the-health-of-a-cassandra-node)
   - [How to inspect tables and data manually](cassandra.md#how-to-inspect-tables-and-data-manually)
   - [How to rolling-restart a Cassandra cluster](cassandra.md#how-to-rolling-restart-a-cassandra-cluster)
 
 ## 4. Elasticsearch
+
 - [Elasticsearch](elasticsearch.md)
   - [How to rolling-restart an Elasticsearch cluster](elasticsearch.md#how-to-rolling-restart-an-elasticsearch-cluster)
   - [How to manually look into what is stored in Elasticsearch](elasticsearch.md#how-to-manually-look-into-what-is-stored-in-elasticsearch)
@@ -29,6 +33,7 @@
   - [Troubleshooting](elasticsearch.md#troubleshooting)
 
 ## 5. Etcd
+
 - [Etcd](etcd.md)
   - [How to see cluster health](etcd.md#how-to-see-cluster-health)
   - [How to inspect tables and data manually](etcd.md#how-to-inspect-tables-and-data-manually)
@@ -37,12 +42,14 @@
   - [Troubleshooting](etcd.md#troubleshooting)
 
 ## 6. General - Linux
+
 - [General - Linux](general-linux.md)
   - [Which ports and network interface is my process running on?](general-linux.md#which-ports-and-network-interface-is-my-process-running-on)
   - [How can I see if my TLS certificates are configured the way I expect?](general-linux.md#how-can-i-see-if-my-tls-certificates-are-configured-the-way-i-expect)
   - [How can I see if my TLS certificates are configured the way I expect (special case Kubernetes from a Kubernetes machine)](general-linux.md#how-can-i-see-if-my-tls-certificates-are-configured-the-way-i-expect-special-case-kubernetes-from-a-kubernetes-machine)
 
 ## 7. Minio
+
 - [Minio](minio.md)
   - [Should you be using Minio?](minio.md#should-you-be-using-minio)
   - [Setting up interaction with Minio](minio.md#setting-up-interaction-with-minio)
@@ -51,6 +58,7 @@
   - [Check the health of a MinIO node](minio.md#check-the-health-of-a-minio-node)
 
 ## 8. Operational Procedures
+
 - [Operational procedures](operations.md)
   - [Reboot procedures](operations.md#reboot-procedures)
   - [Health checks](operations.md#health-checks)
@@ -58,6 +66,7 @@
   - [Understand release tags](operations.md#understand-release-tags)
 
 ## 9. Restund (TURN)
+
 - [Restund (TURN)](restund.md)
   - [Wire-Server Configuration](restund.md#wire-server-configuration)
   - [How to see how many people are currently connected to the restund server](restund.md#how-to-see-how-many-people-are-currently-connected-to-the-restund-server)
@@ -68,6 +77,7 @@
   - [How to check which restund/TURN servers will be used by clients](restund.md#how-to-check-which-restund-turn-servers-will-be-used-by-clients)
 
 ## 10. Investigative Tasks
+
 - [Investigative tasks (e.g. searching for users as server admin)](users.md)
   - [Manually searching for users in Cassandra](users.md#manually-searching-for-users-in-cassandra)
   - [Deleting a user which is not a team user](users.md#deleting-a-user-which-is-not-a-team-user)
@@ -82,5 +92,11 @@
   - [Reset session cookies](users.md#reset-session-cookies)
   - [Identify all users using SSO](users.md#identify-sso-users)
   - [Create a team using the SCIM API](users.md#create-a-team-using-the-scim-api)
+
+## 11. Manuals
+
+- [Manuals](manuals.md)
+  - [Test an ingress is working from inside the cluster](manuals.md#test-an-ingress-is-working-from-inside-the-cluster)
+  - [Load an image into containerd in an offline/airgapped environment](manuals.md#load-an-image-into-containerd-in-an-offlineairgapped-environment)
 
 <!-- TODO: .. include:: administration/redis.rst -->

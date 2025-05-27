@@ -1,16 +1,17 @@
-name: Test Env Latest Build and Deploy to S3
+name: Prod Env Latest Build and Deploy to S3
 
 on:
-  pull_request:
+  push:
     branches:
-      - test-dev
+      - main
     paths-ignore:
       - 'README.md'
       - 'Release.md'
       - '.github/**'
 
 jobs:
-  test:
+  
+  deploy:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -30,20 +31,20 @@ jobs:
             exit 1
           fi
 
-      - name: Configure AWS credentials for DEV
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: ${{ secrets.DEV_AWS_ROLE_TO_ASSUME }}
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           aws-region: eu-west-1
 
-      - name: Deploy latest docs to S3 DEV account
+      - name: Deploy latest docs to S3
         run: |
           mkdir -p tmp_extracted
           tar -xzf ./wire-docs.tar.gz -C tmp_extracted
 
           # removing old objects from the bucket to ensure, we don't keep objects at old path
-          aws s3 rm s3://${{ secrets.DEV_BUCKET }}/latest --recursive
-          aws s3 sync tmp_extracted/latest s3://${{ secrets.DEV_BUCKET }}/latest
+          aws s3 rm s3://${{ secrets.BUCKET }}/latest --recursive
+          aws s3 sync tmp_extracted/latest s3://${{ secrets.BUCKET }}/latest
 
-          # aws s3 cp tmp_extracted/versions.json s3://${{ secrets.DEV_BUCKET }}/versions.json
+          # aws s3 cp tmp_extracted/versions.json s3://${{ secrets.BUCKET }}/versions.json
           rm -rf tmp_extracted

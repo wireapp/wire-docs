@@ -57,7 +57,7 @@ else
 fi
 
 # Rule: Build latest when push is successful to main branch
-if [[ "${CURRENT_TAG}" == "main" ]];
+if [[ "${CURRENT_TAG}" == "main" ]]; then
   CURRENT_TAG="latest"
 fi
 

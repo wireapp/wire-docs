@@ -1,8 +1,8 @@
 #!/bin/bash
 
-set -e
+set -ex
 mike="pipenv run mike"
-
+printenv
 CURRENT=$(git branch --show-current)
 
 # using dummy values for user.name and user.email as they are not required for git operations but a requirement for mike to have gh-pages branch

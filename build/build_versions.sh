@@ -56,6 +56,11 @@ else
   fi
 fi
 
+# Rule: Build latest when push is successful to main branch
+if [[ "${CURRENT_TAG}" == "main" ]];
+  CURRENT_TAG="latest"
+fi
+
 git tag -f $CURRENT_TAG || true
 
 # Fetch the existing tags and their commits from mike

@@ -51,4 +51,3 @@ jobs:
           asset_path: ./wire-docs-${{ github.ref_name }}.tar.gz
           asset_name: wire-docs-${{ github.ref_name }}.tar.gz
           asset_content_type: application/gzip
-

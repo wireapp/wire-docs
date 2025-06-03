@@ -1,4 +1,4 @@
-name: Prod Env Latest Build
+name: Build Test
 
 on:
   pull_request:
@@ -21,10 +21,10 @@ jobs:
       - name: Setup Nix
         uses: cachix/install-nix-action@v16
 
-      - name: Build Archive
-        id: build_archive
+      - name: Build Docs
+        id: build_docs
         run: |
-          make archive
+          make build
           if [ ! -f "wire-docs.tar.gz" ]; then
             echo "Artifact not found!"
             exit 1

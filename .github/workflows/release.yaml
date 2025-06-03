@@ -1,4 +1,4 @@
-name: Build and Release Artifact
+name: Build, Deploy and Release Artifact
 
 on:
   release:

@@ -1,90 +1,215 @@
 # Wire-documents-structure
 
-Wire documentation is hosted on <https://docs.wire.com>. This project is made using Mkdocs.
+Wire documentation is hosted on <https://docs.wire.com>. This project uses MkDocs as its documentation generator.
 
 ## Structure of the repository
-- src 
-    - It contains the files and directories for actual source of the documentation. The `src` directory has been processed based on [docs](https://github.com/wireapp/wire-server/tree/develop/docs). The earlier version was based on Sphinx, so it was converted to markdown and then ported for Mkdocs. Find the process for doing in `build/old-docs.md`.
+### src Directory
+Contains the source files and directories for the documentation. The `src` directory has been migrated from the [wire-server docs](https://github.com/wireapp/wire-server/tree/develop/docs). The previous version used Sphinx, so we converted it to Markdown and adapted it for MkDocs. See `build/old-docs.md` for the migration process.
 
-- Pages from external repositories (via Git submodules):
+### External Pages (Git Submodules)
+We import documentation pages from the backend repository [wire-server](https://github.com/wireapp/wire-server/tree/develop). Many files currently reference wire-server, which you can identify using:
 
-    - We intend to import some documentation pages from the backend repository [wire-server](https://github.com/wireapp/wire-server/tree/develop) into our project. Currently, many files reference wire-server; you can identify these files using the following command
-    ```
-    find . -type l -printf '%p -> %l\n' | grep './src'
-    ```
-    - To fetch the latest updates from wire-server, run the following command. Note: Execute this command only when the remote repository has been updated with new changes.
+```bash
+find . -type l -printf '%p -> %l\n' | grep './src'
+```
 
-    ```
-    git submodule update --remote --checkout --depth 1 -- wire-server
-    ```
+#### Submodule Management
 
-    - To checkout to a specific commit:
-        ```
-        cd wire-server && git fetch --depth=1 origin <commit-id> && git checkout <commit-id>
-        ```
-    
-    - To verify the submodule status:
-        ```
-        git submodule status
-        ```
+**Fetch latest updates from wire-server:**
+```bash
+git submodule update --remote --checkout --depth 1 -- wire-server
+```
+*Note: Only run this command when the remote repository has new changes.*
 
-    - To optionally update the src/changelog/README.md based on the new changelog.md, run the following command:
-    ``` 
-    rm src/changelog/README.md && \
-    grep '^# ' src/changelog/changelog.md | \
-    sed 's/^# //' | while IFS= read -r heading; \
-    do anchor=$(echo "$heading" | sed -E 's/^\[?([0-9-]+)\]? *(\(([^)]+)\)|# *([0-9]+))$/\1-\3\4/' | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g;s/\.//g'); echo "* [$heading](changelog.md#$anchor)"; done > src/changelog/README.md
-    ```
+**Checkout a specific commit:**
+```bash
+cd wire-server && git fetch --depth=1 origin <commit-id> && git checkout <commit-id>
+```
 
-- build 
-    - It contains scripts used by Makefile to support different usecases for builds. It is designed to run one build process at a time. All the local targets use a temporary directory stored in `.tmpdir` file for building/serving the changes. This is due to git-operations by tools like `mike` for mkdocs.
-    ### Prerequisites
-    
-    - make
-    - nix-shell
-    - git
-    - rsync
-    - Docker (optional) - if building  a docker image, useful when testing without installing nix-shell
+**Verify submodule status:**
+```bash
+git submodule status
+```
 
-        ### Makefile Targets
+**Update changelog (optional):**
+To optionally update the src/changelog/README.md based on the new changelog.md, run the following command:
 
-        - `make current`
-            - This target runs the documentation site locally using Mike (Mkdocs) as we do in `make run` but only for the `current` branch. The current changes will be visible under branch name as version name. It will be hosted on `0.0.0.0:8000`. It can also show other versions if they have been pre-built on your local host.
+``` bash
+rm src/changelog/README.md && \
+grep '^# ' src/changelog/changelog.md | \
+sed 's/^# //' | while IFS= read -r heading; \
+do anchor=$(echo "$heading" | sed -E 's/^\[?([0-9-]+)\]? *(\(([^)]+)\)|# *([0-9]+))$/\1-\3\4/' | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g;s/\.//g'); echo "* [$heading](changelog.md#$anchor)"; done > src/changelog/README.md
+```
 
-        - `make run`
-            - This target serves the documentation site locally by first building all the existing tags and building current branch. It later hosts the webserver using python http module. It allows you to preview the documentation as it will appear when hosted `for all the tags and current branch`. It will be hosted on `0.0.0.0:8000`. Use it only if you want to build all existing tags by yourself.
+### build Directory
+Contains scripts used by the Makefile to support different build use cases. The system is designed to run one build process at a time. All local targets use a temporary directory (stored in `.tmpdir` file) for building and serving changes due to git operations required by tools like `mike` for MkDocs.
 
-        - `make archive`
-            - This target archive the processed web pages for documentation for all the tags and current branch from the github branch gh-pages. The output is generated in the main directory as `wire-docs.tar.gz`.
+## Prerequisites
 
-        - `make build`
-            - This target is being used by run and archive targets for building all the tags and current branch. It serves the layer to economise the re-building each time for archive and run targets. Note: if there are uncomitted changes in the `current` branchm then it is going to re-build the current branch everytime.
+- make
+- nix-shell
+- git
+- rsync
+- Docker (optional) - for building Docker images when testing without nix-shell
 
-        - `main docker`
-            - This target builds a Docker image for the documentation. It uses the Dockerfile present in the repository to create an image. It will be using `mike` module from python to host the documents, this is experimental to use `mike` for the container and not python `http` module. It processes the tags present in the `online` [repo](https://github.com/wireapp/wire-docs.git). To test current changes, rely on `make run` or `make current`. To run and test the docker image locally, we recommend the following command:
-                ```bash
-                docker run -d -p 8000:8000 --restart=always --health-cmd="curl --fail http://localhost:8000 || exit 1" --health-interval=30s --health-retries=3 --health-timeout=5s wire-docs
-                ```
-        - `make clean`
-            - This target cleans up the generated tar files and tmp directories from the build process.
+## Makefile Targets
 
-        - `make SHELL="/bin/bash -x" target`
-            - To increase verbosity for make commands.
+### `make current`
+Runs the documentation site locally using Mike (MkDocs plugin) for the `current` branch only. Current changes appear under the branch name as the version name. Hosted at `0.0.0.0:8000`.
 
-## Versioning criteria:
-  - The version number will follow a three-part format: **A.B.C**
+### `make run`
+Serves the documentation site locally by building the current branch as static web pages, then hosts a web server using Python's HTTP module. This allows you to preview how the documentation will appear when hosted for the current branch. Hosted at `0.0.0.0:8000`.
 
-    - **A (Major Version)**: This indicates the minimum API contract version supported by the release. When this number increases, it signals the deprecation of an older API contract version. For example, V5.0.0 means the release supports API V5 and newer. Major versions can include breaking changes, such as database migrations or changes to the backend service structure.
+### `make archive`
+Archives the processed web pages for the current branch from the GitHub `gh-pages` branch (created by `make build`). Output is generated in the main directory as `wire-docs.tar.gz`.
 
-    - **B (Feature Iteration)**: This number reflects feature updates that don’t affect API contract compatibility or introduce breaking changes. For example, V5.1.0 means the release supports API V5 and newer, and includes new features or improvements without altering the compatibility matrix.
+### `make build`
+Used by `run` and `archive` targets to build the current branch. Attempts to identify the version name for the environment. In GitHub environments, it finds an appropriate name for the version to be built instead of using a branch name.
 
-    - **C (Fix Iteration)**: This is incremented for bug fixes or security updates that don’t introduce new features or modify compatibility. There are no breaking changes in a fix iteration.
+### `make docker` *(Experimental)*
+Builds a Docker image for the documentation using the repository's Dockerfile. Uses Python's `mike` module to host documents (experimental - not the standard Python HTTP module). For testing current changes, use `make run` or `make current` instead.
 
-    - The *first release*, `v0.0.0`, indicates that the documentation supports all API versions.
+To test the Docker image locally:
+```bash
+docker run -d -p 8000:8000 --restart=always --health-cmd="curl --fail http://localhost:8000 || exit 1" --health-interval=30s --health-retries=3 --health-timeout=5s wire-docs
+```
+
+### `make clean`
+Cleans up generated tar files and temporary directories from the build process.
+
+### Verbose Mode
+For increased verbosity in make commands:
+```bash
+make SHELL="/bin/bash -x" target
+```
+
+## GitHub Actions for Build and Deployment
+
+```mermaid
+  graph TD
+
+    %% Triggers
+    PR[Pull Request to main] --> |triggers| BuildWorkflow
+    PushMain[Push to main Branch] --> |triggers| DeployWorkflow
+    CreateRelease[Create Release] --> |triggers| ReleaseWorkflow
+    TestEnvironment[Push to test-dev Branch] --> |triggers| TestWorkflow
+
+    %% Styling
+    classDef workflow fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef action fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+
+    class BuildWorkflow,DeployWorkflow,ReleaseWorkflow,TestWorkflow workflow
+    class PR,PushMain,CreateRelease,TestEnvironment action
+
+```
+
+The repository includes four automated builds:
+
+### 1. [Build Test](.github/workflows/build.yaml)
+Runs `make build` to verify MkDocs build structure for each pull request.
+
+```mermaid
+  graph TD
+    %% Build Workflow (PR)
+    BuildWorkflow[Build Workflow<br/>build.yaml] --> |runs| BuildMake[make build]
+    BuildMake --> |verifies| DocStructure[Documentation Structure]
+    DocStructure --> |identifies| NavIssues[Navigation/Markdown Issues]
+
+    %% Styling
+    classDef output fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef workflow fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+
+    class BuildWorkflow workflow
+    class DocStructure,NavIssues output
+
+```
+
+
+### 2. [Prod Env Latest Build and Deploy to S3](.github/workflows/deploy.yaml)
+Runs `make archive` on every push to the main branch as the `latest` version. Cleans old `latest` documents before uploading to ensure the S3 bucket matches the main branch state. Maintains `versions.json` (tracking all document versions) without overwriting, keeping it synchronized with the latest version with commit as an alias.
+
+```mermaid
+  graph TD
+    %% Deploy Workflow (Push to Main)
+    DeployWorkflow[Deploy Workflow<br/>deploy.yaml] --> |runs| ArchiveMake[make archive]
+    ArchiveMake --> |creates| LatestVersion[latest Version]
+    LatestVersion --> |cleans old| OldDocs[Old latest Documents]
+    LatestVersion --> |pushes to| S3Latest[S3 Bucket - Latest]
+    LatestVersion --> |maintains| VersionsJSON[versions.json]
+
+    %% Styling
+    classDef output fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef workflow fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+
+    class DeployWorkflow workflow
+    class LatestVersion,S3Latest,VersionsJSON,OldDocs output
+
+```
+
+### 3. [Build, Deploy and Release Artifact](.github/workflows/release.yaml)
+Runs `make archive` when creating new releases, using the git tag (ref_name) as the version. Follows the same cleaning and S3 management process as the production deployment. Creates a release asset equivalent to the `make archive` output for that git tag.
+
+```mermaid
+  graph TD
+    %% Release Workflow (Create Release)
+    ReleaseWorkflow[Release Workflow<br/>release.yaml] --> |runs| ArchiveMakeRelease[make archive]
+    ArchiveMakeRelease --> |creates| TaggedVersion[Tagged Version]
+    TaggedVersion --> |pushes to| S3Tag[S3 Bucket - ref_name]
+    TaggedVersion --> |maintains| VersionsJSON[versions.json]
+    TaggedVersion --> |cleans old| OldDocs[Old ref_name Documents]
+    TaggedVersion --> |creates| ReleaseAsset[Release Asset <br/> wire-docs-ref_name.tar.gz]
+
+
+    %% Styling
+    classDef output fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef workflow fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+
+    class ReleaseWorkflow workflow
+    class TaggedVersion,ReleaseAsset,S3Tag,VersionsJSON,OldDocs output
+
+```
+
+### 4. [Test Environment Build and S3 Deploy](.github/workflows/test.yaml)
+Tests the above operations in a staging bucket environment.
+
+```mermaid
+  graph TD
+    %% Test Workflow
+    TestWorkflow[Test Workflow<br/>test.yaml]
+    TestWorkflow --> |runs| TestArchive[make archive]
+    TestArchive --> |creates| LatestVersion[latest Version]
+    LatestVersion --> |cleans old| OldDocs[Old latest Documents Staging]
+    LatestVersion --> |pushes to| S3Staging[S3 Staging Bucket - Latest]
+    LatestVersion --> |maintains| VersionsJSON[Staging versions.json]
+
+    %% Styling
+    classDef output fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef workflow fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+
+    class TestWorkflow workflow
+    class LatestVersion,S3Staging,VersionsJSON,OldDocs output
+```
+
+## Versioning System
+
+### Version Format
+Version numbers follow a three-part format: **A.B.C**
+
+- **A (Major Version)**: Indicates the minimum API contract version supported by this release. When this increases, it signals deprecation of older API contract versions. For example, V5.0.0 supports API V5 and newer. Major versions may include breaking changes such as database migrations or backend service structure changes.
+
+- **B (Feature Iteration)**: Reflects feature updates that don't affect API contract compatibility or introduce breaking changes. For example, V5.1.0 supports API V5 and newer while adding new features or improvements without altering compatibility.
+
+- **C (Fix Iteration)**: Incremented for bug fixes or security updates that don’t introduce new features or modify compatibility. Fix iterations contain no breaking changes.
+
+**Note**: The first release, `v0.0.0`, indicates that the documentation supports all API versions.
+
+## Version and Tag Relationship
 
 ## Relationship Between Versions and Tags:
-  - We plan to offer multiple versions of our documentation, with each version corresponding to a specific release in the wire-docs repository.
+- We provide multiple documentation versions, with each version corresponding to a specific release in the wire-docs repository.
 
-  - Each version release includes all built documents from previous releases. Releases are based on Git tags, which mark a specific point in your repository's history.
+- Releases are based on Git tags, which mark a specific point in your repository's history.
 
-  - Once a new version or tag is released, it becomes immutable; future updates will require creating new versions, and no further edits will be permitted on that tag.
+- Once a version or tag is released, it becomes immutable. Future updates require creating new versions—no further edits are permitted on existing tags.
+
+-The latest version is regularly updated based on commits to the main branch.

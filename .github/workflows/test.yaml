@@ -7,7 +7,7 @@ on:
     paths-ignore:
       - 'README.md'
       - 'Release.md'
-      - '.github/**'
+##      - '.github/**'
 
 jobs:
   test:

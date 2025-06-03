@@ -1,7 +1,7 @@
 name: Test Env Latest Build and Deploy to S3
 
 on:
-  pull_request:
+  push:
     branches:
       - test-dev
     paths-ignore:
@@ -41,9 +41,21 @@ jobs:
           mkdir -p tmp_extracted
           tar -xzf ./wire-docs.tar.gz -C tmp_extracted
 
+          # fetching upstream versions to retain information on already existing versions 
+          aws s3 cp s3://${{ secrets.DEV_BUCKET }}/versions.json tmp_extracted/upstream_versions.json
+
+          # merge the both versions.json files and keep the unique entries while giving priority to current versions.json
+          jq -s '.[0] + .[1] | unique_by(.version + .title)' tmp_extracted/upstream_versions.json tmp_extracted/versions.json > tmp_extracted/all_versions.json
+
           # removing old objects from the bucket to ensure, we don't keep objects at old path
           aws s3 rm s3://${{ secrets.DEV_BUCKET }}/latest --recursive
-          aws s3 sync tmp_extracted/latest s3://${{ secrets.DEV_BUCKET }}/latest
 
-          # aws s3 cp tmp_extracted/versions.json s3://${{ secrets.DEV_BUCKET }}/versions.json
+          # pushing all the latest build documents
+          aws s3 sync tmp_extracted/latest s3://${{ secrets.DEV_BUCKET }}/latest
+          
+          # syncing the index.html file
+          aws s3 sync tmp_extracted/index.html s3://${{ secrets.DEV_BUCKET }}/index.html
+
+          # syncying the all_versions.json with versions.json
+          aws s3 cp tmp_extracted/all_versions.json s3://${{ secrets.DEV_BUCKET }}/versions.json
           rm -rf tmp_extracted

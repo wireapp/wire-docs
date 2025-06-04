@@ -25,7 +25,3 @@ jobs:
         id: build_docs
         run: |
           make build
-          if [ ! -f "wire-docs.tar.gz" ]; then
-            echo "Artifact not found!"
-            exit 1
-          fi

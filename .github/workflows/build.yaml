@@ -8,6 +8,8 @@ on:
       - 'README.md'
       - 'Release.md'
       - '.github/**'
+      - 'build/**'
+      - Makefile
 
 jobs:
   build:

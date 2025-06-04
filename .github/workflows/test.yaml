@@ -54,7 +54,7 @@ jobs:
           aws s3 sync tmp_extracted/latest s3://${{ secrets.DEV_BUCKET }}/latest
           
           # syncing the index.html file
-          aws s3 sync tmp_extracted/index.html s3://${{ secrets.DEV_BUCKET }}/index.html
+          aws s3 cp tmp_extracted/index.html s3://${{ secrets.DEV_BUCKET }}/index.html
 
           # syncying the all_versions.json with versions.json
           aws s3 cp tmp_extracted/all_versions.json s3://${{ secrets.DEV_BUCKET }}/versions.json

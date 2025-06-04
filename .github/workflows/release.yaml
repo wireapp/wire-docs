@@ -44,7 +44,7 @@ jobs:
           aws s3 cp s3://${{ secrets.DEV_BUCKET }}/versions.json tmp_extracted/upstream_versions.json
 
           # merge the both versions.json files and keep the unique entries while giving priority to current versions.json
-          jq -s '.[0] + .[1] | unique_by(.version + .title)' tmp_extracted/upstream_versions.json tmp_extracted/versions.json > tmp_extracted/all_versions.json
+          jq -s '.[0] + .[1] | unique_by(.version + .title)' tmp_extracted/versions.json tmp_extracted/upstream_versions.json  > tmp_extracted/all_versions.json
 
           # removing old objects from the bucket for the ref_name to ensure, we don't keep objects at old path
           aws s3 rm s3://${{ secrets.DEV_BUCKET }}/${{ github.ref_name }} --recursive

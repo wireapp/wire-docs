@@ -9,7 +9,7 @@ on:
       - 'Release.md'
       - '.github/**'
       - Makefile
-#      - 'build/**'
+##      - 'build/**'
 
 jobs:
   

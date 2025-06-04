@@ -7,7 +7,9 @@ on:
     paths-ignore:
       - 'README.md'
       - 'Release.md'
-##      - '.github/**'
+      - '.github/**'
+      - 'build/**'
+      - Makefile
 
 jobs:
   test:

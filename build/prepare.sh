@@ -50,5 +50,5 @@ else
     git branch --show-current > "${TEMP_DIR}/.current_branch"
 fi
 
-echo "Syncing all the other files changes from ${ORIGINAL_DIR}/ to ${TEMP_DIR}, to have uncommited changes, if any"
+echo "Syncing all the other files changes from ${ORIGINAL_DIR}/ to ${TEMP_DIR}, to work on uncommited changes, if any"
 rsync -a --exclude='/.git' --exclude="/wire-server" --exclude='wire-docs*.tar.gz' --exclude=".tmpdir" "${ORIGINAL_DIR}/" "$TEMP_DIR/"

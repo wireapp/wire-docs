@@ -55,16 +55,16 @@ Contains scripts used by the Makefile to support different build use cases. The 
 ## Makefile Targets
 
 ### `make current`
-Runs the documentation site locally using Mike (MkDocs plugin) for the `current` branch only. Current changes appear under the branch name as the version name. Hosted at `0.0.0.0:8000`.
+Runs the documentation site locally using Mike (MkDocs plugin) for the `current` branch only. Current changes appear under the `latest` as the version name. Hosted at `0.0.0.0:8000`.
 
 ### `make run`
-Serves the documentation site locally by building the current branch as static web pages, then hosts a web server using Python's HTTP module. This allows you to preview how the documentation will appear when hosted for the current branch. Hosted at `0.0.0.0:8000`.
+Serves the documentation site locally by building the current branch as static web pages, then hosts a web server using Python's HTTP module. This allows you to preview how the documentation will appear when hosted for the current branch under `latest` version. Hosted at `0.0.0.0:8000`.
 
 ### `make archive`
 Archives the processed web pages for the current branch from the GitHub `gh-pages` branch (created by `make build`). Output is generated in the main directory as `wire-docs.tar.gz`.
 
 ### `make build`
-Used by `run` and `archive` targets to build the current branch. Attempts to identify the version name for the environment. In GitHub environments, it finds an appropriate name for the version to be built instead of using a branch name.
+Used by `run` and `archive` targets to build the current branch. Attempts to identify the version name for the environment. In GitHub environments, it identifies a suitable name for the version being built, based on the type of trigger event, such as a Pull Request, a Push, or the creation of a Tag.
 
 ### `make docker` *(Experimental)*
 Builds a Docker image for the documentation using the repository's Dockerfile. Uses Python's `mike` module to host documents (experimental - not the standard Python HTTP module). For testing current changes, use `make run` or `make current` instead.

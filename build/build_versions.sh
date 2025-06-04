@@ -1,7 +1,6 @@
 #!/bin/bash
 
-set -ex
-printenv
+set -e
 mike="pipenv run mike"
 CURRENT=$(git branch --show-current)
 
@@ -29,8 +28,9 @@ validate_output() {
 
 # checking if it is building from a branch
 if [ -n "$CURRENT" ]; then
-  # if building locally, the local tag would be CURRENT_TAG
-  CURRENT_TAG="$CURRENT"
+  # Rule:  if building locally or building on a push to main/test-dev 
+  # the tag will be latest, the branch name won't matter
+  CURRENT_TAG="latest"
 
   # useful for local users to see their diffs with each mike deploy
   git --no-pager diff
@@ -47,18 +47,14 @@ if [ -n "$CURRENT" ]; then
 else
   if [ -n "${GITHUB_REF}" ]; then
     if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
-      # For a tag, strip the "refs/tags/" prefix.
+      # Rule: For a tag, strip the "refs/tags/" prefix.
+      # when built from a tag and from github env, we build a TAG
       CURRENT_TAG="${GITHUB_REF#refs/tags/}"
     elif [[ "${GITHUB_REF}" == refs/pull/* ]]; then
-      # we build latest everytime there is PR
+      # Rule: we build latest everytime there is PR
       CURRENT_TAG="latest"
     fi
   fi
-fi
-
-# Rule: Build latest when push is successful to main branch
-if [[ "${CURRENT_TAG}" == "main" ]]; then
-  CURRENT_TAG="latest"
 fi
 
 git tag -f $CURRENT_TAG || true

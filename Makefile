@@ -51,7 +51,7 @@ archive: build
 	    echo "site"; \
 	    echo "versions.json"; \
 	    echo "index.html"; \
-		echo "latest"; \
+		[ -d "latest" ] && echo "latest"; \
 	} | sed 's|^\./||' | sort -u > archived_files
 	@cd $$(cat .tmpdir) && \
 	  nix-shell ${ORIGINAL_DIR}/build/default.nix --run "tar -czf ${ORIGINAL_DIR}/wire-docs.tar.gz -T archived_files"

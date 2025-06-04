@@ -1,9 +1,9 @@
 #!/bin/bash
 
-set -e
+set -ex
 mike="pipenv run mike"
 CURRENT=$(git branch --show-current)
-
+printenv
 # using dummy values for user.name and user.email as they are not required for git operations but a requirement for mike to have gh-pages branch
 git config --local user.name "Wire Docs"
 git config --local user.email "wire-docs-author@wire.com"
@@ -16,7 +16,7 @@ validate_output() {
   local output="$1"
   # to get building logs
    echo "$output"
-  # ignoring changelog.md as it is talking about past changes
+  # Rule: ignoring changelog.md as it is talking about past changes
   remaining_warnings=$(echo "$output" | grep -i "WARNING" | grep -v "Doc file 'changelog/changelog.md' contains a link" | awk '{$1=$1};1')
 
   if [ -n "$remaining_warnings" ]; then
@@ -65,9 +65,10 @@ while read -r tag commit; do
     existing_tags[$tag]=$commit
 done < <($mike list | awk -F '[][]' '{print $1, $2}')
 
+git show-ref
+
 commit=$(git show-ref "refs/tags/${CURRENT_TAG}" | awk '{print $1}')
 git checkout ${CURRENT_TAG}
-    
 # pull the submodule
 git submodule update --init --depth 1 wire-server
     

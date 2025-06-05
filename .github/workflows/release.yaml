@@ -50,7 +50,7 @@ jobs:
           aws s3 rm s3://${{ secrets.DEV_BUCKET }}/${{ github.ref_name }} --recursive
 
           # pushing all the ref_name build documents to S3
-          aws s3 sync tmp_extracted/${{ github.ref_name }} s3://${{ secrets.DEV_BUCKET }}/
+          aws s3 sync tmp_extracted/${{ github.ref_name }} s3://${{ secrets.DEV_BUCKET }}/${{ github.ref_name }}
 
           # syncying the all_versions.json with versions.json
           aws s3 cp tmp_extracted/all_versions.json s3://${{ secrets.DEV_BUCKET }}/versions.json

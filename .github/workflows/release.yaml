@@ -32,7 +32,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: ${{ secrets.DEV_AWS_ROLE_TO_ASSUME }}
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           aws-region: eu-west-1
 
       - name: Extract and Deploy docs to S3
@@ -41,19 +41,19 @@ jobs:
           tar -xzf ./wire-docs-${{ github.ref_name }}.tar.gz -C tmp_extracted
 
           # fetching upstream versions to retain information on already existing versions 
-          aws s3 cp s3://${{ secrets.DEV_BUCKET }}/versions.json tmp_extracted/upstream_versions.json
+          aws s3 cp s3://${{ secrets.BUCKET }}/versions.json tmp_extracted/upstream_versions.json
 
           # merge the both versions.json files and keep the unique entries while giving priority to current versions.json
           jq -s '.[0] + .[1] | unique_by(.version + .title)' tmp_extracted/versions.json tmp_extracted/upstream_versions.json  > tmp_extracted/all_versions.json
 
           # removing old objects from the bucket for the ref_name to ensure, we don't keep objects at old path
-          aws s3 rm s3://${{ secrets.DEV_BUCKET }}/${{ github.ref_name }} --recursive
+          aws s3 rm s3://${{ secrets.BUCKET }}/${{ github.ref_name }} --recursive
 
           # pushing all the ref_name build documents to S3
-          aws s3 sync tmp_extracted/${{ github.ref_name }} s3://${{ secrets.DEV_BUCKET }}/${{ github.ref_name }}
+          aws s3 sync tmp_extracted/${{ github.ref_name }} s3://${{ secrets.BUCKET }}/${{ github.ref_name }}
 
           # syncying the all_versions.json with versions.json
-          aws s3 cp tmp_extracted/all_versions.json s3://${{ secrets.DEV_BUCKET }}/versions.json
+          aws s3 cp tmp_extracted/all_versions.json s3://${{ secrets.BUCKET }}/versions.json
 
           rm -rf tmp_extracted
 

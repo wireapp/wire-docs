@@ -9,31 +9,31 @@ You need
 
 - two DNS names for the so-called \"nginz\" component of wire-server
     (the main REST API entry point), these are usually called
-    [nginz-https.\<domain\>]{.title-ref} and
-    [nginz-ssl.\<domain\>]{.title-ref}.
+    [nginz-https.\<domain\>] and
+    [nginz-ssl.\<domain\>].
 - one DNS name for the asset store (images, audio files etc. that your
-    users are sharing); usually [assets.\<domain\>]{.title-ref} or
-    [s3.\<domain\>]{.title-ref}.
+    users are sharing); usually [assets.\<domain\>] or
+    [s3.\<domain\>].
 - one DNS name for the webapp (equivalent of <https://app.wire.com>,
     i.e. the javascript app running in the browser), usually called
-    [webapp.\<domain\>]{.title-ref}.
+    [webapp.\<domain\>].
 - one DNS name for the account pages (hosts some html/javascript pages
     for e.g. password reset), usually called
-    [account.\<domain\>]{.title-ref}.
+    [account.\<domain\>].
 - (optional) one DNS name for SFTD support (conference calling),
-    usually called [sftd.\<domain\>]{.title-ref}
+    usually called [sftd.\<domain\>]
 - (optional) one DNS name for team settings (to manage team membership
     if using PRO accounts), usually called
-    [teams.\<domain\>]{.title-ref}
+    [teams.\<domain\>]
 - (optional) two DNS names for audio/video calling servers, usually
-    called [restund01.\<domain\>]{.title-ref} and
-    [restund02.\<domain\>]{.title-ref}. Two are used so during upgrades,
+    called [restund01.\<domain\>] and
+    [restund02.\<domain\>]. Two are used so during upgrades,
     you can drain one and use the second while work is happening on the
     first.
 - (optional) one DNS name for the federator, usually called
-    [federator.\<domain\>]{.title-ref}.
+    [federator.\<domain\>].
 - (optional) one DNS name for SFTD (conference calling), usually
-    called [sftd.\<domain\>]{.title-ref}.
+    called [sftd.\<domain\>].
 
 If you are on the most recent charts, these are your names:
 
@@ -64,7 +64,7 @@ The only expections to this are:
 - sftd which needs to point to the external IPs you are providing
     conference calling on
 
-So [sftd.\<domain\>]{.title-ref} should list both SFT servers, while
+So [sftd.\<domain\>] should list both SFT servers, while
 each of the restund servers get their own respective domain name.
 
 You may be happy with skipping the DNS setup and just make sure that the

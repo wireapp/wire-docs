@@ -10,24 +10,46 @@ to try things out.
 
 Please note your data will be in-memory only and may disappear at any given moment!
 
-What you need:
+### What you need:
 
-- a way to create **DNS records** for your domain name (e.g.
-  `wire.example.com`)
-- a way to create **SSL/TLS certificates** for your domain name (to allow
-  connecting via `https://`)
-- Either one of the following:
-  - A kubernetes cluster (some cloud providers offer a managed
-    kubernetes cluster these days).
-  - One single virtual machine running ubuntu 18.04 with at least 20 GB of disk, 8 GB of memory, and 8 CPU cores.
+- **System**: Ubuntu 24.04 (Focal) on amd64 architecture with following requirements
+  - CPU cores >= 16
+  - Memory > 16 GiB
+  - Disk > 200 GiB 
+- **DNS Records**: 
+  - a way to create DNS records for your domain name (e.g. wire.example.com) 
+  - Find a detailed explanation at [How to set up DNS records](demo-wiab.md#dns-requirements)
+- **SSL/TLS certificates**:
+  - a way to create SSL/TLS certificates for your domain name (to allow connecting via https://)
+  - To ease out the process of managing certs, we recommend using [Let\'s Encrypt](https://letsencrypt.org/getting-started/) &
+[cert-manager](https://cert-manager.io/docs/tutorials/acme/http-validation/)
+  - Find a detailed explanation 
+- **Network**: No interference from UFW or other system specific firewalls, and IP forwarding enabled between network cards. Public internet access to download Wire artifacts and Ubuntu packages.
+- **Packages**: Ansible and Git installed on the localhost (any machine you have access to)
+  - Ansible version: [core 2.16.3] or compatible
+- **Permissions**: Sudo access required for installation on remote_node
+- **Deployment requirements**:
+  - Clone of [wire-server-repository](https://github.com/wireapp/wire-server-deploy) and editing `ansible/inventory/demo/host.yml` as explained in [Deployment requirements](demo-wiab.md#deployment-requirements)
+- **Network Access Requirements**:
 
-A demo installation will look a bit like this:
+| Protocol | Direction | Start Port | End Port | Ether Type | IP Range   | Reason                                      |
+|----------|-----------|------------|----------|------------|------------|---------------------------------------------|
+| Any      | egress    | Any        | Any      | IPv4       | Any        | Allow all outgoing IPv4 traffic             |
+| Any      | egress    | Any        | Any      | IPv6       | Any        | Allow all outgoing IPv6 traffic             |
+| tcp      | ingress   | 22         | 22       | IPv4       | 0.0.0.0/0  | Allow SSH access                            |
+| tcp      | ingress   | 443        | 443      | IPv4       | 0.0.0.0/0  | Allow HTTPS traffic                         |
+| tcp      | ingress   | 80         | 80       | IPv4       | 0.0.0.0/0  | Allow HTTP traffic                          |
+| tcp      | ingress   | 3478       | 3478     | IPv4       | 0.0.0.0/0  | Allow alternative STUN/TURN traffic over TCP|
+| udp      | ingress   | 3478       | 3478     | IPv4       | Any        | Allow STUN/TURN traffic for Coturn          |
+| udp      | ingress   | 49152      | 65535    | IPv4       | 0.0.0.0/0  | Allow calling traffic for Coturn over UDP   |
 
-![image](img/architecture-demo.png)
+- Note: If outbound traffic is restricted, [Note on port ranges](https://docs.wire.com/latest/understand/notes/port-ranges.html) should be followed.
+
 
 ### Next steps for demo installation
 
-If you already have a kubernetes cluster, your next step will be [Installing wire-server (demo) components using helm](helm.md#helm), otherwise, your next step will be [Installing kubernetes for a demo installation (on a single virtual machine)](kubernetes.md#ansible-kubernetes)
+When the above [requirements](#what-you-need) are achieved, continue with  the ansible playbook instructions for the [demo wire in a box](demo-wiab.md) installation. 
+
 
 <a id="planning-prod"></a>
 

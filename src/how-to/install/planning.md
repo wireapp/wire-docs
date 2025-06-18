@@ -12,24 +12,24 @@ Please note your data will be in-memory only and may disappear at any given mome
 
 ### What you need:
 
-- **System**: Ubuntu 24.04 (Focal) on amd64 architecture with following requirements
-  - CPU cores >= 16
-  - Memory > 16 GiB
-  - Disk > 200 GiB 
+- **System**: Ubuntu 24.04 (Focal) on amd64 architecture with following requirements:
+    - CPU cores >= 16
+    - Memory > 16 GiB
+    - Disk > 200 GiB
 - **DNS Records**: 
-  - a way to create DNS records for your domain name (e.g. wire.example.com) 
-  - Find a detailed explanation at [How to set up DNS records](demo-wiab.md#dns-requirements)
+    - a way to create DNS records for your domain name (e.g. wire.example.com) 
+    - Find a detailed explanation at [How to set up DNS records](demo-wiab.md#dns-requirements)
 - **SSL/TLS certificates**:
-  - a way to create SSL/TLS certificates for your domain name (to allow connecting via https://)
-  - To ease out the process of managing certs, we recommend using [Let\'s Encrypt](https://letsencrypt.org/getting-started/) &
+    - a way to create SSL/TLS certificates for your domain name (to allow connecting via https://)
+    - To ease out the process of managing certs, we recommend using [Let\'s Encrypt](https://letsencrypt.org/getting-started/) &
 [cert-manager](https://cert-manager.io/docs/tutorials/acme/http-validation/)
-  - Find a detailed explanation 
+    - Find a detailed explanation 
 - **Network**: No interference from UFW or other system specific firewalls, and IP forwarding enabled between network cards. Public internet access to download Wire artifacts and Ubuntu packages.
 - **Packages**: Ansible and Git installed on the localhost (any machine you have access to)
-  - Ansible version: [core 2.16.3] or compatible
+    - Ansible version: [core 2.16.3] or compatible
 - **Permissions**: Sudo access required for installation on remote_node
 - **Deployment requirements**:
-  - Clone of [wire-server-repository](https://github.com/wireapp/wire-server-deploy) and editing `ansible/inventory/demo/host.yml` as explained in [Deployment requirements](demo-wiab.md#deployment-requirements)
+    - Clone of [wire-server-repository](https://github.com/wireapp/wire-server-deploy) and editing `ansible/inventory/demo/host.yml` as explained in [Deployment requirements](demo-wiab.md#deployment-requirements)
 - **Network Access Requirements**:
 
 | Protocol | Direction | Start Port | End Port | Ether Type | IP Range   | Reason                                      |

@@ -1,7 +1,7 @@
 # Introduction
 
 #### WARNING
-It is *strongly recommended* to have followed and completed the demo installation [Installing wire-server (demo) components using helm](helm.md#helm) before continuing with this page. The demo installation is simpler, and already makes you aware of a few things you need (TLS certs, DNS, a VM, …).
+It is *strongly recommended* to have followed and completed the demo installation [How to install Wire in a box (Demo)](demo-wiab.md) before continuing with this page. The demo installation is simpler, and already makes you aware of a few things you need (TLS certs, DNS, a VM, …).
 
 #### NOTE
 All required dependencies for doing an installation can be found here [Dependencies on operator’s machine](dependencies.md#dependencies).

@@ -7,9 +7,9 @@ The following will install a demo version of all the wire-server components incl
 ### What will be installed?
 
 - Wire-server (API)
-  -  user accounts, authentication, conversations
-  -  assets handling (images, files, …)
-  -  notifications over websocket
+    - user accounts, authentication, conversations
+    - assets handling (images, files, …)
+    - notifications over websocket
 - Wire-webapp, a fully functioning web client (like `https://app.wire.com`)
 - Wire-account-pages, user account management (a few pages relating to e.g. password reset), team-settings page
 - Email relay service i.e. demo-smtp
@@ -172,9 +172,9 @@ The playbook starts by verifying DNS records to ensure proper name resolution:
 
 - Imports [setup_ssh.yml](https://github.com/wireapp/wire-server-deploy/blob/master/ansible/wiab-demo/setup_ssh.yml) to manage SSH keys for Minikube nodes and SSH proxying for the deploy_node and minikube nodes
 - Runs if any of the following tasks are enabled:
-  - Minikube setup
-  - Asset host setup
-  - Offline seed setup
+    - Minikube setup
+    - Asset host setup
+    - Offline seed setup
 
 ### 6. Minikube Cluster Configuration
 
@@ -196,12 +196,12 @@ The playbook starts by verifying DNS records to ensure proper name resolution:
 
 ### 9. Minikube Node Inventory Setup
 
-The playbook then configures access to the Kubernetes nodes:
-- Retrieves the host IP (asset_host) on the Minikube network and Ip addresses for minikube k8s nodes
-- Sets up SSH proxy access to cluster nodes by:
-  - Creating a temporary directory for SSH keys on the localhost
-  - Writing the private key to a file in the temporary directory
-  - Adding the above calculated hosts to the Ansible inventory with appropriate SSH settings
+- The playbook then configures access to the Kubernetes nodes:
+    - Retrieves the host IP (asset_host) on the Minikube network and Ip addresses for minikube k8s nodes
+    - Sets up SSH proxy access to cluster nodes by:
+        - Creating a temporary directory for SSH keys on the localhost
+        - Writing the private key to a file in the temporary directory
+        - Adding the above calculated hosts to the Ansible inventory with appropriate SSH settings
 
 ### 10. Asset Host Setup
 
@@ -238,9 +238,9 @@ The deployment uses an SSH proxy mechanism to access:
 2. The asset host for resource distribution
 
 SSH proxying is configured with:
-- Dynamic discovery of SSH key paths (uses `ansible_ssh_private_key_file` if defined)
-- StrictHostKeyChecking disabled for convenience
-- UserKnownHostsFile set to /dev/null to prevent host key verification issues
+    - Dynamic discovery of SSH key paths (uses `ansible_ssh_private_key_file` if defined)
+    - StrictHostKeyChecking disabled for convenience
+    - UserKnownHostsFile set to /dev/null to prevent host key verification issues
 
 ## General Tips
 
@@ -353,9 +353,9 @@ kubectl --namespace <namespace> describe <name-of-pod>
 
 #### Nothing helped, still struggling to get Wire up?
 - Collect the following information and file a ticket with us:
-  - `artifact_hash` from `ansible/demo/host.yaml` from your setup where you made changes.
-  - Error logs from Ansible or Wire-services or k8s pods. 
-  - Description of the error.
+    - `artifact_hash` from `ansible/demo/host.yaml` from your setup where you made changes.
+    - Error logs from Ansible or Wire-services or k8s pods. 
+    - Description of the error.
 - Create a GitHub issue [here](https://github.com/wireapp/wire-docs) and we will do our best to get it fixed.
 
 ## Cleaning/Uninstalling Wire-in-a-Box
@@ -369,11 +369,11 @@ ansible-playbook -i ansible/inventory/demo/host.yml ansible/wiab-demo/clean_clus
 **Note:** The above command does not uninstall the Debian packages and binaries installed during the setup. This is an intentional design choice to avoid removing packages that may be required by the other users on the deploy_node later. If you wish to proceed with cleaning these packages, you can add the variable -e uninstall_pkgs=true.
 
 The cleanup process handles:
-- **Minikube**: Stops and deletes the Kubernetes cluster (optional `remove_minikube=true`)
-- **Packages**: Removes installed dependencies including Docker, kubectl, yq, etc. (optional `uninstall_pkgs=true`). **Note**: Verify the playbook before removing packages, it might remove pre-existing packages.
-- **IPTables**: Restores pre-installation network rules (optional `remove_iptables=true`)
-- **SSH Keys**: Removes generated SSH keys (optional `remove_ssh=true`)
-- **Artifacts**: Deletes downloaded deployment artifacts (optional `remove_artifacts=true`)
-- **Asset Host**: Stops the asset hosting service and cleans up related files (optional `clean_assethost=true`)
+    - **Minikube**: Stops and deletes the Kubernetes cluster (optional `remove_minikube=true`)
+    - **Packages**: Removes installed dependencies including Docker, kubectl, yq, etc. (optional `uninstall_pkgs=true`). **Note**: Verify the playbook before removing packages, it might remove pre-existing packages.
+    - **IPTables**: Restores pre-installation network rules (optional `remove_iptables=true`)
+    - **SSH Keys**: Removes generated SSH keys (optional `remove_ssh=true`)
+    - **Artifacts**: Deletes downloaded deployment artifacts (optional `remove_artifacts=true`)
+    - **Asset Host**: Stops the asset hosting service and cleans up related files (optional `clean_assethost=true`)
 
 Each cleanup operation can be enabled/disabled independently with the corresponding variables.

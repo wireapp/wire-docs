@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The following will install a demo version of all the wire-server components including the databases. This setup is not recommended in production but will get you started. Demo version means no data persistence (everything stored in memory, will be lost). Read the section [Cleaning/Uninstalling Wire-in-a-Box](#cleaninguninstalling-wire-in-a-box) to clean the installation post testing the demo solution.
+The following will install a demo version of all the wire-server components including the databases. This setup is not recommended in production but will get you started. Demo version means no data persistence, as everything is stored in memory and will be lost. It does not require any external storage solutions to function. Read the section [Cleaning/Uninstalling Wire-in-a-Box](#cleaninguninstalling-wire-in-a-box) to clean the installation post testing the demo solution.
 
 ### What will be installed?
 
@@ -24,7 +24,7 @@ The following will install a demo version of all the wire-server components incl
 - highly available k8s cluster
 
 ### Diagram
-A demo installation will look a bit like this:
+The flow diagram of the Demo setup:
 
 ```mermaid
 graph TB
@@ -95,11 +95,11 @@ graph TB
 
 This guide provides detailed instructions for deploying a Demo Wire-in-a-Box (WIAB) using Ansible on an Ubuntu 24.04 system. 
 
-The deployment process is structured into multiple blocks within the Ansible playbook, offering flexibility in execution. It is designed to configure a remote node, such as example.com (referred to as deploy_node), to install Wire with a custom domain, example.com (referred to as target_domain). 
+The deployment process is structured into multiple blocks within the Ansible playbook, offering flexibility in execution. It is designed to configure a remote node (referred to as deploy_node), to install Wire with a custom domain, example.com (referred to as target_domain). 
 
 These variables must be verified in the file [ansible/inventory/demo/host.yml](https://github.com/wireapp/wire-server-deploy/blob/master/ansible/inventory/demo/host.yml) before running the pipeline.
 
-Typically, the deployment process runs seamlessly without requiring any external flags. However, if needed, you have the option to skip certain tasks based on their conditional flags. 
+Typically, the deployment process runs seamlessly without requiring any external flags. However, if needed, you have the option to skip certain tasks by passing the conditional flags defined for a task.
 
 For instance, if you wish to bypass the [Wire Artifact Download tasks](#8-wire-artifact-download) —which can be time-consuming—you can manage the artifacts independently and skip this step in the Ansible workflow by using the flag `-e skip_download=true`.
 
@@ -107,8 +107,8 @@ For more detailed instructions on each task, please refer to the [Deployment Flo
 
 ## Deployment requirements:
   - Clone of [wire-server-repository](https://github.com/wireapp/wire-server-deploy)
-  - The inventory file [host.yml](https://github.com/wireapp/wire-server-deploy/blob/master/ansible/inventory/demo/host.yml) (post cloning the previous repo) to update and verify the following default variables:
-    - ansible_host: aka **deploy_node** i.e. IP address or hostname of VM where Wire will be deployed (Mandatory)
+  - The inventory file [host.yml](https://github.com/wireapp/wire-server-deploy/blob/master/ansible/inventory/demo/host.yml) in the wire-server-deploy needs to  be verified and updated with the following default variables:
+    - ansible_host: aka **deploy_node** i.e. IP address or hostname of the VM where Wire will be deployed (Mandatory)
     - ansible_user: username to access the deploy_node (Mandatory)
     - ansible_ssh_private_key_file: SSH key file path for username@deploy_node (Mandatory)
     - target_domain: The domain you want to use for wire installation eg. example.com (Mandatory)
@@ -247,7 +247,7 @@ SSH proxying is configured with:
 ### Ansible run selective tasks
 - You can use ^skip_ variables as environment variables to control the execution flow of the playbook. If these variables are passed, they will skip specific groups of tasks as explained in the [Deployment Flow](#deployment-flow) section. By default, if no variables are passed, all tasks will run in sequence.
 
-  In case of timeouts or any failures, you can skip tasks that have already been completed by passing the appropriate flags. For example, if the Wire artifact download task fails due to a timeout or disk space issue, you can skip the tasks that come before the Wire Artifact Download by using the following command:
+  In case of timeouts or other failures, you can skip tasks that have already been completed by passing the appropriate flags. For example, if the Wire artifact download task fails due to a timeout or disk space issue, you can skip the preceding tasks by using the following command:
 ```bash
 ansible-playbook -i ansible/inventory/demo/host.yml ansible/wiab-demo/deploy_wiab.yml -e "skip_verify_dns=true skip_install_pkgs=true skip_minikube=true"
 ```

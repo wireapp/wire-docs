@@ -7,7 +7,7 @@ The following will install a demo version of all the wire-server components incl
 ### What will be installed?
 
 - Wire-server (API)
-    - user accounts, authentication, conversations
+    - core - user accounts, authentication, conversations
     - assets handling (images, files, …)
     - notifications over websocket
 - Wire-webapp, a fully functioning web client (like `https://app.wire.com`)
@@ -15,7 +15,7 @@ The following will install a demo version of all the wire-server components incl
 - Email relay service i.e. demo-smtp
 - Group calling component i.e. coturn 
 - Ephemeral datastores
-- A cert-manager with `letsencrypt` as `issuser`. As an alternative to providing your own certificate, you may want to allow for automated certificate issuing through Let’s Encrypt. 
+- A cert-manager with `letsencrypt` as `issuser`.
 
 ### What will not be installed?
 

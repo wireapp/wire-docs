@@ -23,7 +23,6 @@ Please note your data will be in-memory only and may disappear at any given mome
     - a way to create SSL/TLS certificates for your domain name (to allow connecting via https://)
     - To ease out the process of managing certs, we recommend using [Let\'s Encrypt](https://letsencrypt.org/getting-started/) &
 [cert-manager](https://cert-manager.io/docs/tutorials/acme/http-validation/)
-    - Find a detailed explanation 
 - **Network**: No interference from UFW or other system specific firewalls, and IP forwarding enabled between network cards. Public internet access to download Wire artifacts and Ubuntu packages.
 - **Packages**: Ansible and Git installed on the localhost (any machine you have access to)
     - Ansible version: [core 2.16.3] or compatible

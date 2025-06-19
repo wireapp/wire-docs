@@ -14,14 +14,14 @@ The following will install a demo version of all the wire-server components incl
 - Wire-account-pages, user account management (a few pages relating to e.g. password reset), team-settings page
 - Email relay service i.e. demo-smtp
 - Group calling component i.e. coturn 
-- Ephemeral datastores in k8s
+- Ephemeral datastores
 - A cert-manager with `letsencrypt` as `issuser`. As an alternative to providing your own certificate, you may want to allow for automated certificate issuing through Let’s Encrypt. 
 
 ### What will not be installed?
 
 - notifications over native push notifications via [FCM](https://firebase.google.com/docs/cloud-messaging/)/[APNS](https://developer.apple.com/notifications/)
 - persistent datastores in k8s 
-- highly available k8s cluster
+- highly availablity
 
 ### Diagram
 The flow diagram of the Demo setup:
@@ -106,8 +106,8 @@ For instance, if you wish to bypass the [Wire Artifact Download tasks](#8-wire-a
 For more detailed instructions on each task, please refer to the [Deployment Flow section](#deployment-flow).
 
 ## Deployment requirements:
-  - Clone of [wire-server-repository](https://github.com/wireapp/wire-server-deploy)
-  - The inventory file [host.yml](https://github.com/wireapp/wire-server-deploy/blob/master/ansible/inventory/demo/host.yml) in the wire-server-deploy needs to  be verified and updated with the following default variables:
+  - Clone of [wire-server-deploy repository](https://github.com/wireapp/wire-server-deploy)
+  - The inventory file [host.yml](https://github.com/wireapp/wire-server-deploy/blob/master/ansible/inventory/demo/host.yml) in the wire-server-deploy needs to be verified and updated with the following default variables:
     - ansible_host: aka **deploy_node** i.e. IP address or hostname of the VM where Wire will be deployed (Mandatory)
     - ansible_user: username to access the deploy_node (Mandatory)
     - ansible_ssh_private_key_file: SSH key file path for username@deploy_node (Mandatory)

@@ -98,4 +98,8 @@
 - [Test an ingress is working from inside the cluster](manuals.md#test-an-ingress-is-working-from-inside-the-cluster)
 - [Load an image into containerd in an offline/airgapped environment](manuals.md#load-an-image-into-containerd-in-an-offlineairgapped-environment)
 
+## 12. Migration
+
+- [Migrate team features](migrate-team-features.md)
+
 <!-- TODO: .. include:: administration/redis.rst -->

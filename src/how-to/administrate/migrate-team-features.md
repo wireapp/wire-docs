@@ -34,8 +34,6 @@ kubectl get svc -n default` # assuming the services are in the default namespace
 ```
 And the service name for the cassandra and replace the value of `cassandraHost` if it differs.
 
-The `appVersion` value in `migrate-features/Chart.yaml` is used as the image tag. Update it if you need to pull a different image tag than `5.12.0`.
-
 ## Troubleshoot and monitoring
 
 After the helm installation check if the job is running

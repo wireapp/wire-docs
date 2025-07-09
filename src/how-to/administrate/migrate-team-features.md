@@ -2,21 +2,11 @@
 
 This document describes how to migrate your team settings if the release is older than [5.12.0](https://docs.wire.com/latest/changelog/changelog.html#2025-03-06-chart-release-5120) in the air-gapped environment. If you do not perform this migration after deploying a newer release, your team settings will be in an inconsistent state, until this is run.
 
-We added a [migrate-features](https://github.com/wireapp/helm-charts/tree/main/charts/migrate-faciliate) helm chart to facilitate the migration process.
+We added a [migrate-features](https://github.com/wireapp/helm-charts/tree/main/charts/migrate-features) helm chart to facilitate the migration process.
 
-## Run the migration job
+## Configuration
 
-When this chart is installed, it sets up a `migrate-feature` job in the `default` namespace:
-
-  ```sh
-  helm install default ./charts/migrate-features
-  ```
- 
- Before running the helm command, make sure the `migrate-features` chart is available in the charts directory, if not please download the chart or copy it from our latest artifacts.
-
- ## Configuration
-
- The values of the chart already contains the necessary configuration options.
+ The values of the chart `migrate-features/values.yaml` already contains the necessary configuration options.
 
  ```yaml
  job:
@@ -33,6 +23,17 @@ Most configuration values can remain as they are, but ensure the `cassandraHost`
 kubectl get svc -n default` # assuming the services are in the default namespace
 ```
 And the service name for the cassandra and replace the value of `cassandraHost` if it differs.
+
+## Run the migration job
+
+When this chart is installed, it sets up a `migrate-feature` job in the `default` namespace:
+
+  ```sh
+  helm install default ./charts/migrate-features
+  ```
+
+Before running the helm command, make sure the `migrate-features` chart is available in the charts directory, if not please download the chart or copy it from our latest artifacts.
+
 
 ## Troubleshoot and monitoring
 

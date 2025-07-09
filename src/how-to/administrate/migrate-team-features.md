@@ -1,8 +1,8 @@
 # Migrate to new team features
 
-This document describes how to migrate to the new team features of the wire app if the release is older than [5.12.0](https://docs.wire.com/latest/changelog/changelog.html#2025-03-06-chart-release-5120) in the air-gapped environment.
+This document describes how to migrate your team settings if the release is older than [5.12.0](https://docs.wire.com/latest/changelog/changelog.html#2025-03-06-chart-release-5120) in the air-gapped environment. If you do not perform this migration after deploying a newer release, your team settings will be in an inconsistent state, until this is run.
 
-We added a [migrate-features](https://github.com/wireapp/helm-charts/tree/main/charts/migrate-faciliate) helm chart to facilitate the migration process, as described in the release changelog in the wire-server-deploy bundle.
+We added a [migrate-features](https://github.com/wireapp/helm-charts/tree/main/charts/migrate-faciliate) helm chart to facilitate the migration process.
 
 ## Run the migration job
 
@@ -16,7 +16,7 @@ The chart sets up the `migrate-feature` job when it got installed in the `defaul
 
  ## Configuration
 
- The values of the chart contains the necessary configuration options.
+ The values of the chart already contains the necessary configuration options.
 
  ```yaml
  job:

@@ -6,7 +6,7 @@ We added a [migrate-features](https://github.com/wireapp/helm-charts/tree/main/c
 
 ## Run the migration job
 
-The chart sets up the `migrate-feature` job when it got installed in the `default` namespace:
+When this chart is installed, it sets up a `migrate-feature` job in the `default` namespace:
 
   ```sh
   helm install default ./charts/migrate-features

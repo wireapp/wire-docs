@@ -46,7 +46,7 @@ bash-4.4# ansible --version
 ansible 2.9.12
 ```
 
-Once you’re in there, you can move on to [installing kubernetes](kubernetes.md#ansible-kubernetes).
+Once you’re in there, you can move on to [installing kubernetes](ansible-VMs.md#installing-kubernetes).
 
 ## (Alternative) Installing dependencies using Direnv and Nix
 

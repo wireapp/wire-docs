@@ -13,8 +13,7 @@ nav:
       - How to plan an installation: how-to/install/planning.md
       - Version requirements: how-to/install/version-requirements.md
       - Dependencies on operator’s machine: how-to/install/dependencies.md
-      - How to install kubernetes (Demo): how-to/install/kubernetes.md
-      - How to install wire-server using Helm (Demo): how-to/install/helm.md
+      - How to install Wire in a box (Demo): how-to/install/demo-wiab.md
       - Introduction: how-to/install/prod-intro.md
       - How to install kubernetes and databases: how-to/install/ansible-VMs.md
       - How to configure AWS services: how-to/install/aws-prod.md
@@ -144,6 +143,7 @@ theme:
 
 plugins:
   - search
+  - mermaid2
   - minify:
       minify_html: true
       minify_js: true
@@ -179,8 +179,12 @@ markdown_extensions:
   - pymdownx.snippets
   - pymdownx.tasklist:
       custom_checkbox: true
-  - pymdownx.superfences
   - pymdownx.tabbed
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
 
 extra:
   version:

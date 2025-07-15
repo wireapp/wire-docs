@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:139.0) Gecko/20100101 Firefox/139.0" version="27.1.5">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64; rv:139.0) Gecko/20100101 Firefox/139.0" version="27.2.0">
   <diagram id="rLDlN7DbNAh7FuR19A_p" name="Page-1">
-    <mxGraphModel dx="1892" dy="535" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="2916" dy="1168" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -861,7 +861,7 @@
         <mxCell id="mps1uX8T5PpobUmjtMyG-376" value="= client connection via internal network or VPN connection, UDP (voice/video calling),&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; Ports&amp;nbsp;&lt;span data-testid=&quot;issue-activity-feed.feed-display-with-intersection-observer&quot;&gt;&lt;span&gt;&lt;span data-testid=&quot;comment-base-item-138797&quot;&gt;49152-65535&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&amp;nbsp;(as specificied in /proc/sys/net/ipv4/ip_local_port_range), adjustable based on customer requirements" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#000000;opacity=20;" parent="1" vertex="1">
           <mxGeometry x="542" y="1118" width="484" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="mps1uX8T5PpobUmjtMyG-377" value="&lt;div style=&quot;font-size: 12px&quot;&gt;Admin Host communicates with all Wire backend components via port 22&lt;/div&gt;&lt;div style=&quot;font-size: 12px&quot;&gt;&lt;br style=&quot;font-size: 12px&quot;&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 12px&quot;&gt;Asset Host - all Wire backend components communicate with the Asset Host via port 80&lt;br style=&quot;font-size: 12px&quot;&gt;&lt;/div&gt;&amp;nbsp;and port 8080" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#000000;opacity=20;" parent="1" vertex="1">
+        <mxCell id="mps1uX8T5PpobUmjtMyG-377" value="&lt;div style=&quot;font-size: 12px&quot;&gt;Admin Host communicates with the&amp;nbsp; Wire hosting infrastructure via port 22 for orchestration purposes.&lt;/div&gt;&lt;div style=&quot;font-size: 12px&quot;&gt;Asset Host - all wire hosting infrastructure communicates with the Asset Host via port&amp;nbsp;8080 for application asset retrieval during deployment&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#000000;opacity=20;" parent="1" vertex="1">
           <mxGeometry x="542" y="1221" width="484" height="50" as="geometry" />
         </mxCell>
         <mxCell id="mps1uX8T5PpobUmjtMyG-408" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bac8d3;strokeColor=#23445d;" parent="1" vertex="1">

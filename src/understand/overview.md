@@ -19,7 +19,7 @@ Users use Wire Clients, either installed with the wire application locally, or b
 The above graph gives us a rough breakdown of which domains are used for which parts of the platform.
 
 #### Wire Web Applications
-The Wire web application is started by a web browser opening up https://webapp.example.com/ . Similarly, Teams in Wire are managed by loading the Team Management application, reachable at https://teams.example.com/ . Both of these web applications are static, which is to say, the application that is loaded uses the Wire API to perform all actions, and has no "state" in the backend. the 'account' application is not meant for users to directly access, and contains pages to manage password resets, and other special pages not a part of team settings or the Wire Webapp.
+The Wire web application is started by a web browser opening up https://webapp.example.com/ . Similarly, Teams in Wire are managed by loading the Team Management application, reachable at https://teams.example.com/ . Both of these web applications are static, which is to say, the application that is loaded uses the Wire API to perform all actions, and has no "state" in the backend. The 'account' application is not meant for users to directly access, and contains pages to manage password resets, and other special pages outside of the team settings or the Wire Webapp.
 
 #### Wire API Access
 All actions in the wire applications require wire API access, which is generally granted when a user logs into a wire client device (including webapp). There are no "long lived" connections in the API, when a client is using the application, they perform their API call, then the connection ends. 

@@ -8,7 +8,7 @@ In a simplified way, the server components for Wire involve the following:
 
 ![image](img/architecture-server-simplified.svg)
 
-The Wire clients (such as the Wire app on your phone) connect either directly (or via a load balancer) to the “Wire Server”. By “Wire Server” we mean multiple API server components that connect to each other, and which also connect to a few databases. Both the API components and the databases are each in a “cluster”, ensuring copies of the same program are available multiple times. This allows any one component to fail without users noticing that there is a problem (also called “high-availability”).
+The Wire clients (such as the Wire app on your phone) connect either directly or through a load balancer to the “Wire Server”.  The term “Wire Server” refers to a set of API server components that work together and also communicate with various databases. Both the API components and the databases are each deployed in a “cluster”, a setup where multiple instances of the same service run in parallel.This design ensures that if one instance fails, others continue to serve requests without disruption. This fault-tolerant setup is known as high availability, and it helps ensure a seamless experience for users even during component failures.
 
 ## Architecture and networking
 

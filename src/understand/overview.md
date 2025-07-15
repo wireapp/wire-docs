@@ -34,7 +34,7 @@ Files, Voice Messages, Pictures, and other items users upload to the wire backen
 In general, both of wire's calling services have two phases of communicating with them: there's the signaling phase, which creates, reserves, and communicates about the call, then there is the active phase, where audio/video data is being transfered in-between the participants. Part of the signaling phase of all calls is performed by messages over the Wire Messaging Platform, in order to inform participants about the existence and location of a call.
 
 ##### Conference Calling
-Conference calling in Wire is managed a dedicated service, named "SFT". This service uses HTTPS to perform the signaling parts of setting up a call, but uses a proprietary deritive of the TURN protocol over UDP to actually transfer calling content. This is why it goes both to a load balancer (for HTTPS), and to a firewall (to forward on UDP packets).
+Conference calling in Wire is a managed dedicated service, named "SFT". This service uses HTTPS to perform the signaling parts of setting up a call, but uses a proprietary derivative of the TURN protocol over UDP to actually transfer calling content. This is why it goes both to a load balancer (for HTTPS), and to a firewall (to forward on UDP packets).
 
 ##### Personal Calling
 Individual calling between pairs of participants in the wire application is managed by a version of https://github.com/coturn/coturn , which wire has extended for denial of service hardening. This service does not use HTTPS at any point, but does speak the TURN protocol, only deviating from the published standard in the area of authentication.

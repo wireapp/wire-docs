@@ -28,7 +28,7 @@ All actions in the wire applications require wire API access, which is generally
 As wire is an interactive application, from time to time, we need to tell the client something has happened. This involves holding open a "long lived" connection to the backend, via the WebSockets API over HTTP. 
 
 #### Asset Retrieval
-Files, Voice Messages, Pictures, and other items users upload to the wire backend for distribution are referred to as 'assets' in wire. Asset requests are handled on the "https://assets.example.com/" domain, which is separate from the rest of wire, so that customers have the option of using cacheing (cloudflare, etc) services to speed up their downloads.
+Files, Voice Messages, Pictures, and other items users upload to the wire backend for distribution are referred to as 'assets' in wire. Asset requests are handled on the "https://assets.example.com/" domain, which is separate from the rest of wire. This separation allows customers to use caching services (such as Cloudflare) to accelerate downloads and improve performance.
 
 #### Calling
 In general, both of wire's calling services have two phases of communicating with them: there's the signaling phase, which creates, reserves, and communicates about the call, then there is the active phase, where audio/video data is being transfered in-between the participants. Part of the signaling phase of all calls is performed by messages over the Wire Messaging Platform, in order to inform participants about the existence and location of a call.

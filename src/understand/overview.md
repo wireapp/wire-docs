@@ -51,6 +51,13 @@ Wire clients (such as the Wire app on your phone) connect to your wire cluster t
 The nginx ingress pods inside kubernetes look at incoming traffic, and forward that traffic on to the right place, depending on what’s inside the URL passed. For example, if a request comes in for `https://nginz-https.example.com`, it is forwarded to a component called `nginz`, which is the main entry point for the [wire-server API](https://github.com/wireapp/wire-server). If, however, a request comes in for `https://webapp.example.com`, it is forwarded to a component called [webapp](https://github.com/wireapp/wire-webapp), which hosts the graphical browser Wire client (as found when you open [https://app.wire.com](https://app.wire.com)).
 
 
+### Backend Routing
+
+Now that we have a good grasp of how traffic gets from client devices to your Wire Messaging Cluster and your Wire Calling Cluster, let's examine how traffic is routed inside of the wire clusters.
+
+![image](img/traffic-simple.svg)
+
+
 ### Focus on internet protocols
 
 ![image](img/architecture-tls-on-prem-2020-09.png)

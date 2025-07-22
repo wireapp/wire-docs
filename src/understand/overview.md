@@ -8,7 +8,7 @@ In a simplified way, the server components for Wire involve the following:
 
 ![image](img/architecture-server-simplified.svg)
 
-The Wire clients (such as the Wire app on your phone) connect either directly or through a load balancer to the “Wire Server”.  The term “Wire Server” refers to a set of API server components that work together and also communicate with various databases. Both the API components and the databases are each deployed in a “cluster”, a setup where multiple instances of the same service run in parallel.This design ensures that if one instance fails, others continue to serve requests without disruption. This fault-tolerant setup is known as high availability, and it helps ensure a seamless experience for users even during component failures.
+The Wire clients (such as the Wire app on your phone) connect either directly or through a load balancer to the “Wire Server”.  The term “Wire Server” refers to a set of API server components that work together and also communicate with various databases. Both the API components and the databases are each deployed in a “cluster”, a setup where multiple instances of the same service run in parallel. This design ensures that if one instance fails, others continue to serve requests without disruption. This fault-tolerant setup is known as high availability, and it helps ensure a seamless experience for users even during component failures.
 
 ## Architecture and networking
 
@@ -19,7 +19,7 @@ Users use Wire Clients, either installed with the wire application locally, or b
 The above graph gives us a rough breakdown of which domains are used for which parts of the platform.
 
 #### Wire Web Applications
-The Wire web application is started by a web browser opening up https://webapp.example.com/ . Similarly, Teams in Wire are managed by loading the Team Management application, reachable at https://teams.example.com/ . Both of these web applications are static, which is to say, the application that is loaded uses the Wire API to perform all actions, and has no "state" in the backend. The 'account' application is not meant for users to directly access, and contains pages to manage password resets, and other special pages outside of the team settings or the Wire Webapp.
+The Wire web application is started by a web browser opening up https://webapp.example.com/ . Similarly, Teams in Wire are managed by loading the Team Management application, reachable at https://teams.example.com/ . Both of these web applications are static, which is to say, the application that is loaded uses the Wire API to perform all actions, and has no "state" in the backend. the 'account' application is not meant for users to directly access, and contains pages to manage password resets, and other special pages not a part of team settings or the Wire Webapp.
 
 #### Wire API Access
 All actions in the wire applications require wire API access, which is generally granted when a user logs into a wire client device (including webapp). There are no "long lived" connections in the API, when a client is using the application, they perform their API call, then the connection ends. 
@@ -28,19 +28,35 @@ All actions in the wire applications require wire API access, which is generally
 As wire is an interactive application, from time to time, we need to tell the client something has happened. This involves holding open a "long lived" connection to the backend, via the WebSockets API over HTTP. 
 
 #### Asset Retrieval
-Files, Voice Messages, Pictures, and other items users upload to the wire backend for distribution are referred to as 'assets' in wire. Asset requests are handled on the "https://assets.example.com/" domain, which is separate from the rest of wire. This separation allows customers to use caching services (such as Cloudflare) to accelerate downloads and improve performance.
+Files, Voice Messages, Pictures, and other items users upload to the wire backend for distribution are referred to as 'assets' in wire. Asset requests are handled on the "https://assets.example.com/" domain, which is separate from the rest of wire, so that customers have the option of using cacheing (cloudflare, etc) services to speed up their downloads. All assets other than profile pictures are encrypted-at-rest in the assets database (usually, S3 or an S3 like-service).
 
 #### Calling
-In general, both of wire's calling services have two phases of communicating with them: there's the signaling phase, which creates, reserves, and communicates about the call, then there is the active phase, where audio/video data is being transfered in-between the participants. Part of the signaling phase of all calls is performed by messages over the Wire Messaging Platform, in order to inform participants about the existence and location of a call.
+In general, both of wire's calling services have two phases of communicating with them: there's the signaling phase, which creates, reserves, and communicates about the call, then there is the active phase, where audio/video data is being transfered in-between the participants. The last part of the signaling phase of all calls is performed by sending messages over the Wire Messaging Platform, in order to inform participants about the existence and location of a call.
 
 ##### Conference Calling
-Conference calling in Wire is a managed dedicated service, named "SFT". This service uses HTTPS to perform the signaling parts of setting up a call, but uses a proprietary derivative of the TURN protocol over UDP to actually transfer calling content. This is why it goes both to a load balancer (for HTTPS), and to a firewall (to forward on UDP packets).
+Conference calling in Wire is managed a dedicated service, named "SFT". This service uses HTTPS to perform the signaling parts of setting up a call, but uses a proprietary deritive of the TURN protocol over UDP to actually transfer calling content. This is why it goes both to a load balancer (for HTTPS), and to a firewall (to forward on UDP packets).
 
 ##### Personal Calling
 Individual calling between pairs of participants in the wire application is managed by a version of https://github.com/coturn/coturn , which wire has extended for denial of service hardening. This service does not use HTTPS at any point, but does speak the TURN protocol, only deviating from the published standard in the area of authentication.
 
 #### Mobile Notifications
 At this point, you might be wondering "what's that Amazon thing up in the corner?". For mobile clients (AKA, cellphones), Wire utilizes Google and Apple push notification services to send a message to the client devices when they need to go check the backend for messages. This is because keeping a "long lived" connection to the backend causes a major battery draw on android, and is simply not possible on apple devices. If complete secrecy is required, the android client is permitted to go into a "websocket-only" mode, where it will use the websocket instead of the cell phone network. This, of course, drains the battery, as the messages required to keep the "long lived" connection going require regular contact to your backend, and require "waking up" the mobile device regularly, preventing it from going into deeper power savings modes.
+
+### Wire Messaging Cluster
+
+The Wire Messaging Cluster is where all of the non-calling components of Wire are deployed. 
+
+Wire clients (such as the Wire app on your phone) connect to your wire cluster through a load balancer in order to exchange messages, retrieve assets, notify each other about calls, and perform other interactions with other wire users. The load balancer forwards traffic to the ingress inside the kubernetes VMs. Wire needs a load balancer for this, so that in the case of a failure of the hardware wire is running on, the load balancer can switch where it sends traffic to, ensuring a continuous service.
+
+The nginx ingress pods inside kubernetes look at incoming traffic, and forward that traffic on to the right place, depending on what’s inside the URL passed. For example, if a request comes in for `https://nginz-https.example.com`, it is forwarded to a component called `nginz`, which is the main entry point for the [wire-server API](https://github.com/wireapp/wire-server). If, however, a request comes in for `https://webapp.example.com`, it is forwarded to a component called [webapp](https://github.com/wireapp/wire-webapp), which hosts the graphical browser Wire client (as found when you open [https://app.wire.com](https://app.wire.com)).
+
+
+### Backend Routing
+
+Now that we have a good grasp of how traffic gets from client devices to your Wire Messaging Cluster and your Wire Calling Cluster, let's examine how traffic is routed inside of the wire clusters.
+
+![image](img/traffic-simple.svg)
+
 
 ### Focus on internet protocols
 
@@ -52,11 +68,7 @@ The following diagram shows a usual setup with multiple VMs (Virtual Machines):
 
 ![image](../how-to/install/img/architecture-server-ha.png)
 
-Wire clients (such as the Wire app on your phone) connect to a load balancer.
 
-The load balancer forwards traffic to the ingress inside the kubernetes VMs. (Restund is special, see [Restund (TURN) servers](restund.md#understand-restund) for details on how Restund works.)
-
-The nginx ingress pods inside kubernetes look at incoming traffic, and forward that traffic on to the right place, depending on what’s inside the URL passed. For example, if a request comes in for `https://example-https.example.com`, it is forwarded to a component called `nginz`, which is the main entry point for the [wire-server API](https://github.com/wireapp/wire-server). If, however, a request comes in for `https://webapp.example.com`, it is forwarded to a component called [webapp](https://github.com/wireapp/wire-webapp), which hosts the graphical browser Wire client (as found when you open [https://app.wire.com](https://app.wire.com)).
 
 Wire-server needs a range of databases. Their names are: cassandra, elasticsearch, minio, redis, etcd.
 

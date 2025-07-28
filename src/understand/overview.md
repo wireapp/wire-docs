@@ -58,6 +58,67 @@ Now that we have a good grasp of how traffic gets from client devices to your Wi
 ![image](img/traffic-simple.svg)
 
 
+### Wire Messaging Cluster
+The Wire Messaging Kubernetes Cluster is where your wire environment lives. Traffic headed into your Wire Messaging Cluster breaks down into four categories: access to static sites (EG: webapp, account, or teams), asset retrieval (when using MinIO), web sockets, or communications with the Backend API.
+
+#### Static Sites
+Account pages, Team Management, and the webapp are static applications, which is to say, if you try to download them, the content is the same each time. While what you see in the application changes, that's because what you are seeing is content presented from the Backend API, not because what you retrieve from the application's hosting service is any different.
+
+For static sites, their traffic enters the kubernetes cluster through your load balancer. there, it is sent to the nginx ingress, and then directly to the pods serving the static application.
+
+#### Asset Retrieval
+For customers who do not have a wire compatible S3 API, wire will configure a MinIO S3-like service. This service is where items such as profile pictures, file contents, and uploaded images rest. Everything in this service is encrypted-at-rest, with the exception of the profile pictures.
+
+If you have MinIO hosting your assets, then requests for assets will travel through your load balancer. there, it is sent to the nginx ingress, which directs said request to the MinIO cluster.
+
+#### Web Sockets
+In order for Wire to communicate that something has happened (a message sent, a read receipt, someone started typing...), a websocket may be kept open, between clients and the backend. This is a channel a client and the backend communicates over bidirectionally. A 'ping-pong' is sent every 30 seconds across the link, to keep it active, and so that if it is closed or interrupted, it can be re-opened.
+
+Web Sockets are a part of the Wire Backend API. As such, the direction of their traffic is through the Wire Messaging Load Balancer, through the first Nginx ingress, but also through a second modified NginX ingress, we call NginZ. This ingress checks to make sure a user is authenticated, before passing it deeper into the messaging services, for the web socket to be serviced.
+
+#### Backend API Communications
+In order for users to read or change anything in wire, they need to use the Backend API. This is the API provided by Wire's Messaging Services, which most user activity is performed over.
+
+Traffic destined to the backend API is sent through the Wire Messaging Load Balancer, Through the first Nginx ingress, through the NginZ Ingress (assuming it is authorized!), then onward to the service designated for that endpoint. NginZ contains the knowledge of which service a given endpoint needs to go to, as well as the type of authentication required to reach that endpoint.
+
+### Wire Calling Cluster
+Wire's calling services are divided into two: 1<->1 calling is performed through a modified version of coturn, while conference calling goes through a wire-developed service, called SFT. Both of these services follow a similar model: They have a signaling phase, where call participants can create, join, and end calls, and a "in-call" phase, where call traffic is actually transfered. during the "in-call" phase, both services open a UDP port which all call participants communicate with, which is where the call "happens". All callers participating in a call will be contacting the calling service on the same UDP port.
+
+Communications from your end users to your Wire Calling Cluster need to go both through a load balancer, AND through one or more firewalls. The load balancer handles HTTPS traffic to `https://sft1.example.com/` and other SFT domains, while the firewalls handle the UDP traffic.
+
+#### Coturn
+For one-to-one calls (calls initiated in a 1:1 conversation), coturn is used. Our release of coturn is extended for DDOS prevention, federated calling support, and has a modified authentication API.
+
+When a wire user in a 1:1 conversation tries to place a call, the participating clients first try to find a route directly between them. If a route can be found, call data is routed between the clients directly, completely bypassing the backend.
+
+Only when the above fails, does the user's Wire client rely on the backend for call content relaying. This means calls can be succeeding even when the backend is completely unreachable.
+
+##### Signaling
+During the signaling phase, Wire clients will attempt to discover each other directly. This works well for people residing on the same network; they do not even need to be able to reach the calling server to have a call! While they are trying to discover each other, the client initiating the call will also attempt to reserve a call relay on each of your coturn servers. 
+
+If the Wire clients can directly talk to one another, they will cancel their reservations. If they recieve a reservation, they will cancel any other reservation requests in-flight, reserving only one call relay point. This gives us direct connections when possible, and when it's not possible, the call relay will stand up on the quickest-to-respond coturn server.
+
+Wire clients attempting to place a call will connect to port 3678 of `coturn0.example.com` and other coturn domains, to reserve a call relay. This traffic will arrive at a firewall in your environment, where it will be sent directly to a specific node in the calling kubernetes cluster, where the coturn process will handle the traffic directly.
+
+##### Calling
+Once a call relay has been reserved, all participants will be notified of it over Wire messages, by telling the participants the IP and port to connect to. They will all connect through the appropriate calling firewall (identified by IP), and traffic will be sent directly to a specific kubernetes node.
+
+#### SFT
+SFT is Wire's Selectively Forwarding TURN Service. Wire uses SFT to host conference calls in all wire Groups and Channels.
+
+##### Signaling
+Signaling works completely differently than it does in coturn calls. Signaling is handled via HTTP, rather than UDP ports. This makes debugging easier, but does require the use of a load balancer in front of your Wire Calling Cluster, to handle HTTPS encrypted signaling.
+
+Wire clients attempting to create a conference call will use HTTPS to contact `https://sft1.example.com` and other SFT domains. This traffic arrives at the Wire Calling Cluster's load balancer, and is directed into the cluster through a standard nginx instance. This instance relays traffic to one of the 'join-call' ingresses, which in turn relays to the requested SFT server. As with coturn, clients will attempt to reserve on all of the nodes, and keep the reservation that 'arrives first'.
+
+##### Calling
+Once a conference call has been created, all participants will be notified of it over Wire messages, by telling the participants the DNS name and port to connect to. They will all connect through the appropriate calling firewall (identified by DNS), and traffic will be sent directly to a specific kubernetes node.
+
+
+### Backing Services
+
+The wire services in your main Wire Messaging Cluster require a variety of databases. Their names are: cassandra, elasticsearch, minio, redis, etcd.
+
 ### Focus on internet protocols
 
 ![image](img/architecture-tls-on-prem-2020-09.png)
@@ -68,9 +129,6 @@ The following diagram shows a usual setup with multiple VMs (Virtual Machines):
 
 ![image](../how-to/install/img/architecture-server-ha.png)
 
-
-
-Wire-server needs a range of databases. Their names are: cassandra, elasticsearch, minio, redis, etcd.
 
 All the server components on one physical machine can connect to all the databases (also those on a different physical machine). The databases each connect to each-other, e.g. cassandra on machine 1 will connect to the cassandra VMs on machines 2 and 3.
 

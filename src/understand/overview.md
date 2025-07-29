@@ -98,7 +98,7 @@ During the signaling phase, Wire clients will attempt to discover each other dir
 
 If the Wire clients can directly talk to one another, they will cancel their reservations. If they receive a reservation, they will cancel any other reservation requests in-flight, reserving only one call relay point. This gives us direct connections when possible, and when it's not possible, the call relay will stand up on the quickest-to-respond coturn server.
 
-Wire clients attempting to place a call will connect to port 3678 of `coturn0.example.com` and other Coturn domains, to reserve a call relay. This traffic will arrive at a firewall in your environment, where it will be sent directly to a specific node in the calling kubernetes cluster, where the coturn process will handle the traffic directly.
+Wire clients attempting to place a call will connect to port 3478 of `coturn0.example.com` and other Coturn domains, to reserve a call relay. This traffic will arrive at a firewall in your environment, where it will be sent directly to a specific node in the calling kubernetes cluster, where the coturn process will handle the traffic directly.
 
 ##### Calling
 Once a call relay has been reserved, all participants will be notified of it over Wire messages, by telling the participants the IP and port to connect to. They will all connect through the appropriate calling firewall (identified by IP), and traffic will be sent directly to a specific kubernetes node.

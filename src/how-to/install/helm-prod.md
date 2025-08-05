@@ -2,10 +2,6 @@
 
 # Installing wire-server (production) components using Helm
 
-#### NOTE
-Code in this repository should be considered *beta*. As of 2020, we do not (yet)
-run our production infrastructure on Kubernetes (but plan to do so soon).
-
 ## Introduction
 
 The following will install a version of all the wire-server components. These instructions are for reference, and may not set up what you would consider a production environment, due to the fact that there are varying definitions of ‘production ready’. These instructions will cover what we consider to be a useful overlap of our users’ production needs. They do not cover load balancing/distributing, using multiple datacenters, federating wire, or other forms of intercontinental/interplanetary distribution of the wire service infrastructure. If you deviate from these directions and need to contact us for support, please provide the deviations you made to fit your production environment along with your support request.

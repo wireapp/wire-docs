@@ -162,6 +162,40 @@ Brig uses Elasticsearch Cassandra, Postgres and RabbitMQ. Additionally, it will 
 [Cargohold](https://github.com/wireapp/wire-server/tree/develop/services/cargohold) is the Asset Storage API of Wire. It uses Amazon-AWS-S3-style services to store encrypted files that users are sharing amongst each other, such as images, file attachments, voice messages, and other static content, which we call assets. All assets except profile pictures are symmetrically encrypted before storage (and the keys are only known to the participants of the conversation in which an asset was shared - servers have no knowledge of the keys).
 
 Cargohold only needs to speak to your S3 hosting service.
+
+### Calling in your main cluster:
+![image](img/calling-in_cluster.svg)
+
+Placing calling in your main kubernetes cluster is heavily discouraged by wire. If a calling component is broken into in the above scenario, other critical databases your wire cluster uses would be at risk. For this reason, Wire always recommends using a separate kubernetes cluster for calling services.
+
+### Calling in your DMZ:
+![image](img/calling-DMZ.svg)
+
+In the above diagram, we have routed and labeled the calling traffic into a non-federated Wire calling cluster. As you can see, placing calling in it's own kubernetes cluster is much safer, as the cluster does not have access to any of the wire databases. For most configurations, the calling cluster and the wire backend do not need to speak at all.
+
+### Federated Calling
+![image](img/federated_calling.svg)
+
+In a calling environment that also has federation, many different styles of calling may be happening. 
+
+#### Normal Calling
+Users such as Alice and Bob may are participating in a one-to-one call by their wire clients connecting directly to each other across a flat corporate network. No interaction with the calling servers is necessary for this to occur.
+
+Users like Charlie and David may be at home, or otherwise on separate networks, that do not allow them to connect to each other. In this case, for a one-to-one call, they use the Coturn server to relay their conversation back and forth.
+
+#### Federated Calling
+For federated calls, things can get quite a bit more complicated. 
+
+In "Your Pristine Datacenter", we show coturn deployed twice. One coturn relays calls for one-to-one functionality, and the other handles encrypting/decrypting traffic that goes to a *REMOTE* coturn, that is to say, the coturn of someone who you are federated with.
+
+In the above diagram, Edith, Fred, Gary, and Henry are all in the same conference call. Edith and Fred are connected to the SFT server which holds the call in the datacenter, but Gary and Henry have very different paths.
+
+##### Gary
+For Gary, the call is "remote", so not held on any calling infrastructure on his end. He uses the local Coturn server on his network to connect across the DTLS connection, to the Coturn that handles the DTLS connection in the remote datacenter. That remone Coturn then connects Gary to the conference on the SFT server.
+
+##### Henry
+Henry has a different thing happening. For Henry, the call is on the SFT server in his datacenter, but for some reason, the network he is on cannot connect to the conference call on it's UDP port. Henry's wire client uses coturn to relay.. into the SFT call! This is yet another nice fallover capability of the wire clients when networks are 'adverse'.
+
 ### Focus on internet protocols
 
 ![image](img/architecture-tls-on-prem-2020-09.png)

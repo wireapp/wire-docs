@@ -282,7 +282,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="mps1uX8T5PpobUmjtMyG-202" value="TCP 6379" style="edgeLabel;resizable=0;html=1;align=center;verticalAlign=middle;fontSize=8;" parent="mps1uX8T5PpobUmjtMyG-201" connectable="0" vertex="1">
+        <mxCell id="mps1uX8T5PpobUmjtMyG-202" value="TCP 8443" style="edgeLabel;resizable=0;html=1;align=center;verticalAlign=middle;fontSize=8;" parent="mps1uX8T5PpobUmjtMyG-201" connectable="0" vertex="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="mps1uX8T5PpobUmjtMyG-203" value="MinIO" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=8;" parent="1" vertex="1">
@@ -901,7 +901,7 @@
         <mxCell id="mps1uX8T5PpobUmjtMyG-377" value="&lt;div style=&quot;font-size: 12px&quot;&gt;Admin Host communicates with all Wire backend components via port 22&lt;/div&gt;&lt;div style=&quot;font-size: 12px&quot;&gt;&lt;br style=&quot;font-size: 12px&quot;&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 12px&quot;&gt;Asset Host - all Wire backend components communicate with the Asset Host via port 80 and port 8080&lt;br style=&quot;font-size: 12px&quot;&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#000000;opacity=20;" parent="1" vertex="1">
           <mxGeometry x="646" y="824" width="484" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="9q0lNBaJ7Ec52wBJKJK--62" value="" style="endArrow=none;startArrow=none;html=1;rounded=1;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;curved=0;strokeColor=light-dark(#CC6600, #e66100);exitX=0;exitY=0.75;exitDx=0;exitDy=0;startFill=0;endFill=0;dashed=1;dashPattern=1 2;" parent="1" source="9q0lNBaJ7Ec52wBJKJK--59" target="mps1uX8T5PpobUmjtMyG-337" edge="1">
+        <mxCell id="9q0lNBaJ7Ec52wBJKJK--62" value="" style="endArrow=none;startArrow=none;html=1;rounded=1;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;curved=0;strokeColor=light-dark(#000000,#CC6600);exitX=0;exitY=0.75;exitDx=0;exitDy=0;startFill=0;endFill=0;dashed=1;dashPattern=1 2;" parent="1" source="9q0lNBaJ7Ec52wBJKJK--59" target="mps1uX8T5PpobUmjtMyG-337" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="90" y="540" as="sourcePoint" />
             <mxPoint x="80" y="610" as="targetPoint" />
@@ -922,12 +922,13 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="9q0lNBaJ7Ec52wBJKJK--64" value="" style="endArrow=none;startArrow=none;html=1;rounded=1;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;curved=0;strokeColor=light-dark(#CC6600,#D47D25);startFill=0;endFill=0;entryX=0.475;entryY=0.009;entryDx=0;entryDy=0;dashed=1;dashPattern=1 2;entryPerimeter=0;" parent="1" target="mps1uX8T5PpobUmjtMyG-340" edge="1">
+        <mxCell id="9q0lNBaJ7Ec52wBJKJK--64" value="" style="endArrow=none;startArrow=none;html=1;rounded=1;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;curved=0;strokeColor=light-dark(#000000,#CC6600);startFill=0;endFill=0;entryX=0.475;entryY=0.009;entryDx=0;entryDy=0;dashed=1;dashPattern=1 2;entryPerimeter=0;" parent="1" target="mps1uX8T5PpobUmjtMyG-340" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="220" y="540" as="sourcePoint" />
+            <mxPoint x="270" y="540" as="sourcePoint" />
             <mxPoint x="313.88000000000034" y="630.73125" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="278" y="540" />
+              <mxPoint x="281" y="540" />
+              <mxPoint x="281" y="629" />
               <mxPoint x="278" y="629" />
             </Array>
           </mxGeometry>
@@ -961,7 +962,7 @@
         </mxCell>
         <mxCell id="9q0lNBaJ7Ec52wBJKJK--71" value="" style="endArrow=none;startArrow=none;html=1;rounded=1;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;curved=0;strokeColor=light-dark(#000000,#CC6600);startFill=0;endFill=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;dashed=1;dashPattern=1 2;fillColor=#f5f5f5;" parent="1" target="mps1uX8T5PpobUmjtMyG-339" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="270" y="540" as="sourcePoint" />
+            <mxPoint x="210" y="540" as="sourcePoint" />
             <mxPoint x="458" y="640" as="targetPoint" />
             <Array as="points">
               <mxPoint x="400" y="540" />

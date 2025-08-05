@@ -164,17 +164,17 @@ Brig uses Elasticsearch Cassandra, Postgres and RabbitMQ. Additionally, it will 
 Cargohold only needs to speak to your S3 hosting service.
 
 ### Calling in your main cluster:
-![image](img/calling-in_cluster.png)
+![image](img/calling-in_cluster.svg)
 
 Placing calling in your main kubernetes cluster is heavily discouraged by wire. If a calling component is broken into in the above scenario, other critical databases your wire cluster uses would be at risk. For this reason, Wire always recommends using a separate kubernetes cluster for calling services.
 
 ### Calling in your DMZ:
-![image](img/calling-DMZ.png)
+![image](img/calling-DMZ.svg)
 
-As you can see, placing calling in it's own kubernetes cluster is much safer. For most configurations, the calling cluster and the wire backend do not need to speak at all.
+In the above diagram, we have routed and labeled the calling traffic into a non-federated Wire calling cluster. As you can see, placing calling in it's own kubernetes cluster is much safer, as the cluster does not have access to any of the wire databases. For most configurations, the calling cluster and the wire backend do not need to speak at all.
 
 ### Federated Calling
-![image](img/federated_calling.png)
+![image](img/federated_calling.svg)
 
 In a calling environment that also has federation, many different styles of calling may be happening. 
 

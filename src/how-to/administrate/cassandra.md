@@ -47,7 +47,7 @@ A `UN` at the begginng of the line, refers to a node that is `Up` and `Normal`.
 You can also check the logs of the cassandra server with
 
 ```default
-journalctl -u cassandra.service 
+journalctl -u cassandra.service
 ```
 
 ## How to inspect tables and data manually
@@ -79,3 +79,29 @@ On each server one by one:
 4. Start the cassandra daemon process: `systemctl start cassandra`
 5. Wait for your cluster to be healthy again.
 6. Do the same on the next server.
+
+## How to find a user's team from their email
+
+There are two keyspaces `brig` and `galley` in Cassandra DB where team related data is distributed.
+
+- The `galley` keyspace has the table called `team` which has the team name with team UUID.
+- The `brig` keyspace has the table called `user` which has the user info including email, user ID and team UUID.
+
+1. Get the team UUID from the `brig.user` table:
+
+```sql
+cqlsh> SELECT team
+FROM brig.user
+WHERE email = 'the-user@example.com'
+ALLOW FILTERING;
+```
+
+Output will be a UUID like: `e93308fc-1676-4d53-af15-4b7f5fa7599a`
+
+2. Use the team UUID to get the team name in `galley` keyspace:
+
+```sql
+cqlsh> SELECT name
+FROM galley.team
+WHERE team = e93308fc-1676-4d53-af15-4b7f5fa7599a;
+```

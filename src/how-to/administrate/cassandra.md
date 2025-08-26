@@ -105,3 +105,6 @@ cqlsh> SELECT name
 FROM galley.team
 WHERE team = e93308fc-1676-4d53-af15-4b7f5fa7599a;
 ```
+Output will be the human-readable team name, e.g. "Spouse Comms".
+
+Note: Please checkout the [test cassandra schema](https://github.com/wireapp/wire-server/blob/develop/cassandra-schema.cql) to get an understanding of the production database entities.

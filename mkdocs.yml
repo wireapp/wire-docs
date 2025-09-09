@@ -98,6 +98,10 @@ nav:
         - Connection: developer/reference/user/connection.md
         - User Registration: developer/reference/user/registration.md
         - User Rich info: developer/reference/user/rich-info.md
+  - Apps SDK:
+      - Understanding Apps: integrations/README.md
+      - Creating An App: integrations/creating-an-app.md
+      - Permissions: integrations/permissions.md
   - Security Responses:
       - Overview: security-responses/README.md
       - "2023-01-19 - Security Advisory: HTML Injection in wire.com": security-responses/2023-01-19_html_injection.md

@@ -87,7 +87,7 @@ The following process was made in particular for a K8ssandra migration, but the 
 > **⚠️ Important:**  
 > This migration involves approximately **1 hour of downtime**.  
 > Plan accordingly and notify your users.  
-> Shut down the `wire-server` before starting the migration.  
+> Shut down `wire-server` or block traffic so no more writes happen to Cassandra (in any manner you see fit or are comfortable with) before starting the migration.  
 > Have users create backups for extra safety.
 
 Tools used:
@@ -97,11 +97,37 @@ Tools used:
 
 Both tools come with our solutions for Cassandra and K8ssandra.
 
+### Flush data on all nodes
+
+Flush the data on each Cassandra node in the old cluster to ensure all in-memory writes are persisted to disk.
+
+```bash
+nodetool flush brig
+nodetool flush galley
+nodetool flush spar
+nodetool flush gundeck
+```
+---
+
+### Copy SSTables
+
+Copy SSTables from one Cassandra node for the required keyspaces (brig, spar, gundeck, and galley).
+
+If Cassandra was installed using Wire's Ansible playbook, data will be under `/mnt/cassandra/data`.
+
+```bash
+mkdir backup
+cp -r /mnt/cassandra/data/brig    backup/
+cp -r /mnt/cassandra/data/spar    backup/
+cp -r /mnt/cassandra/data/galley  backup/
+cp -r /mnt/cassandra/data/gundeck backup/
+```
+---
+
 ---
 
 ### Prepare your new cassandra/k8ssandra cluster
-Install and prepare your Cassandra/K8ssandra cluster. 
-For K8ssandra you can use our testing [solution](https://github.com/wireapp/wire-server-deploy/blob/master/offline/k8ssandra_setup.md) and charts as needed.  
+Install and prepare your Cassandra/K8ssandra cluster. We recommend building your own cluster charts, but, you can also use our testing [solution](https://github.com/wireapp/wire-server-deploy/blob/master/offline/k8ssandra_setup.md) and charts if needed.
 
 > **Note:** Some modifications may be required for your environment if you decide to use our k8ssandra solution.
 
@@ -126,6 +152,8 @@ Or apply a `sed`:
 sed -i 's/<old-cassandra-service>/<new-cassandra-or-k8ssandra-service>/g' values/wire-server/values.yaml
 ```
 
+> **Note:** If you have used our K8ssandra charts, the name of the new service will be `k8ssandra-cluster-datacenter-1-service.database`
+
 ---
 
 ### Reinstall wire-server
@@ -134,38 +162,14 @@ Reinstall `wire-server` so migration jobs can apply the required keyspace and ta
 
 ---
 
-### Flush data on all nodes
-
-Flush the data on each Cassandra node in the old cluster to ensure all in-memory writes are persisted to disk.
-
-```bash
-nodetool flush brig
-nodetool flush galley
-nodetool flush spar
-nodetool flush gundeck
-```
----
-
-### Copy SSTables
-
-Copy SSTables from one Cassandra node for the required keyspaces (brig, spar, gundeck, and galley).
-
-If Cassandra was installed using Wire's Ansible playbook, data will be under `/mnt/cassandra/data`.
-
-```bash
-cp -r /mnt/cassandra/data/brig    backup/
-cp -r /mnt/cassandra/data/spar    backup/
-cp -r /mnt/cassandra/data/galley  backup/
-cp -r /mnt/cassandra/data/gundeck backup/
-```
----
-
 ### Move backup into the new cluster
 
-For Cassandra just copy it to the new cluster. 
-For K8ssandra, make a volume mount pointing to the backup directory (if supported by your charts), or copy files directly into one of the datacenter pods.
+For Cassandra just copy it to one of the nodes in the new cluster. 
+For K8ssandra copy files directly into one of the datacenter pods. 
 
-Example using `kubectl cp`
+> **Note:** You could also make a volume mount for the pods, but it will require modifying the charts as the support is not in there natively.
+
+Example using `kubectl cp` for K8ssandra:
 
 ```bash
 kubectl cp backup k8ssandra-cluster-datacenter-1-default-sts-0:/tmp -n <k8ssandra-namespace>

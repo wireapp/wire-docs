@@ -104,7 +104,7 @@ for related data.
 inserting multiple records into the same table; that is an antipattern, see [this
 documentation](https://docs.datastax.com/en/cql-oss/3.x/cql/cql_using/useBatchBadExample.html).
 
-*Sidenote 2:*: Batch statements do not have the I for isolation of an ACID transaction. While
+*Sidenote 2:* Batch statements do not have the I for isolation of an ACID transaction. While
 writing to table A and B of a batch, another process might read table A and B and already see the
 update in A but not see the update in B yet. As this is a transient problem, and in practice in the
 wire-server codebase most lookups read only table A *or* table B and not both concurrently (as often

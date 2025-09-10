@@ -2,3 +2,8 @@
 	path = wire-server
 	url = https://github.com/wireapp/wire-server.git
 	branch = develop
+
+[submodule "wire-apps-jvm-sdk"]
+	path = wire-apps-jvm-sdk
+	url = https://github.com/wireapp/wire-apps-jvm-sdk.git
+	branch = main

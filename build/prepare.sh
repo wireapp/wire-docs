@@ -51,4 +51,4 @@ else
 fi
 
 echo "Syncing all the other files changes from ${ORIGINAL_DIR}/ to ${TEMP_DIR}, to work on uncommited changes, if any"
-rsync -a --exclude='/.git' --exclude="/wire-server" --exclude='wire-docs*.tar.gz' --exclude=".tmpdir" "${ORIGINAL_DIR}/" "$TEMP_DIR/"
+rsync -a --exclude='/.git' --exclude="/wire-server" --exclude="/wire-apps-jvm-sdk" --exclude='wire-docs*.tar.gz' --exclude=".tmpdir" "${ORIGINAL_DIR}/" "$TEMP_DIR/"

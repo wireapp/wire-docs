@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -e
 mike="pipenv run mike"
 CURRENT=$(git branch --show-current)
 

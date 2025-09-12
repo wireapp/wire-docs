@@ -71,7 +71,8 @@ git checkout ${CURRENT_TAG}
 
 # pull the submodule
 git submodule update --init --depth 1 wire-server
-    
+git submodule update --init --depth 1 wire-apps-jvm-sdk
+
 # Check if tag exists in mike
 if [ -n "${existing_tags[$CURRENT_TAG]}" ]; then
     existing_commit="${existing_tags[$CURRENT_TAG]}"
@@ -91,6 +92,7 @@ else
 
 # deinit the submodule to avoid issues with the next iteration
 git submodule deinit -f wire-server
+git submodule deinit -f wire-apps-jvm-sdk
 
 # Set the default tag and create an alias to $CURRENT_TAG
 $mike set-default $CURRENT_TAG

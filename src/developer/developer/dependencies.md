@@ -81,12 +81,10 @@ If `openssl-dev` does not work for you, try `libssl-dev`.
 
 ### Arch:
 
-```none
-```
+```bash
 # You might also need 'sudo pacman -S base-devel' if you haven't
 # installed the base-devel group already.
 sudo pacman -S snappy icu openssl ncurses-compat-libs
-```
 ```
 
 ### macOS:
@@ -176,7 +174,6 @@ dpkg -i target/release/cryptobox*.deb
 
 ### Generic
 
-```none
 ```bash
 export TARGET_LIB="$HOME/.wire-dev/lib"
 export TARGET_INCLUDE="$HOME/.wire-dev/include"
@@ -188,7 +185,6 @@ make install
 # Add cryptobox-c to ldconfig
 sudo bash -c "echo \"${TARGET_LIB}\" > /etc/ld.so.conf.d/cryptobox.conf"
 sudo ldconfig
-```
 ```
 
 Make sure stack knows where to find it. In `~/.stack/config.yaml` add:
@@ -240,25 +236,21 @@ Requirements:
 
 ### Telepresence example usage:
 
-```none
-```
+```bash
 # terminal 1
 telepresence --namespace "$NAMESPACE" --also-proxy cassandra-ephemeral
 ```
 
-```
+```bash
 # terminal 2
 curl http://elasticsearch-ephemeral:9200
-```
 ```
 
 ### Telepresence example usage 2:
 
-```none
-```
+```bash
 # just one terminal
 telepresence --namespace "$NAMESPACE" --also-proxy cassandra-ephemeral --run bash -c "curl http://elasticsearch-ephemeral:9200"
-```
 ```
 
 ### Telepresence usage discussion:

@@ -1,23 +1,10 @@
 # Wire Utility Tool
 
-## Table of Contents
-
-1. [Introduction](#introduction)
-2. [Architecture Overview](#architecture-overview)
-3. [Deployment Guide](#deployment-guide)
-4. [Accessing the Tool](#accessing-the-tool)
-5. [Core Debugging Tools](#core-debugging-tools)
-6. [System and Network Tools](#system-and-network-tools)
-7. [Workflow Examples](#workflow-examples)
-8. [Periodic Probing and Logging](#periodic-probing-and-logging)
-9. [Internal API Access](#internal-api-access)
-10. [Configuration Reference](#configuration-reference)
-
 ## Introduction
 
 ### Purpose
 
-The Wire Utility Tool is a specialized debugging container designed to provide comprehensive monitoring, troubleshooting, and operational capabilities for Wire's backend infrastructure. It serves as a standardized toolkit for SRE teams, developers, and DevOps engineers working with Wire services.
+The Wire Utility Tool is a specialized debugging container designed to provide comprehensive monitoring, troubleshooting, and operational capabilities for Wire's backend infrastructure. It serves as a standardized toolkit for SRE teams, developers, and DevOps engineers working with Wire services in an air-gapped environment.
 
 ### Key Features
 
@@ -78,9 +65,10 @@ The tool integrates with Wire's core services through environment-based configur
 
 ## Deployment Guide
 
+Wire utility tool is bundled together with the wire-server-deployment package.
 ### Prerequisites
 
-- **Kubernetes cluster**: kubectl access
+- **Kubernetes cluster**: kubectl access to k8s cluster
 - **Helm**: Helm chart deployment (see [Wire Helm Charts](https://github.com/wireapp/helm-charts/tree/main/charts/wire-utility))
 - **RBAC permissions**: Pod exec and describe permissions
 - **Network access**: Connectivity to Wire services
@@ -119,7 +107,7 @@ env:
 
 ### How to Save the Image for Air-Gapped Environment
 
-For air-gapped environments where internet access is not available, you need to manually download and distribute the Wire Utility Tool image to your Kubernetes nodes.
+For air-gapped environments where internet access is not available, you need to manually download and distribute the Wire Utility Tool image to your Kubernetes nodes if you are not installing the tool from the off-line bundle.
 
 1. **Download the chart**: First, ensure the `wire-utility` chart is available in your `wire-server-deploy` charts directory.
 

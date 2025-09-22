@@ -5,12 +5,13 @@
 1. [Introduction](#introduction)
 2. [Architecture Overview](#architecture-overview)
 3. [Deployment Guide](#deployment-guide)
-4. [Configuration Reference](#configuration-reference)
-5. [Usage Scenarios](#usage-scenarios)
-6. [Troubleshooting Guide](#troubleshooting-guide)
-7. [Best Practices](#best-practices)
-8. [API Reference](#api-reference)
-9. [Contributing](#contributing)
+4. [Accessing the Tool](#accessing-the-tool)
+5. [Core Debugging Tools](#core-debugging-tools)
+6. [System and Network Tools](#system-and-network-tools)
+7. [Workflow Examples](#workflow-examples)
+8. [Periodic Probing and Logging](#periodic-probing-and-logging)
+9. [Internal API Access](#internal-api-access)
+10. [Configuration Reference](#configuration-reference)
 
 ## Introduction
 
@@ -44,7 +45,7 @@ The Wire Utility Tool is deployed as a Kubernetes StatefulSet via the official W
 ### Container Structure
 
 ```
-wire-utility-tool:latest
+wire-utility-tool:<tag>
 ├── Base Image: Debian Bullseye Slim
 ├── System Tools: bash, curl, wget, networking utilities
 ├── Database Clients: psql, cqlsh, redis-cli
@@ -116,6 +117,40 @@ env:
   ENABLE_PROBE_THREAD: "true"
 ```
 
+### How to Save the Image for Air-Gapped Environment
+
+For air-gapped environments where internet access is not available, you need to manually download and distribute the Wire Utility Tool image to your Kubernetes nodes.
+
+1. **Download the chart**: First, ensure the `wire-utility` chart is available in your `wire-server-deploy` charts directory.
+
+2. **Pull the image**: Download the Wire Utility Tool image using Docker:
+
+   ```bash
+   docker pull quay.io/wire/wire-utility-tool:1.1.0
+   ```
+
+3. **Save the image**: Export the image to a tar file (replace forward slashes and colons with underscores for filesystem compatibility):
+
+   ```bash
+   docker save -o quay.io_wire_wire-utility-tool_1.1.0.tar quay.io/wire/wire-utility-tool:1.1.0
+   ```
+
+4. **Distribute to nodes**: Copy the `.tar` file to all Kubernetes nodes in your cluster.
+
+5. **Import on each node**: Run this command on **each** Kubernetes node to import the image into containerd:
+
+   ```bash
+   ctr -n k8s.io images import quay.io_wire_wire-utility-tool_1.1.0.tar
+   ```
+
+6. **Verify import**: Confirm the image is available in containerd:
+
+   ```bash
+   ctr -n k8s.io images list | grep wire-utility
+   ```
+
+Once the image is available on all nodes, you can proceed with the standard Helm deployment.
+
 ## Accessing the Tool
 
 ### Kubernetes Pod Access
@@ -124,13 +159,13 @@ Once deployed via the Wire Helm chart, access the utility pod for debugging:
 
 ```bash
 # Get pod name
-d kubectl get pods -l app.kubernetes.io/name=wire-utility
+kubectl get pods -l app.kubernetes.io/name=wire-utility
 
 # Interactive shell access
-d kubectl exec -it wire-utility-0 -- bash
+kubectl exec -it wire-utility-0 -- bash
 
 # Ephemeral debug container (Kubernetes 1.25+)
-d kubectl debug -it wire-utility-0 --image=quay.io/wire/wire-utility-tool:latest -- bash
+kubectl debug -it wire-utility-0 --image=quay.io/wire/wire-utility-tool:latest -- bash
 ```
 
 ### Service Status Overview
@@ -153,9 +188,19 @@ status
 # ✅ Elasticsearch elasticsearch-external:9200
 # ✅ PostgreSQL   postgresql:5432
 #
-# === Available Tools and Commands ===
-
+# === Quick Commands ===
+status                    # Show this status
+mc ls wire-minio          # List MinIO buckets
+mc admin info wire-minio  # Show MinIO server info
+cqlsh                     # Connect to Cassandra
+rabbitmqadmin list queues # List RabbitMQ queues
+psql                      # Connect to PostgreSQL
+es usages                 # Show all available Elasticsearch debug commands
+es all                    # Run all Elasticsearch diagnostics (health, nodes, indices, etc.)
+```
 ## Core Debugging Tools
+
+The Wire Utility Tool provides comprehensive command-line interfaces and utilities for interacting with all supported services. Each service has dedicated tools and commands for monitoring, debugging, and administration.
 
 ### Status Monitoring
 ```bash
@@ -272,6 +317,8 @@ es stats
 
 ## System and Network Tools
 
+Beyond service-specific debugging tools, the Wire Utility Tool includes general-purpose system and network utilities for comprehensive troubleshooting and monitoring.
+
 ### Network Diagnostics
 ```bash
 # Test connectivity to services
@@ -286,38 +333,6 @@ dig cassandra-external
 ping -c 3 cassandra-external
 ```
 
-### System Monitoring
-```bash
-# System resource usage
-top
-htop
-
-# Memory information
-free -h
-
-# Disk usage
-df -h
-
-# Process list
-ps aux
-
-# System information
-uname -a
-cat /etc/os-release
-```
-
-### File and Text Processing
-```bash
-
-# Process JSON data
-curl -s http://api.example.com | jq '.data[]'
-echo '{"key": "value"}' | jq '.key'
-
-# Archive operations
-tar -czf archive.tar.gz directory/
-tar -xzf archive.tar.gz
-```
-
 ### Development and Testing Tools
 ```bash
 # Python interpreter (for scripting)
@@ -328,13 +343,6 @@ python3 -c "import requests; print('Python available')"
 curl -X GET http://api.example.com
 curl -X POST -d '{"key": "value"}' http://api.example.com
 
-# Base64 encoding/decoding
-echo "text" | base64
-echo "dGV4dA==" | base64 -d
-
-# Generate test data
-openssl rand -base64 32
-date +%s
 ```
 
 ## Workflow Examples
@@ -435,21 +443,11 @@ kubectl logs -f wire-utility-0 | grep "Cassandra"
 
 Since the pod is deployed within the Kubernetes cluster, you can directly access internal APIs of wire components such as `brig`, `galley`.
 
-#### Service Health Endpoints
+#### Service Endpoints
 
 ```bash
-# Elasticsearch cluster health
-curl -s $ES_SERVICE_NAME:$ES_PORT/_cluster/health | jq '.'
-
-# MinIO health check
-curl -s $MINIO_SERVICE_ENDPOINT/minio/health/live
-
-# RabbitMQ management API
-curl -s -u $RABBITMQ_USERNAME:$RABBITMQ_PASSWORD \
-  http://$RABBITMQ_SERVICE_NAME:$RABBITMQ_MGMT_PORT/api/overview | jq '.'
-
-# Cassandra nodetool info (if available)
-curl -s http://cassandra-external:8080/api/v1/operations/node/info
+# Example API from galley service
+curl -X GET http://galley:8080/i/teams/<team_UUID> | jq '.'
 ```
 
 #### Database-Specific APIs

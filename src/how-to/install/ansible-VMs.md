@@ -227,11 +227,11 @@ minio_network_interface=ens3
 
 #### Configure Access Key and Secret Key for MinIO and Cargohold Service
 
-**Purpose**: Configure secure, least-privilege access for the Cargohold service to use MinIO object storage.
+**Purpose**: Configure a secure, least-privilege access method for the Cargohold service to utilize the MinIO object storage.
 
 **Security Model**:
 - **MinIO root credentials**: Used only for administrative purposes
-- **Cargohold IAM user**: Least privileged user with policy access only to the `assets` bucket
+- **Cargohold IAM user**: A least privileged user with a policy that only gives access to the `assets` bucket
 - **Service account**: Separate access/secret key pair for Cargohold service operations
 
 ## Setup Process
@@ -246,7 +246,7 @@ minio_network_interface=ens3
    minio_cargohold_secret_key: "<MINIO CARGOHOLD SECRET KEY>"
    ```
 
-2. **For existing Wire systems** - backup and regenerate secrets:
+2. **For existing Wire systems** - Backup and regenerate secrets:
    ```bash
    # Backup current secrets file
    cp ansible/inventory/offline/group_vars/all/secrets.yaml \

@@ -217,33 +217,71 @@ this step.
 - In your ‘hosts.ini’ file, in the `[all:vars]` section, make sure
   you set the ‘minio_network_interface’ to the name of the interface
   you want minio nodes to talk to each other on. The default from the
-  playbook is not going to be correct for your machine. For example:
-- In your ‘hosts.ini’ file, in the `[minio:vars]` section, ensure you
-  set minio_access_key and minio_secret key.
-- If you intend to use a `deep link` to configure your clients to
-  talk to the backend, you need to specify your domain (and optionally
-  your prefix), so that links to your deep link json file are generated
-  correctly. By configuring these values, you fill in the blanks of
-  `https://{{ prefix }}assets.{{ domain }}`.
+  playbook is not going to be correct for your machine.
 
 ```ini
-[minio:vars]
-minio_access_key = "REPLACE_THIS_WITH_THE_DESIRED_SECRET_KEY"
-minio_secret_key = "REPLACE_THIS_WITH_THE_DESIRED_SECRET_KEY"
-# if you want to use deep links for client configuration:
-#minio_deeplink_prefix = ""
-#minio_deeplink_domain = "example.com"
-
 [all:vars]
 # Default first interface on ubuntu on kvm:
 minio_network_interface=ens3
 ```
 
-- Use ansible, and deploy Minio:
+#### Configure Access Key and Secret Key for MinIO and Cargohold Service
 
-```default
-ansible-playbook -i hosts.ini minio.yml -vv
-```
+**Purpose**: Configure a secure, least-privilege access method for the Cargohold service to utilize the MinIO object storage.
+
+**Security Model**:
+- **MinIO root credentials**: Used only for administrative purposes
+- **Cargohold IAM user**: A least privileged user with a policy that only gives access to the `assets` bucket
+- **Service account**: Separate access/secret key pair for Cargohold service operations
+
+## Setup Process
+
+1. **Generate credentials**: Run `./bin/offline-secrets.sh` from the wire-server-deploy directory.
+
+   This generates a `secrets.yaml` file in `ansible/inventory/offline/group_vars/all/` with:
+   ```yaml
+   minio_access_key: "<MINIO ROOT ACCESS KEY>"
+   minio_secret_key: "<MINIO ROOT SECRET KEY>"
+   minio_cargohold_access_key: "<MINIO CARGOHOLD ACCESS KEY>"
+   minio_cargohold_secret_key: "<MINIO CARGOHOLD SECRET KEY>"
+   ```
+
+2. **For existing Wire systems** - Backup and regenerate secrets:
+   ```bash
+   # Backup current secrets file
+   cp ansible/inventory/offline/group_vars/all/secrets.yaml \
+      ansible/inventory/offline/group_vars/all/secrets.yaml.backup
+
+   # Remove current secrets and generate new ones
+   rm ansible/inventory/offline/group_vars/all/secrets.yaml
+   ./bin/offline-secrets.sh
+   ```
+
+3. **Migration step**: Replace the newly generated `minio_access_key` and `minio_secret_key` with the values from `secrets.yaml.backup` to maintain compatibility.
+
+4. **Deploy MinIO configuration**:
+   ```bash
+   ansible-playbook -i hosts.ini minio.yml -vv
+   ```
+
+5. **Update Cargohold service configuration** in `values/wire-server/secrets.yaml`:
+   ```yaml
+   cargohold:
+     secrets:
+       # Replace with values from ansible/inventory/offline/group_vars/all/secrets.yaml
+       awsKeyId: dummykey     # replace with minio_cargohold_access_key
+       awsSecretKey: dummysecret # replace with minio_cargohold_secret_key
+   ```
+
+6. **Deploy updated Wire Server**:
+   ```bash
+   helm upgrade --install wire-server ./charts/wire-server \
+     --timeout=15m0s \
+     --values ./values/wire-server/values.yaml \
+     --values ./values/wire-server/secrets.yaml
+   ```
+
+This configures the Cargohold service with its IAM user credentials to securely manage the `assets` bucket.
 
 ### Restund
 

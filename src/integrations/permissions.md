@@ -1,1 +1,0 @@
-../../wire-apps-jvm-sdk/docs/src/permissions.md

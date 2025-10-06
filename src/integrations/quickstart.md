@@ -1,0 +1,1 @@
+../../wire-apps-jvm-sdk/docs/src/quickstart.md

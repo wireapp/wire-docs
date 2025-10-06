@@ -1,1 +1,0 @@
-../../wire-apps-jvm-sdk/docs/src/creating-an-app.md

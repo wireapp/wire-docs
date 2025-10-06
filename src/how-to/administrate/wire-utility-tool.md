@@ -237,6 +237,26 @@ cqlsh -e "DESCRIBE TABLE keyspace.table_name;"
 ```
 
 ### RabbitMQ Message Queue
+
+**Note**: RabbitMQ commands require the management plugin to be enabled. If the management plugin is disabled on your RabbitMQ nodes, `rabbitmqadmin` commands will fail with:
+
+```bash
+*** Could not connect: [Errno 111] Connection refused
+```
+
+**Resolution**: Enable the RabbitMQ management plugin on your RabbitMQ nodes:
+
+```bash
+sudo rabbitmq-plugins enable rabbitmq_management
+```
+
+This enables the management API (accessible on port 15672) which is required for:
+- All `rabbitmqadmin` administrative commands
+- Periodic health checks performed by the utility tool
+- Web-based RabbitMQ management interface
+
+The management plugin automatically enables the required dependencies (`rabbitmq_management_agent` and `rabbitmq_web_dispatch`).
+
 ```bash
 # List all queues
 rabbitmqadmin list queues

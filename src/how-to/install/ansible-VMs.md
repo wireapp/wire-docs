@@ -22,13 +22,14 @@ kubespray, via ansible. This section covers installing VMs with ansible.
 | Cassandra                                            | 3        | 2            | 4             | 80                |
 | MinIO                                                | 3        | 1            | 2             | 400               |
 | ElasticSearch                                        | 3        | 1            | 2             | 60                |
+| postgresql                                           | 3        | 1            | 2             | 50                |
 | Kubernetes³                                          | 3        | 6¹           | 8             | 40                |
 | Restund⁴                                             | 2        | 1            | 2             | 10                |
-| **Per-Server Totals**                                | —        | 11 CPU Cores | 18 GB Memory  | 590 GB Disk Space |
+| **Per-Server Totals**                                | —        | 12 CPU Cores | 20 GB Memory  | 640 GB Disk Space |
 | Admin Host²                                          | 1        | 1            | 4             | 40                |
 | Asset Host²                                          | 1        | 1            | 4             | 100               |
-| **Per-Server Totals with<br/>Admin and Asset Hosts** | —        | 13 CPU Cores | 26 GB Memory  | 730 GB Disk Space |
-- ¹ Kubernetes hosts may need more ressources to support SFT (Conference Calling). See “Conference Calling Hardware Requirements” below.
+| **Per-Server Totals with<br/>Admin and Asset Hosts** | —        | 14 CPU Cores | 28 GB Memory  | 780 GB Disk Space |
+- ¹ Kubernetes hosts may need more resources to support SFT (Conference Calling). See “Conference Calling Hardware Requirements” below.
 - ² Admin and Asset Hosts can run on any one of the 3 servers, but that server must not allocate additional resources as indicated in the table above.
 - ³ Etcd is run inside of Kubernetes, hence no specific resource allocation
 - ⁴ Restund may be hosted on only 2 of the 3 servers, or all 3. Two nodes are enough to ensure high availability of Restund services
@@ -282,6 +283,17 @@ minio_network_interface=ens3
    ```
 
 This configures the Cargohold service with its IAM user credentials to securely manage the `assets` bucket.
+
+### Postgresql cluster
+
+To set up a high-availability PostgreSQL cluster for Wire Server, refer to the [PostgreSQL High Availability Cluster - Quick Setup](../administrate/postgresql-cluster.md) guide. This will walk you through deploying a three-node PostgreSQL cluster with automatic failover capabilities using repmgr.
+
+The setup includes:
+- Three PostgreSQL nodes (one primary, two replicas)
+- Automatic failover and split-brain protection
+- Integration with Kubernetes via the postgres-endpoint-manager
+
+After deploying the PostgreSQL cluster, make sure to install the `postgresql-external` helm chart as described in the guide to integrate it with your Wire Server deployment.
 
 ### Restund
 

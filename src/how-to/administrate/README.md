@@ -102,4 +102,7 @@
 
 - [Migrate team features](migrate-team-features.md)
 
+## 13. Wire-utility
+
+- [Wire utility tool](wire-utility-tool.md)
 <!-- TODO: .. include:: administration/redis.rst -->

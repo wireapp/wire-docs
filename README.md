@@ -6,14 +6,28 @@ Wire documentation is hosted on <https://docs.wire.com>. This project uses MkDoc
 ### src Directory
 Contains the source files and directories for the documentation. The `src` directory has been migrated from the [wire-server docs](https://github.com/wireapp/wire-server/tree/develop/docs). The previous version used Sphinx, so we converted it to Markdown and adapted it for MkDocs. See `build/old-docs.md` for the migration process.
 
-### External Pages (Git Submodules)
-We import documentation pages from the backend repository [wire-server](https://github.com/wireapp/wire-server/tree/develop). Many files currently reference wire-server, which you can identify using:
+### build Directory
+Contains scripts used by the Makefile to support different build use cases. The system is designed to run one build process at a time. All local targets use a temporary directory (stored in `.tmpdir` file) for building and serving changes due to git operations required by tools like `mike` for MkDocs.
+
+### src/changelog Directory
+**Update changelog (optional):**
+To optionally update the src/changelog/README.md based on the new changelog.md, run the following command:
+
+``` bash
+rm src/changelog/README.md && \
+grep '^# ' src/changelog/changelog.md | \
+sed 's/^# //' | while IFS= read -r heading; \
+do anchor=$(echo "$heading" | sed -E 's/^\[?([0-9-]+)\]? *(\(([^)]+)\)|# *([0-9]+))$/\1-\3\4/' | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g;s/\.//g'); echo "* [$heading](changelog.md#$anchor)"; done > src/changelog/README.md
+```
+
+## External Pages (Git Submodules)
+We import documentation pages from multiple repositories using submodules. The file [.gitmodules](.gitmodules) configures the submodules, including [wire-server](https://github.com/wireapp/wire-server/tree/develop) and [wire-apps-jvm-sdk](https://github.com/wireapp/wire-apps-jvm-sdk/tree/main). The external pages from submodules are linked in the `src` directory as symbolic links. These files can be identified using the following command:
 
 ```bash
 find . -type l -printf '%p -> %l\n' | grep './src'
 ```
 
-#### Submodule Management
+### Submodule Management
 
 **Fetch latest updates from wire-server:**
 ```bash
@@ -30,19 +44,34 @@ cd wire-server && git fetch --depth=1 origin <commit-id> && git checkout <commit
 ```bash
 git submodule status
 ```
+* Note: Commit the updated submodule reference after making changes before making further changes via links in the `src` directory.
 
-**Update changelog (optional):**
-To optionally update the src/changelog/README.md based on the new changelog.md, run the following command:
-
-``` bash
-rm src/changelog/README.md && \
-grep '^# ' src/changelog/changelog.md | \
-sed 's/^# //' | while IFS= read -r heading; \
-do anchor=$(echo "$heading" | sed -E 's/^\[?([0-9-]+)\]? *(\(([^)]+)\)|# *([0-9]+))$/\1-\3\4/' | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g;s/\.//g'); echo "* [$heading](changelog.md#$anchor)"; done > src/changelog/README.md
+**How to add a new submodule:**
+- Add the submodule using:
+```bash
+git submodule add -b <branch> <repository-url> <path>
 ```
+- Modify the following scripts in the `build` directory to include the new submodule:
+  - `build/prepare.sh`
+  ```
+  rsync -a --exclude='/.git' --exclude="/wire-server" --exclude="/wire-apps-jvm-sdk" --exclude="/<path>" --exclude='wire-docs*.tar.gz' --exclude=".tmpdir" "${ORIGINAL_DIR}/" "$TEMP_DIR/"
+  ```
+  - `build/build_versions.sh`
+  ```
+    # pull the submodule
+    git submodule update --init --depth 1 wire-server
+    git submodule update --init --depth 1 wire-apps-jvm-sdk
+    git submodule update --init --depth 1 <path>
+    ...
+    # deinit the submodule to avoid issues with the next iteration
+    git submodule deinit -f wire-server
+    git submodule deinit -f wire-apps-jvm-sdk
+    git submodule deinit -f <path>
+  ```
+- Commit the changes to the local origin repository and test the build process using `make run`.
 
-### build Directory
-Contains scripts used by the Makefile to support different build use cases. The system is designed to run one build process at a time. All local targets use a temporary directory (stored in `.tmpdir` file) for building and serving changes due to git operations required by tools like `mike` for MkDocs.
+### Linking pages from submodules and wire-docs
+How to link pages from submodules can be found at [Linking Submodules](build/linking-submodule/README.md).
 
 ## Prerequisites
 

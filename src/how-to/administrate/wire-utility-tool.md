@@ -4,7 +4,7 @@
 
 ### Purpose
 
-The Wire Utility Tool is a specialized debugging container designed to provide comprehensive monitoring, troubleshooting, and operational capabilities for Wire's backend infrastructure. It serves as a standardized toolkit for SRE teams, developers, and DevOps engineers working with Wire services in an air-gapped environment.
+The Wire Utility Tool is a specialized debugging container designed to provide comprehensive monitoring, troubleshooting, and operational capabilities for Wire's backend infrastructure. It serves as a standardized toolkit for SRE teams, developers, and DevOps engineers working with Wire services in an offline environment.
 
 ### Key Features
 
@@ -85,7 +85,27 @@ The Helm chart handles:
 - **Health checks** and probes
 - **Volume mounts** for temporary storage
 
-#### Basic Configuration
+#### Installation
+
+The Wire Utility Tool integrates with your existing Wire server deployment by reusing configuration from your main `values.yaml` and `secrets.yaml` files.
+
+All the values required for the wire-utility to build connections with the Wire data sources are passed via your existing Wire server configuration files: `./values/wire-server/values.yaml` and `./values/wire-server/secrets.yaml`.
+
+Install the wire-utility chart using Helm:
+
+```bash
+d helm install wire-utility ./charts/wire-utility \
+  -f ./values/wire-server/values.yaml \
+  -f ./values/wire-server/secrets.yaml
+```
+
+The chart automatically inherits service endpoints and credentials from your main Wire deployment configuration.
+
+**Troubleshooting Helm Template Errors**: If you encounter Helm template errors during installation due to missing keys (even when passing the wire-server values and secrets files), this typically indicates you're running an older version of wire-server. To resolve this:
+
+1. Update the `./charts/wire-utility/values.yaml` file with the missing keys and appropriate default values
+2. This ensures the utility tool deployment doesn't interfere with your existing Wire server setup
+3. Refer to the latest wire-utility chart values for the required configuration keys
 
 ```yaml
 # values.yaml (excerpt)
@@ -107,7 +127,7 @@ env:
 
 ### How to Save the Image for Air-Gapped Environment
 
-For air-gapped environments where internet access is not available, you need to manually download and distribute the Wire Utility Tool image to your Kubernetes nodes if you are not installing the tool from the off-line bundle.
+For air-gapped environments where internet access is not available, you need to manually download and distribute the Wire Utility Tool image to your Kubernetes nodes if you are not installing the tool from the offline bundle.
 
 1. **Download the chart**: First, ensure the `wire-utility` chart is available in your `wire-server-deploy` charts directory.
 
@@ -147,13 +167,13 @@ Once deployed via the Wire Helm chart, access the utility pod for debugging:
 
 ```bash
 # Get pod name
-kubectl get pods -l app.kubernetes.io/name=wire-utility
+d kubectl get pods -l app.kubernetes.io/name=wire-utility
 
 # Interactive shell access
-kubectl exec -it wire-utility-0 -- bash
+d kubectl exec -it wire-utility-0 -- bash
 
 # Ephemeral debug container (Kubernetes 1.25+)
-kubectl debug -it wire-utility-0 --image=quay.io/wire/wire-utility-tool:latest -- bash
+d kubectl debug -it wire-utility-0 --image=quay.io/wire/wire-utility-tool:latest -- bash
 ```
 
 ### Service Status Overview
@@ -425,26 +445,26 @@ When enabled, the pod generates periodic health check logs:
 
 ```bash
 # View current logs
-kubectl logs wire-utility-0
+d kubectl logs wire-utility-0
 
 # Follow logs in real-time
-kubectl logs -f wire-utility-0
+d kubectl logs -f wire-utility-0
 
 # View logs from last hour
-kubectl logs --since=1h wire-utility-0
+d kubectl logs --since=1h wire-utility-0
 ```
 
 #### Log Analysis
 
 ```bash
 # Search for specific service issues
-kubectl logs wire-utility-0 | grep -i "error\|failed\|unreachable"
+d kubectl logs wire-utility-0 | grep -i "error\|failed\|unreachable"
 
 # Count successful vs failed checks
-kubectl logs wire-utility-0 | grep -c "is reachable\|connection successful\|is healthy"
+d kubectl logs wire-utility-0 | grep -c "is reachable\|connection successful\|is healthy"
 
 # Monitor specific service
-kubectl logs -f wire-utility-0 | grep "Cassandra"
+d kubectl logs -f wire-utility-0 | grep "Cassandra"
 ```
 
 ### Internal API Access
@@ -480,6 +500,6 @@ All of the necessary configurations are generated from the values/wire-server/va
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `ENABLE_PROBE_THREAD` | No | `false` | Enable periodic health checks |
+| `ENABLE_PROBE_THREAD` | Yes | `true` | Enable periodic health checks |
 | `HOSTNAME` | Auto | Pod name | Container hostname for logging |
 

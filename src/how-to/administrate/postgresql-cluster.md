@@ -2,15 +2,15 @@
 
 ## What You're Building
 
-You're setting up a three-node PostgreSQL cluster where one node acts as the primary (handling all writes) and two nodes act as replicas (ready to take over if the primary fails). The system includes automatic failover capabilities through [repmgr](https://www.repmgr.org/docs/current/index.html) and split-brain protection to prevent data corruption during network partitions.
+A three-node PostgreSQL cluster with one primary node (handling writes) and two replicas (ready to take over on failure). The system includes automatic failover via [repmgr](https://www.repmgr.org/docs/current/index.html) and split-brain protection to prevent data corruption during network partitions.
 
 ## Prerequisites
 
-Before you begin, ensure you have three Ubuntu servers with static IP addresses and SSH access configured.
+Three Ubuntu servers with static IP addresses and SSH access configured.
 
 ## Step 1: Define Your Inventory
 
-Create or edit your inventory file at `ansible/inventory/offline/hosts.ini`. This file tells Ansible about your three PostgreSQL servers and how they should be configured.
+Create or edit your inventory file at `ansible/inventory/offline/hosts.ini` to define your PostgreSQL servers and their configuration.
 
 ```ini
 [all]
@@ -20,10 +20,8 @@ postgresql3 ansible_host=192.168.122.206
 
 [postgresql:vars]
 postgresql_network_interface = enp1s0
-postgresql_version = 17
 wire_dbname = wire-server
 wire_user = wire-server
-wire_pass = CHANGE_ME_strong_password_123 # use strong password, if this is commented out, a random password will be created automatically via ansible playbook.
 
 [postgresql]
 postgresql1
@@ -38,108 +36,239 @@ postgresql2
 postgresql3
 ```
 
-The structure here is important. The `postgresql_rw` group designates your primary node (the one that accepts writes), while `postgresql_ro` contains your replica nodes (which follow the primary and can be promoted if needed). The network interface variable tells PostgreSQL which network adapter to use for cluster communication between nodes.
+The `postgresql_rw` group designates your primary node (accepts writes), while `postgresql_ro` contains replica nodes (follow the primary and can be promoted if needed). The network interface variable specifies which adapter to use for cluster communication.
 
 ## Step 2: Test Connectivity
 
-Before running any deployment commands, verify that Ansible can reach all three servers. This quick check saves time by catching connection issues early.
+Verify Ansible can reach all three servers:
 
 ```bash
 d ansible all -i ansible/inventory/offline/hosts.ini -m ping
 ```
 
-You should see three successful responses. If any node fails to respond, check your SSH configuration and network connectivity before proceeding.
+You should see three successful responses. If any node fails, check your SSH configuration and network connectivity.
 
 ## Step 3: Deploy the Complete Cluster
 
-Run the main deployment playbook. This single command orchestrates the entire installation process, which takes approximately ten to fifteen minutes to complete.
+Run the deployment playbook (takes 10-15 minutes):
 
 ```bash
 d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/postgresql-deploy.yml
 ```
 
-Behind the scenes, this playbook performs several sequential operations. First, it installs PostgreSQL version 17 and repmgr on all three nodes. Then it configures the first node as the primary and sets up the repmgr metadata database. Next, it clones the two replica nodes from the primary and registers them with the cluster. The playbook also deploys the split-brain detection system and creates the Wire database with the appropriate user credentials. Finally, it runs health checks to verify everything is working correctly.
+This playbook installs PostgreSQL 17 and repmgr on all nodes, configures the primary node, clones and registers the replicas, deploys split-brain detection, creates the Wire database with credentials, and runs health checks.
 
 ## Step 4: Verify the Cluster
 
-After deployment completes, check that your cluster is healthy and properly configured. SSH into any of the three nodes and run the cluster status command.
+Check cluster status from any node:
 
 ```bash
 sudo -u postgres repmgr -f /etc/repmgr/17-main/repmgr.conf cluster show
 ```
 
-You should see output showing one primary node marked with an asterisk and two standby nodes, all in the running state. The standby nodes should list the primary as their upstream node, confirming that replication is active.
+You should see one primary node (marked with asterisk) and two standby nodes, all running. Standby nodes should list the primary as their upstream node.
 
-Next, verify that all the critical services are running correctly on each node.
+Verify critical services are running:
 
 ```bash
 sudo systemctl status postgresql@17-main repmgrd@17-main detect-rogue-primary.timer
 ```
 
-All three services should show as active. The postgresql service runs the database engine, repmgrd monitors cluster health and handles automatic failover, and the detect-rogue-primary timer prevents split-brain scenarios by checking for conflicting primary nodes every thirty seconds.
+All three services should be active: postgresql (database engine), repmgrd (cluster health and failover), and detect-rogue-primary timer (checks for conflicting primaries every 30 seconds).
 
 ## Step 5: Check Replication Status
 
-On the primary node, verify that both replicas are actively receiving data through streaming replication.
+On the primary node, verify both replicas are receiving data via streaming replication:
 
 ```bash
 sudo -u postgres psql -c "SELECT application_name, client_addr, state FROM pg_stat_replication;"
 ```
 
-You should see two rows, one for each replica, with the state showing as "streaming". This confirms that changes on the primary are being continuously replicated to both standby nodes.
+You should see two rows (one per replica) with state "streaming", confirming continuous replication to both standby nodes.
 
-## Step 6: Note Your Wire Database Credentials
+## Step 6: Wire Database Credentials
 
-During deployment, the playbook generated a secure password for the Wire database user. You'll find this password in the Ansible output under the task named "Display PostgreSQL setup completion". Save this password securely as you'll need it when configuring your Wire server to connect to this database cluster.
+The playbook generates a secure password and stores it in the `wire-postgresql-external-secret` Kubernetes secret. Running `bin/offline-deploy.sh` automatically syncs this password to `brig` and `galley` service secrets in `values/wire-server/secrets.yaml`.
+
+If deploying/upgrading wire-server manually, use one of these methods:
+
+### Option 1: Run the sync script in the adminhosts container:
+
+```bash
+# Sync PostgreSQL password from K8s secret to secrets.yaml
+./bin/sync-k8s-secret-to-wire-secrets.sh \
+  wire-postgresql-external-secret \
+  password \
+  values/wire-server/secrets.yaml \
+  .brig.secrets.pgPassword \
+  .galley.secrets.pgPassword
+```
+
+This script retrieves the password from `wire-postgresql-external-secret`, updates multiple YAML paths, creates a backup at `secrets.yaml.bak`, verifies updates, and works with any Kubernetes secret and YAML file.
+
+### Option 2: Manual Password Override
+
+Override passwords during helm installation:
+
+```bash
+# Retrieve password from Kubernetes secret
+PG_PASSWORD=$(kubectl get secret wire-postgresql-external-secret \
+  -n default \
+  -o jsonpath='{.data.password}' | base64 --decode)
+
+# Install/upgrade with password override
+helm upgrade --install wire-server ./charts/wire-server \
+  --namespace default \
+  -f values/wire-server/values.yaml \
+  -f values/wire-server/secrets.yaml \
+  --set brig.secrets.pgPassword="${PG_PASSWORD}" \
+  --set galley.secrets.pgPassword="${PG_PASSWORD}"
+```
 
 ## Optional: Test Automatic Failover
 
-If you want to verify that automatic failover works correctly, you can simulate a primary failure. On the current primary node, stop the PostgreSQL service.
+To verify automatic failover works, simulate a primary failure by stopping the PostgreSQL service on the primary node:
 
 ```bash
 sudo systemctl mask postgresql@17-main && sudo systemctl stop postgresql@17-main
 ```
 
-Wait approximately thirty seconds, then check the cluster status from one of the replica nodes. You should see that one of the replicas has been automatically promoted to primary. The repmgrd daemon detects the failed primary, forms quorum with the remaining nodes, selects the best candidate based on replication lag and priority, and promotes it automatically. The other replica will automatically reconfigure itself to follow the new primary.
+Wait 30 seconds, then check cluster status from a replica node:
+
+```bash
+sudo -u postgres repmgr -f /etc/repmgr/17-main/repmgr.conf cluster show
+```
+
+One replica should now be promoted to primary. The repmgrd daemon detected the failure, formed quorum, selected the best candidate based on replication lag and priority, and promoted it. The remaining replica automatically reconfigures to follow the new primary.
 
 ## What Happens During Failover
 
-Understanding the failover process helps you trust the system. When the primary becomes unavailable, each repmgrd daemon tries to reconnect every five seconds. After five failed attempts (about 25 seconds), the daemons on the replica nodes communicate to reach consensus that the primary is truly down. They require at least two nodes to agree in a three-node cluster, preventing false positives from network hiccups. The system then selects which replica to promote based on two factors: how caught up each replica is with the primary's data, and the priority value you configured in the inventory. The selected replica is promoted to become the new primary using PostgreSQL's native promotion function. Finally, the remaining replica automatically detects the new primary and begins following it, and any Kubernetes services are updated to point to the new primary through the postgres-endpoint-manager component.
+When the primary fails, repmgrd daemons retry connections every five seconds. After five failures (~25 seconds), the replicas reach consensus that the primary is down (requiring two-node quorum to prevent false positives). The system promotes the most up-to-date replica with the highest priority using PostgreSQL's native promotion function. The remaining replica detects the new primary and begins following it, while postgres-endpoint-manager updates Kubernetes services to point to the new primary.
 
 ## Recovery Time Expectations
 
-In the event of a primary failure, the PostgreSQL cluster itself recovers within thirty seconds. However, applications running in Kubernetes may take slightly longer to reconnect because the postgres-endpoint-manager updates Kubernetes endpoints on a two-minute polling cycle. This means your Wire services will experience between thirty seconds and two minutes of database unavailability during an unplanned failover event.
+The cluster recovers within 30 seconds of a primary failure. Applications running in Kubernetes may take up to 2 minutes to reconnect due to the postgres-endpoint-manager's polling cycle, resulting in 30 seconds to 2 minutes of database unavailability during unplanned failover.
+
+## Troubleshooting
+
+### Common Issues During Deployment
 
 
-Please check [the details documentation](https://github.com/wireapp/wire-server-deploy/blob/main/offline/postgresql-cluster.md) on how to debug if there are some failover happens or the cluster requires some emergency recover from the wire-server-deploy repository.
+#### PostgreSQL Service Won't Start
+If PostgreSQL fails to start after deployment:
+```bash
+# Check PostgreSQL logs
+sudo journalctl -u postgresql@17-main -f
+
+# Verify configuration files exist and are readable
+sudo test -f /etc/postgresql/17/main/postgresql.conf && echo "Config file exists" || echo "Config file missing"
+sudo -u postgres test -r /etc/postgresql/17/main/postgresql.conf && echo "Config readable by postgres user" || echo "Config not readable"
+
+# Check PostgreSQL configuration syntax
+sudo -u postgres /usr/lib/postgresql/17/bin/postgres --config-file=/etc/postgresql/17/main/postgresql.conf -C shared_preload_libraries
+
+# Check disk space and permissions
+df -h /var/lib/postgresql/
+sudo ls -la /var/lib/postgresql/17/main/
+```
+
+#### Replication Issues
+If standby nodes show "disconnected" status:
+```bash
+# On primary: Check if replicas are connecting
+sudo -u postgres psql -c "SELECT client_addr, state, sync_state FROM pg_stat_replication;"
+
+
+
+# Verify repmgr configuration
+sudo -u postgres repmgr -f /etc/repmgr/17-main/repmgr.conf node check
+```
+
+### Post-Deployment Issues
+
+#### Split-Brain Detection
+If you suspect multiple primaries exist, check the cluster status on each node:
+```bash
+sudo -u postgres repmgr -f /etc/repmgr/17-main/repmgr.conf cluster show
+
+# Check detect-rogue-primary logs
+sudo journalctl -u detect-rogue-primary.timer -u detect-rogue-primary.service
+```
+
+#### Failed Automatic Failover
+If failover doesn't happen automatically:
+```bash
+# Check repmgrd status and logs
+sudo systemctl status repmgrd@17-main
+sudo journalctl -u repmgrd@17-main -f
+
+# Verify quorum requirements
+sudo -u postgres repmgr -f /etc/repmgr/17-main/repmgr.conf cluster show --compact
+
+# Manual failover if needed
+sudo -u postgres repmgr -f /etc/repmgr/17-main/repmgr.conf standby promote
+```
+
+#### Replication Lag Issues
+If standby nodes fall behind:
+```bash
+# Check replication lag
+sudo -u postgres psql -c "SELECT client_addr, sent_lsn, write_lsn, flush_lsn, replay_lsn, (sent_lsn - replay_lsn) AS lag FROM pg_stat_replication;"
+
+```
+
+#### Kubernetes Integration Issues
+If postgres-external chart fails to detect the primary:
+```bash
+# Check postgres-endpoint-manager logs
+d kubectl logs -l app=postgres-endpoint-manager
+
+# Verify service endpoints
+d kubectl get endpoints postgresql-external-rw postgresql-external-ro
+
+# Test connectivity from within cluster
+d kubectl run test-pg --rm -it --image=postgres:17 -- psql -h postgresql-external-rw -U wire-server -d wire-server
+```
+
+### Recovery Scenarios
+
+For detailed recovery procedures covering complex scenarios such as:
+- Complete cluster failure recovery
+- Corrupt data node replacement
+- Network partition recovery
+- Emergency manual intervention
+- Backup and restore procedures
+- Disaster recovery planning
+
+Please refer to the [comprehensive PostgreSQL cluster recovery documentation](https://github.com/wireapp/wire-server-deploy/blob/main/offline/postgresql-cluster.md) in the wire-server-deploy repository.
 
 ## Next Steps
 
-With your PostgreSQL HA cluster running, you're ready to integrate it with your Wire server deployment. The cluster runs independently outside Kubernetes, providing a stable database foundation. The postgres-endpoint-manager component (deployed separately) with postgres-external helm chart keeps your Kubernetes services pointed at the current primary node, ensuring seamless connectivity even during failover events.
+With your PostgreSQL HA cluster running, integrate it with your Wire server deployment. The cluster runs independently outside Kubernetes. The postgres-endpoint-manager component (deployed with postgres-external helm chart) keeps Kubernetes services pointed at the current primary, ensuring seamless connectivity during failover.
 
 ### Install postgres-external helm chart
 
-From wire-server-deploy directory run:
+From the wire-server-deploy directory:
 
 ```bash
 d helm upgrade --install postgresql-external ./charts/postgresql-external
 ```
 
-This helm charts configures the services `postgresql-external-rw` and `postgresql-external-ro` with corresponding endpoints.
+This configures `postgresql-external-rw` and `postgresql-external-ro` services with corresponding endpoints.
 
-The helm chart configures a postgres-endpoint-manager cronjob which runs in every two minutes to check the current primary, if any failover happens, the cronjob updates the corresponding endpoints with current primary and standbys. If the cluster is stable the cronjob runs like a probe.
+The helm chart deploys a postgres-endpoint-manager cronjob that runs every 2 minutes to check the current primary. On failover, it updates endpoints with the current primary and standbys. When stable, it runs as a health probe.
 
-You can check the logs of the cronjob for details:
+Check cronjob logs:
 
 ```bash
-# get the cronjob pods
+# Get cronjob pods
 d kubectl get pods -A | grep postgres-endpoint-manager
 
-# Inspect the logs of one of the pods to check how cronjob is detecting the primary and standby postgres nodes and updating when necessary.
-d kubectl logs postgres-endpoint-manager-29329300-6zphm # replace this with the pods found by the above command
+# Inspect logs to see primary/standby detection and updates
+d kubectl logs postgres-endpoint-manager-29329300-6zphm # replace with actual pod name
 ```
 
-If you are interested how the endpoints get updated, you can check the [postgres-endpoint-manager](https://github.com/wireapp/postgres-endpoint-manager) repository
+See the [postgres-endpoint-manager](https://github.com/wireapp/postgres-endpoint-manager) repository for endpoint update details.
 
 
 

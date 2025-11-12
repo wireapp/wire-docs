@@ -95,6 +95,7 @@ If deploying/upgrading wire-server manually, use one of these methods:
 ### Option 1: Run the sync script in the adminhosts container:
 
 ```bash
+d bash
 # Sync PostgreSQL password from K8s secret to secrets.yaml
 ./bin/sync-k8s-secret-to-wire-secrets.sh \
   wire-postgresql-external-secret \
@@ -240,7 +241,7 @@ For detailed recovery procedures covering complex scenarios such as:
 - Backup and restore procedures
 - Disaster recovery planning
 
-Please refer to the [comprehensive PostgreSQL cluster recovery documentation](https://github.com/wireapp/wire-server-deploy/blob/main/offline/postgresql-cluster.md) in the wire-server-deploy repository.
+Please refer to the [comprehensive PostgreSQL cluster recovery documentation](https://github.com/wireapp/wire-server-deploy/blob/master/offline/postgresql-cluster.md) in the wire-server-deploy repository.
 
 ## Next Steps
 

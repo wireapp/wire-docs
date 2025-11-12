@@ -90,7 +90,7 @@ You should see two rows (one per replica) with state "streaming", confirming con
 
 The playbook generates a secure password and stores it in the `wire-postgresql-external-secret` Kubernetes secret. Running `bin/offline-deploy.sh` automatically syncs this password to `brig` and `galley` service secrets in `values/wire-server/secrets.yaml`.
 
-If deploying/upgrading wire-server manually, use one of these methods:
+If deploying/upgrading wire-server manually, use one of these methods to update `pgPassword` in the `values/wire-server/secrets.yaml` file
 
 ### Option 1: Run the sync script in the adminhosts container:
 
@@ -105,11 +105,10 @@ d bash
   .galley.secrets.pgPassword
 ```
 
-This script retrieves the password from `wire-postgresql-external-secret`, updates multiple YAML paths, creates a backup at `secrets.yaml.bak`, verifies updates, and works with any Kubernetes secret and YAML file.
+This script retrieves the password from `wire-postgresql-external-secret`, updates multiple YAML paths, creates a backup at `secrets.yaml.bak`, verifies updates, and works with any Kubernetes secret and YAML file. Check the details of the [k8s secret sync script](https://github.com/wireapp/wire-server-deploy/blob/master/bin/sync-k8s-secret-to-wire-secrets.sh) from the wire-server-deploy repository.
 
 ### Option 2: Manual Password Override
 
-Override passwords during helm installation:
 
 ```bash
 # Retrieve password from Kubernetes secret
@@ -266,7 +265,7 @@ Check cronjob logs:
 d kubectl get pods -A | grep postgres-endpoint-manager
 
 # Inspect logs to see primary/standby detection and updates
-d kubectl logs postgres-endpoint-manager-29329300-6zphm # replace with actual pod name
+d kubectl logs postgres-endpoint-manager-<29329300-6zphm> # replace with actual pod name
 ```
 
 See the [postgres-endpoint-manager](https://github.com/wireapp/postgres-endpoint-manager) repository for endpoint update details.

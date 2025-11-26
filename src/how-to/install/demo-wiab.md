@@ -113,19 +113,6 @@ For more detailed instructions on each task, please refer to the [Deployment Flo
 
 Note: the playbook installs a set of system tools during the `install_pkgs` tasks (for example `docker`/`containerd`, `kubectl`, `minikube` when provisioning a cluster, `yq`, `jq`, `ncat`). If you already have these tools on the deploy node you may skip the `install_pkgs` tag when running the playbook.
 
-- **Network Access Requirements**:
-
-| Protocol | Port(s)     | Purpose                                    |
-|----------|-------------|--------------------------------------------||
-| TCP      | 22          | SSH access (for remote management)         |
-| TCP      | 80          | HTTP (certificate renewal)                 |
-| TCP      | 443         | HTTPS (primary Wire access)                |
-| TCP      | 3478        | Alternative STUN/TURN traffic              |
-| UDP      | 3478        | STUN/TURN for voice/video calls            |
-| UDP      | 32768-65535 | Voice/video calling traffic (Coturn/SFTD)  |
-
-- Note: If outbound traffic is restricted, [Note on port ranges](https://docs.wire.com/latest/understand/notes/port-ranges.html) should be followed.
-
 ## DNS Requirements
 
 - two DNS records for the so-called "nginz" component of wire-server (the main REST API entry point), these are usually called `nginz-https.<domain>` and `nginz-ssl.<domain>`

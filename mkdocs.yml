@@ -1,7 +1,7 @@
 site_name: Wire Docs
 docs_dir: src
 site_url: "https://docs.docs.com"
-repo_url: https://github.com/wireapp/wire-docs
+repo_url: https://github.com/wireapp/wire-server
 edit_uri: edit/main/src/
 site_author: Wire Authors
 site_description: "Wire Documentation"

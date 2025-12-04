@@ -24,23 +24,24 @@ Please note your data will be in-memory only and may disappear at any given mome
     - To ease out the process of managing certs, we recommend using [Let\'s Encrypt](https://letsencrypt.org/getting-started/) &
 [cert-manager](https://cert-manager.io/docs/tutorials/acme/http-validation/)
 - **Network**: No interference from UFW or other system specific firewalls, and IP forwarding enabled between network cards. Public internet access to download Wire artifacts and Ubuntu packages.
-- **Packages**: Ansible and Git installed on the localhost (any machine you have access to)
+- **Packages**: Ansible and unzip (or git) on the localhost (any machine you have access to)
     - Ansible version: [core 2.16.3] or compatible
 - **Permissions**: Sudo access required for installation on remote_node
-- **Deployment requirements**:
-    - Clone of [wire-server-repository](https://github.com/wireapp/wire-server-deploy) and editing `ansible/inventory/demo/host.yml` as explained in [Deployment requirements](demo-wiab.md#deployment-requirements)
+- **Ansible Playbooks**: 
+  - The `ansible` directory from [wire-server-deploy repository](https://github.com/wireapp/wire-server-deploy)
+  - Obtain it using **either** method:
+    - **Download as ZIP:** [wire-server-deploy/archive/master.zip](https://github.com/wireapp/wire-server-deploy/archive/refs/heads/master.zip) (requires unzip)
+    - **Clone with Git:** `git clone https://github.com/wireapp/wire-server-deploy.git` (requires git)
 - **Network Access Requirements**:
 
-| Protocol | Direction | Start Port | End Port | Ether Type | IP Range   | Reason                                      |
-|----------|-----------|------------|----------|------------|------------|---------------------------------------------|
-| Any      | egress    | Any        | Any      | IPv4       | Any        | Allow all outgoing IPv4 traffic             |
-| Any      | egress    | Any        | Any      | IPv6       | Any        | Allow all outgoing IPv6 traffic             |
-| tcp      | ingress   | 22         | 22       | IPv4       | 0.0.0.0/0  | Allow SSH access                            |
-| tcp      | ingress   | 443        | 443      | IPv4       | 0.0.0.0/0  | Allow HTTPS traffic                         |
-| tcp      | ingress   | 80         | 80       | IPv4       | 0.0.0.0/0  | Allow HTTP traffic                          |
-| tcp      | ingress   | 3478       | 3478     | IPv4       | 0.0.0.0/0  | Allow alternative STUN/TURN traffic over TCP|
-| udp      | ingress   | 3478       | 3478     | IPv4       | Any        | Allow STUN/TURN traffic for Coturn          |
-| udp      | ingress   | 49152      | 65535    | IPv4       | 0.0.0.0/0  | Allow calling traffic for Coturn over UDP   |
+| Protocol | Port(s)     | Purpose                                    |
+|----------|-------------|--------------------------------------------|
+| TCP      | 22          | SSH access (for remote management)         |
+| TCP      | 80          | HTTP (certificate renewal)                 |
+| TCP      | 443         | HTTPS (primary Wire access)                |
+| TCP      | 3478        | Alternative STUN/TURN traffic              |
+| UDP      | 3478        | STUN/TURN for voice/video calls            |
+| UDP      | 32768-65535 | Voice/video calling traffic (Coturn/SFTD)  |
 
 - Note: If outbound traffic is restricted, [Note on port ranges](https://docs.wire.com/latest/understand/notes/port-ranges.html) should be followed.
 

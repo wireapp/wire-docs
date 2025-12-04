@@ -28,67 +28,40 @@ The flow diagram of the Demo setup:
 
 ```mermaid
 graph TB
-    %% External components
-    WebClients["🖥️ Web Clients/Android/iOS<br/>Clients"]
-    AnsibleNode["📋 Ansible node"]
+    Client["🖥️ Clients"]
+    Admin["📋 Admin<br/>⬇️ Download wire-server-deploy"]
     
-    %% Main deploy_node containing all components
-    subgraph DeployNode ["🖥️ deploy_node"]
-        %% NIC on the node
-        NIC["🌐 NIC (Public/Private)<br/>ssh/https/Coturn UDP<br/>traffic"]
-        
-        %% Iptables NAT rules on the node
-        NAT["🔄 Iptables NAT rules<br/>redirect external traffic<br/>to k8s pods"]
-        
-        %% Wire server deployment on the node
-        WireServerDownload["📥 Download wire-server-<br/>deploy-static-demo-*.tgz<br/>and start assets.service"]
-        
-        %% Docker/k8s environment on the node
-        subgraph DockerK8s ["🐳 Docker - minikube k8s"]
-            SeedContainer["seed-offline-containerized<br/>(loads all the containers)"]
-            
-            subgraph HelmCharts ["Helm Charts:<br/>fake-sws | demo-smtp | rabbitmq<br/>databases-ephemeral | wire-server<br/>webapp | account-pages | team-settings<br/>ingress-nginx-controller<br/>nginx-ingress-services<br/>coturn | SFT"]
-            end
+    subgraph Node ["deploy_node"]
+        IPTables["🔄 iptables rules"]
+        Download["📥 Artifacts<br/>Helm Charts<br/>Docker Images"]
+        subgraph K8s ["Minikube K8s"]
+            Seeds["🐳 Container Images + 📦 Helm Charts <br/>wire-server | wire-utility<br/>databases | coturn"]
+            Wire["🚀 Wire Services<br/>💬 Messaging | ☎️ Calls"]
         end
     end
-
-
-    GitCommands["🖥️ git clone github.com/wireapp/wire-server-deploy.git<br/>cd wire-server-deploy<br/>ansible-playbook -i ansible/inventory/demo/host.yml<br/>ansible/wiab-demo/deploy_wiab.yml"]
     
-    %% Traffic flows
-    %% Wire application traffic from clients
-    WebClients -->|"🔵 Wire App Traffic<br/>(https/websocket)"| NIC
-    NIC --> NAT
-    NAT -->|"Route to k8s pods"| DockerK8s
+    Admin -->|"SSH/Ansible"| IPTables
+    Client -->|"HTTPS/UDP"| IPTables
+    IPTables --> K8s
     
+    Download --> Seeds
+    Seeds --> Wire
     
-    %% SSH/Ansible configuration traffic
-    AnsibleNode -->|"🟢 SSH/Ansible Traffic<br/>(configuration)"| NIC
-    AnsibleNode --> GitCommands
+    classDef client fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef admin fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef network fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+    classDef download fill:#e0f2f1,stroke:#00897b,stroke-width:2px
+    classDef k8s fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+    classDef seeds fill:#ffccbc,stroke:#bf360c,stroke-width:2px
+    classDef wire fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
     
-    %% Internal connections on deploy_node
-    WireServerDownload -->|"Seeds"| SeedContainer
-    SeedContainer -->|"docker image loads"| HelmCharts
-
-    %% Color coding based on legend - softer colors for better readability
-    classDef yellow fill:#fff9c4,stroke:#666,stroke-width:1px,color:#4a4a4a
-    classDef blue fill:#e3f2fd,stroke:#666,stroke-width:1px,color:#1565c0
-    classDef green fill:#e8f5e8,stroke:#666,stroke-width:1px,color:#2e7d32
-    classDef red fill:#ffebee,stroke:#666,stroke-width:1px,color:#c62828
-    classDef purple fill:#f3e5f5,stroke:#666,stroke-width:1px,color:#7b1fa2
-    classDef rose fill:#fce4ec,stroke:#666,stroke-width:1px,color:#c2185b
-    classDef orange fill:#fff3e0,stroke:#666,stroke-width:1px,color:#ef6c00
-    classDef gray fill:#f5f5f5,stroke:#666,stroke-width:1px,color:#616161
-    
-    %% Apply colors according to legend and function
-    class DeployNode yellow
-    class WireServerDownload,NAT blue
-    class HelmCharts,SeedContainer green
-    class DockerK8s red
-    class NIC purple
-    class WebClients rose
-    class AnsibleNode orange
-    class GitCommands gray
+    class Client client
+    class Admin admin
+    class IPTables network
+    class Download download
+    class K8s k8s
+    class Seeds seeds
+    class Wire wire
 ```
 
 This guide provides detailed instructions for deploying Wire-in-a-Box (WIAB) using Ansible on an Ubuntu 24.04 system. The deployment process is structured into multiple blocks within the Ansible playbook, offering flexibility in execution. It is designed to configure a remote node, such as example.com (referred to as deploy_node), to install Wire with a custom domain, example.com (referred to as target_domain). These variables must be verified in the file [ansible/inventory/demo/host.yml](https://github.com/wireapp/wire-server-deploy/blob/master/ansible/inventory/demo/host.yml) before running the pipeline.
@@ -229,13 +202,18 @@ The playbook then configures access to the Kubernetes node:
 - It will seed the docker images shipped for the wire related helm charts in the minikube k8s node
 - Can be skipped using `--skip-tags seed_containers`
 
-### 12. Wire helm charts values preparation
+### 12. Wire Helm Chart Values Preparation
 
 - Imports [wire_values.yml](https://github.com/wireapp/wire-server-deploy/blob/master/ansible/wiab-demo/wire_values.yml) to prepare the Helm chart values
-- Runs automatically when using `--tags wire_values`
-- The playbook backs up existing values files before replacing them.
+- Runs in two scenarios:
+  - When running the **full playbook** (no tags specified)
+  - When **both** `wire_values` **and** `helm_install` tags are explicitly passed: `--tags wire_values,helm_install`
+- Will be **skipped** if only `--tags wire_values` or only `--tags helm_install` is passed
+- The playbook backs up existing values files before replacing them
 
- Note: an admin can choose to skip this step if they already have their own values files (from previous similar deployments) and wish to avoid overwriting values. Provide your values in the expected `values/` paths and run the next playbook with appropriate tags.
+**Note:** An admin can skip this step by:
+- Running only `--tags helm_install` (if values already exist from previous deployments)
+- Providing pre-created values files in the expected `values/` paths and using `--skip-tags wire_values`
 
 ### 13. Wire Secrets Creation
 
@@ -355,7 +333,7 @@ The following tags are available for controlling playbook execution:
 | `download` | Wire artifact download | None |
 | `asset_host` | Asset host configuration | SSH Proxy and Inventory Setup |
 | `seed_containers` | Container seeding | SSH Proxy and Inventory Setup|
-| `wire_values` | Setup Wire Helm values | None |
+| `wire_values` | Setup Wire Helm values | Requires `helm_install` tag |
 | `wire_secrets` | Create Wire secrets | None |
 | `helm_install` | Helm chart installation | None |
 | `cert_manager_networking` | Enable Cert Manager hairpin Networking | None |

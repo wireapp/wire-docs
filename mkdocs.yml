@@ -18,6 +18,7 @@ nav:
       - How to install kubernetes and databases: how-to/install/ansible-VMs.md
       - How to configure AWS services: how-to/install/aws-prod.md
       - How to install wire-server using Helm: how-to/install/helm-prod.md
+      - Multi-Ingress Configuration: how-to/install/multi-ingress.md
       - Infrastructure configuration: how-to/install/infrastructure-configuration.md
       - How to monitor wire-server: how-to/install/monitoring.md
       - How to see centralized logs for wire-server: how-to/install/logging.md

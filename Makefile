@@ -38,6 +38,8 @@ run: check-port build
 .PHONY: current
 current: prepare
 	@BRANCH=$$(git branch --show-current) && cd $$(cat .tmpdir) && \
+	git submodule update --init --depth 1 wire-server && \
+	git submodule update --init --depth 1 wire-apps-jvm-sdk && \
 	nix-shell build/default.nix --run "pipenv run mike deploy $$BRANCH && \
 	pipenv run mike set-default $$BRANCH && pipenv run mike serve -a 0.0.0.0:8000"
 

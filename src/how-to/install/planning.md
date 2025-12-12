@@ -26,6 +26,7 @@ Please note your data will be in-memory only and may disappear at any given mome
 - **Network**: No interference from UFW or other system specific firewalls, and IP forwarding enabled between network cards. Public internet access to download Wire artifacts and Ubuntu packages.
 - **Packages**: Ansible and unzip (or git) on the localhost (any machine you have access to)
     - Ansible version: [core 2.16.3] or compatible
+    - Note: The deployment will automatically install additional required packages on the deploy_node (see [Package Installation](#4-package-installation) section). You can skip this step using `--skip-tags install_pkgs` if these packages are already installed
 - **Permissions**: Sudo access required for installation on remote_node
 - **Ansible Playbooks**: 
   - The `ansible` directory from [wire-server-deploy repository](https://github.com/wireapp/wire-server-deploy)

@@ -17,36 +17,39 @@ Please read and understand the content in https://docs.wire.com/latest/understan
 In an outage there are many key questions you will need quick answers to, in order to properly triage and troubleshoot an issue. Having these facts either memorized, or written down clearly in a central location will expidite response times.
 
 Quick Facts:
- * Who can administrate your Wire installation / How do you contact them?
- * Is your Wire Calling infrastructure hosted in a separate DMZ (Wire recommended), hosted alongside your Wire install, or are you using our Cloud Calling offering?
- * What does the network path look like between your users, and your wire installation?
- * Is there anything "out of the ordinary" about how your wire installation is configured?
- * Have there been any major changes or failures recently? Inside your network, or in the wider Internet? (think: Cloudflare, AWS, etc...)
+
+* Who can administrate your Wire installation / How do you contact them?
+* Is your Wire Calling infrastructure hosted in a separate DMZ (Wire recommended), hosted alongside your Wire install, or are you using our Cloud Calling offering?
+* What does the network path look like between your users, and your wire installation?
+* Is there anything "out of the ordinary" about how your wire installation is configured?
+* Have there been any major changes or failures recently? Inside your network, or in the wider Internet? (think: Cloudflare, AWS, etc...)
 
 ### Know your Infrastructure
 All products have dependencies; Wire is no different. Whether these be Internet, Power, or something like an SSO provider, dependencies break, and knowing what you're dependent on gets you closer to solutions quickly.
 
 What to know:
- * What Domain Names are a part of your Wire installation? How are those domains resolved by the end users?
- * Who is your Internet Service Provider? 
- * What DNS service does your wire install use?
- * What network time source are your wire servers depending on?
- * What load balancers and firewalls are in use around your wire deployment?
- * What infrastructure does your Wire service run on?
+
+* What Domain Names are a part of your Wire installation? How are those domains resolved by the end users?
+* Who is your Internet Service Provider? 
+* What DNS service does your wire install use?
+* What network time source are your wire servers depending on?
+* What load balancers and firewalls are in use around your wire deployment?
+* What infrastructure does your Wire service run on?
 
 ### Know your Users
 
 Knowing what your users are using, how they use it, and what they value in it can help you get your users what they value quickly.
 
 Quick Facts:
- * What platforms are the users using, and in what porportion? (Web / Android / iOS / Windows / Mac / Linux / ...)
- * What is the network path between your users, and your wire services?
- * For mobile platforms:
-   * How do your users recieve notifications? (APNS / FCM / WebSockets)
-   * Are you managing wire on your users' mobile devices with a Mobile Device Management(MDM) product?
- * How do your users find your wire installation?
- * How do your users login to wire? What infrastructure does that depend on? (SSO, SCIM, LDAP, etc...)
- * What do your users use wire for? Mostly Messaging, mostly Calling, File sharing? 
+
+* What platforms are the users using, and in what porportion? (Web / Android / iOS / Windows / Mac / Linux / ...)
+* What is the network path between your users, and your wire services?
+* For mobile platforms:
+    * How do your users recieve notifications? (APNS / FCM / WebSockets)
+    * Are you managing wire on your users' mobile devices with a Mobile Device Management(MDM) product?
+* How do your users find your wire installation?
+* How do your users login to wire? What infrastructure does that depend on? (SSO, SCIM, LDAP, etc...)
+* What do your users use wire for? Mostly Messaging, mostly Calling, File sharing? 
 
 ### Take Backups
 Both the wire backend, and the wire clients have backup and restore procedures. familiarize yourself with them, and ensure backups are taken regularly.

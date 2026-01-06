@@ -1,12 +1,14 @@
 <a id="inspector"></a>
 
-# Debugging Wire issues using the Inspector
+# Examining Wire issues using the Web Inspector
 
-The inspector in your web browser can be a very handy tool, when debugging issues people see in their web browsers.
+The Web Inspector in your web browser can be a very handy tool, when debugging issues people can see in their web browsers.
 
-## Pulling a Calls Config / SFT errors
+## Conference Calling
 
-Customer complaint: some conference calling not working, end user cannot get or has not yet gotten logs to us.
+### Pulling a Calls Config
+
+End User complaint: some conference calling not working, end user cannot get logs.
 
 This procedure should get us:
 
@@ -19,12 +21,12 @@ From one of the affected webapp users' machine:
 
 * Right click, anywhere in the web application, and open the inspector.
 * The browser should now have a new window in it. This is the browser's inspector showing you the code for whatever you clicked on.
-    * Select the 'Network' tab of the inspector, and return to wire without closing the inspector window.
-* In the wire application, select a room where others have successfully been placing conference calls, and where there are NO federated users.
+    * Select the 'Network' tab of the inspector, and return to Wire without closing the inspector window.
+* In the Wire application, select a channel/group where others have successfully been placing conference calls, and where there are NO federated users.
     * Place a call. You should see files loading into the 'Network' tab of the inspector. The results of placing this call do not matter, but do let the call either succeed (and hang it up!), or fail.
 * In the inspector, Click on the 'File' or 'Name' column header once. This should sort the requests that were sent.
     * If there is not a 'Method' column shown, please right click on 'Name' or 'File', and select 'Method' to make it visible.
-* Look for a file named either 'v2', or 'v2?limit=3'. that is the settings given to you by your wire backend, for calling.
+* Look for a file named either 'v2', or 'v2?limit=3'. that is the settings given to you by your Wire backend, for calling.
     * There will be at least two shown. In the 'method' column, the files will have a method of 'GET', 'GET + Preflight', or 'OPTIONS'. Click on the one labeled either 'GET'.
 * A new pane will have popped open with 'Headers', 'Response', 'Timings', and other tabs.
     * Click on the 'Response' tab.
@@ -47,9 +49,11 @@ Your calls config is a JSON document, made of several sections, telling clients 
 * Find the requests that have the same URL as you found in the 'sft_servers' section of the calls config.
 * Screenshot them. ensure that the 'Name' or 'File' is readable, the 'Url' is fully visible, the 'Method' is visible, and the 'Status' is visible.
 
-## Examining file upload/download problems
+## File Sharing
 
-Customer Complaint:
+### Examining file Upload/Download Problems
+
+End User Complaint:
 
 File upload/download is not working. someone uploaded a file, but i can’t download it. I can try to send things, but they never upload. I’m on webapp.
 Procedure:
@@ -58,8 +62,8 @@ From one of the affected webapp users' machine:
 
 * Right click, anywhere in the web application, and open the inspector.
     * The browser should now have a new window in it. This is the browser's inspector showing you the code for whatever you clicked on.
-* Select the 'Network' tab of the inspector, and return to wire without closing the inspector window.
-* In the wire application, select a room where others have successfully been uploading files, and where there are NO federated users.
+* Select the 'Network' tab of the inspector, and return to Wire without closing the inspector window.
+* In the Wire application, select a channel/group where others have successfully been uploading files, and where there are NO federated users.
     * Attempt to download a file by clicking on the three dots next to the file, and selecting ‘Download’. You should see traffic in the 'Network' tab of the inspector. The results of your attempt do not matter.
 * In the inspector, Click on the 'File' or 'Name' column header once. This should sort the requests that were sent.
     * If there is not a 'Method' column shown, please right click on 'Name' or 'File', and select 'Method' to make it visible.

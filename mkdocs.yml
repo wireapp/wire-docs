@@ -43,8 +43,8 @@ nav:
       - Restund (TURN): how-to/administrate/restund.md
       - Investigative tasks (e.g. searching for users as server admin): how-to/administrate/users.md
   - Support:
-      - Triaging Issues: support/triaging_issues.md
-      - Collecting information with the Web Inspector: support/inspector.md
+      - Triaging Issues: how-to/support/triaging_issues.md
+      - Collecting information with the Web Inspector: how-to/support/inspector.md
   - Reference:
       - Architecture Overview: understand/overview.md
       - Single Sign-On and User Provisioning: understand/single-sign-on/README.md

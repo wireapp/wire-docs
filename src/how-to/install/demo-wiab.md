@@ -175,7 +175,7 @@ The playbook starts by verifying DNS records to ensure proper name resolution:
   - kubernetes >= 18.0.0 (Kubernetes Python client)
   - pyyaml >= 5.4.1 (YAML parser)
 
-> **Note on PEP668 Override:** Python packages are installed using `--break-system-packages` flag to override [PEP668](https://peps.python.org/pep-0668/) constraints on Ubuntu 24.04. This is necessary because the deployment requires system-wide access to Ansible Python modules (kubernetes, pyyaml) for infrastructure provisioning. The playbook installs these packages system-wide rather than in virtual environments to ensure they are available in the Ansible execution context.
+> **Virtual Environment Approach:** Python packages are installed in an isolated virtual environment at `/opt/ansible-venv` instead of system-wide installation. This eliminates conflicts with system Python packages and respects [PEP668](https://peps.python.org/pep-0668/) constraints on Ubuntu 24.04. The playbook automatically detects the best Python interpreter available (system Python if kubernetes is installed, or venv otherwise) and configures Ansible accordingly. If neither has the kubernetes module, it fails with clear remediation instructions.
 
 ### 4. SSH Key Management (Automatic Dependency)
 
@@ -258,19 +258,11 @@ The playbook starts by verifying DNS records to ensure proper name resolution:
 - Reports deployment status and pod health
 - Can be skipped using `--skip-tags helm_install`
 
-### 14. Cert Manager Hairpin Networking Configuration
+**Cert Manager Hairpin Networking Configuration:**
+- If `use_cert_manager` is true, automatically configures hairpin (NAT) behavior on the host so workloads (pods) can reach external/public IPs that resolve back to the same node
+- Runs automatically at the end of helm chart installation when cert-manager is enabled
 
-- Imports [hairpin_networking.yml](https://github.com/wireapp/wire-server-deploy/blob/master/ansible/wiab-demo/hairpin_networking.yml)
-- Configures hairpin (NAT) behavior on the host so workloads (pods) can reach external/public IPs that resolve back to the same node
-- **Always runs when** `use_cert_manager` is true
-
-```
-a Pod (same node k8s)→ wants to reach → domain → which resolves to the public IP of the same node
-```
-
-If you do not use cert-manager (or you obtain certificates externally) and there is no need for this hairpin behaviour, you can skip this step by using the tag `--skip-tags cert_manager_networking`.
-
-### 15. Temporary Cleanup
+### 14. Temporary Cleanup
 
 - Locates all temporary SSH key directories created during deployment
 - Lists and removes these directories
@@ -365,8 +357,7 @@ The following tags are available for controlling playbook execution:
 | `seed_containers` | Container seeding | Minikube node inventory setup | Yes (`--skip-tags seed_containers`) |
 | `wire_values` | Setup Wire Helm values | None | Yes (`--skip-tags wire_values`) |
 | `wire_secrets` | Create Wire secrets | None | Yes (`--skip-tags wire_secrets`) |
-| `helm_install` | Helm chart installation | None | Yes (`--skip-tags helm_install`) |
-| `cert_manager_networking` | Cert Manager hairpin networking | None | Yes (`use_cert_manager=true`) |
+| `helm_install` | Helm chart installation + cert-manager hairpin networking | None | Yes (`--skip-tags helm_install`) |
 | `cleanup` | Temporary file cleanup | None | Yes (`--skip-tags cleanup`) |
 
 

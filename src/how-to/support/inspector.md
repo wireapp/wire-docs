@@ -153,7 +153,7 @@ Copy the entire output of this terminal session for Wire. What we'll be looking 
 
 * Return to your browser
     * Gather a screenshot of the request you selected, making sure the headers are readable. If needed, take separate shots of the request, and it's headers.
-	* Cather an HAR file from your network tab of your inspector (download icon for chrome, right click on a request and "Save All as HAR"). Note that HAR files are sensitive. Hand this to no-one you do not trust with your password for 15 minutes, to allow your authentication credentials in the HAR file to expire.
+	* Gather an HAR file from your network tab of your inspector (download icon for chrome, right click on a request and "Save All as HAR"). Note that HAR files are sensitive. Hand this to no-one you do not trust with your password for 15 minutes, to allow your authentication credentials in the HAR file to expire.
 
 * Select the console tab in your inspector, and copy any content you see there, for wire.
     * right click anywhere, and save as (which saves all, not just the one you clicked on).

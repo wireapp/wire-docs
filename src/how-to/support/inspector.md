@@ -140,7 +140,7 @@ Copy the entire output of this terminal session for Wire. What we'll be looking 
 
 * Open a command line, on a linux machine that can reach the wire environment.
     * Construct a Curl command significantly similar to the GET request we are examiming:
-        * curl <request URL> <-- our target, you will need quotes around the request URL.
+        * curl <broken request URL> <-- our target, you will need quotes around the request URL.
         * -v <-- verbose mode, so we can see the resulting headers
         * -o bad_request <-- our file to store the result of the request in.
         * -X GET <-- our method

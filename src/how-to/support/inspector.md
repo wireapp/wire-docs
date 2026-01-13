@@ -131,7 +131,7 @@ We are now going to prepare to construct an equivalent CURL request for this req
   * -H <first header>
   * -H <second header>...
 
-* Copy all of the headers from the GET request in your inspector on to the end of your curl command, (placing quotes around each, and ensuring they are formatted "key: value"), then hit enter to run the request in curl. (**HINT:** Some web browsers have a 'Raw' slider, that shows them in a easier to cut and paste form!)
+* Copy all of the headers from the GET request in your inspector on to the end of your curl command (placing quotes around each, and ensuring they are formatted "key: value"), then hit enter to run the request in curl. (**HINT:** Some web browsers have a 'Raw' slider, that shows them in a easier to cut and paste form!)
 
 Copy the entire output of this terminal session for Wire. What we'll be looking for is a header in the 'response' portion (the part starting with '<' characters.) named 'access-control-allow-origin'.
 

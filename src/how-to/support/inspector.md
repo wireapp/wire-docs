@@ -144,7 +144,7 @@ Copy the entire output of this terminal session for Wire. What we'll be looking 
         * -v <-- verbose mode, so we can see the resulting headers
         * -o bad_request <-- our file to store the result of the request in.
         * -X GET <-- our method
-        * -H "Origin: <broken request URL>"
+        * -H "Origin: https://teams.wire.com" <-- Replace teams.wire.com with the name of your teams page.
 		* -H <first header>
 		* -H <second header>...
     * Copy all of the headers from the GET request in your inspector, into your Curl command, then hit enter to run the request in Curl.

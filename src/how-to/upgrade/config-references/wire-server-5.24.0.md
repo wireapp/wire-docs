@@ -81,3 +81,18 @@ background-worker:
     agingTimeout: 1d
     idlenessTimeout: 10m
 ```
+
+### `gundeck`
+
+New settings, change only if required. The following are defaults as they come in charts
+
+```yaml
+gundeck:
+  config:
+    redis:
+      host: redis-ephemeral # This one is already references in the mandatory catefory
+      port: 6379
+      connectionMode: "master" # master | cluster
+      enableTls: false
+      insecureSkipVerifyTls: false
+```    

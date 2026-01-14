@@ -1,4 +1,6 @@
-# Wire-Server 5.24.0 release 
+# Wire-Server 5.24.0 release
+
+The following reference was written based on the following [`build.json` charts](https://raw.githubusercontent.com/wireapp/wire-builds/79660a72c74c8644fb3717bd147368e4c5848117/build.json).
 
 ## Mandatory (breaking) changes
 
@@ -90,7 +92,7 @@ New settings, change only if required. The following are defaults as they come i
 gundeck:
   config:
     redis:
-      host: redis-ephemeral # This one is already references in the mandatory catefory
+      host: redis-ephemeral # This one is already referenced in the mandatory catefory
       port: 6379
       connectionMode: "master" # master | cluster
       enableTls: false

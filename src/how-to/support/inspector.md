@@ -127,7 +127,7 @@ We are now going to prepare to construct an equivalent CURL request for this req
     * -v <-- verbose mode, so we can see the resulting headers
     * -o good_request <-- our file to store the result of the request in.
   * -X GET <-- our method
-  * -H "Origin: <request URL>"
+  * -H "Origin: https://teams.wire.com"  <-- Replace teams.wire.com with the name of YOUR teams page
   * -H <first header>
   * -H <second header>...
 

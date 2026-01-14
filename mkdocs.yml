@@ -31,6 +31,15 @@ nav:
       - Using tinc: how-to/install/ansible-tinc.md
       - Troubleshooting during installation: how-to/install/troubleshooting.md
       - Verifying your installation: how-to/install/post-install.md
+  - Upgrade:
+      - Overview: how-to/upgrade/README.md
+      - Planning an upgrade: how-to/upgrade/01-planning.md
+      - Preparing an upgrade: how-to/upgrade/02-preparing.md
+      - Upgrade process: how-to/upgrade/03-upgrade.md
+      - Troubleshooting: how-to/upgrade/04-troubleshooting.md
+      - Configuration Reference:
+        - Overview: how-to/upgrade/05-config-reference.md
+        - Wire Server 5.24: how-to/upgrade/config-references/wire-server-5.24.0.md
   - Administration:
       - Overview: how-to/administrate/README.md
       - kubernetes: how-to/administrate/kubernetes/README.md

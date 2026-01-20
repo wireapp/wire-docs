@@ -4,6 +4,18 @@ The following reference was written based on the following [`build.json` charts]
 
 ## Mandatory (breaking) changes
 
+### `brig`
+
+```yaml
+brig:
+  rabbitmq:
+    host: rabbitmq-host-or-service
+    port: 5672 # default
+  secrets:
+    username: wire-server
+    password: verysecurepassword
+```
+
 ### `background-worker`
 
 ```yaml

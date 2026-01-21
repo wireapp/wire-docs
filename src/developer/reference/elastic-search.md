@@ -33,16 +33,28 @@ BRIG_CASSANDRA_KEYSPACE=<YOUR_C*_KEYSPACE>
 WIRE_VERSION=<VERSION_YOU_ARE_DEPLOYING>
 GALLEY_HOST=<HOSTNAME OF RUNNING GALLEY INSTANCE>
 GALLEY_PORT=<PORT NUMBER OF RUNNING GALLEY INSTANCE>
+PG_SETTINGS=<eg., '{"host":"127.0.0.1","port":"5432","user":"wire-server","dbname":"backendA"}'>
+PG_PASSWORD_FILE=<eg., ./libs/wire-subsystems/test/resources/postgres-credentials.yaml>
 
 docker run "quay.io/wire/brig-index:$WIRE_VERSION" migrate-data \
   --elasticsearch-server "http://$ES_HOST:$ES_PORT" \
   --elasticsearch-index "$ES_INDEX" \
   --cassandra-host "$BRIG_CASSANDRA_HOST" \
   --cassandra-port "$BRIG_CASSANDRA_PORT" \
-  --cassandra-keyspace "$BRIG_CASSANDRA_KEYSPACE"
-  --galley-host "$GALLEY_HOST"
-  --galley-port "$GALLEY_PORT"
+  --cassandra-keyspace "$BRIG_CASSANDRA_KEYSPACE" \
+  --galley-host "$GALLEY_HOST" \
+  --galley-port "$GALLEY_PORT" \
+  --pg-pool-size 10 \
+  --pg-pool-acquisition-timeout 10s \
+  --pg-pool-aging-timeout 1d \
+  --pg-pool-idleness-timeout 1h \
+  --pg-settings "$PG_SETTINGS" \
+  --pg-password-file "$PG_PASSWORD_FILE"
 ```
+
+NB: brig-index supports --help both for global params and
+sub-commands.  If anything goes wrong or if in doubt, take a look at
+that for alwasy up to date information.
 
 (Or, as above, you can also do the same thing without docker.)
 
@@ -61,15 +73,23 @@ BRIG_CASSANDRA_KEYSPACE=<YOUR_C*_KEYSPACE>
 WIRE_VERSION=<VERSION_YOU_ARE_DEPLOYING>
 GALLEY_HOST=<HOSTNAME OF RUNNING GALLEY INSTANCE>
 GALLEY_PORT=<PORT NUMBER OF RUNNING GALLEY INSTANCE>
+PG_SETTINGS=<eg., '{"host":"127.0.0.1","port":"5432","user":"wire-server","dbname":"backendA"}'>
+PG_PASSWORD_FILE=<eg., ./libs/wire-subsystems/test/resources/postgres-credentials.yaml>
 
 docker run "quay.io/wire/brig-index:$WIRE_VERSION" reindex \
   --elasticsearch-server "http://$ES_HOST:$ES_PORT" \
   --elasticsearch-index "$ES_INDEX" \
   --cassandra-host "$BRIG_CASSANDRA_HOST" \
   --cassandra-port "$BRIG_CASSANDRA_PORT" \
-  --cassandra-keyspace "$BRIG_CASSANDRA_KEYSPACE"
-  --galley-host "$GALLEY_HOST"
-  --galley-port "$GALLEY_PORT"
+  --cassandra-keyspace "$BRIG_CASSANDRA_KEYSPACE" \
+  --galley-host "$GALLEY_HOST" \
+  --galley-port "$GALLEY_PORT" \
+  --pg-pool-size 10 \
+  --pg-pool-acquisition-timeout 10s \
+  --pg-pool-aging-timeout 1d \
+  --pg-pool-idleness-timeout 1h \
+  --pg-settings "$PG_SETTINGS" \
+  --pg-password-file "$PG_PASSWORD_FILE"
 ```
 
 Subcommand `reindex-if-same-or-newer` can be used instead of `reindex`, if you want to recreate the documents in elasticsearch regardless of their version.
@@ -147,6 +167,8 @@ ES_NEW_INDEX=<NEW_INDEX_NAME>
 WIRE_VERSION=<VERSION_YOU_ARE_DEPLOYING>
 GALLEY_HOST=<HOSTNAME OF RUNNING GALLEY INSTANCE>
 GALLEY_PORT=<PORT NUMBER OF RUNNING GALLEY INSTANCE>
+PG_SETTINGS=<eg., '{"host":"127.0.0.1","port":"5432","user":"wire-server","dbname":"backendA"}'>
+PG_PASSWORD_FILE=<eg., ./libs/wire-subsystems/test/resources/postgres-credentials.yaml>
 
 # Use curl http://$ES_OLD_HOST:$ES_OLD_PORT/$ES_OLD_INDEX/_settings
 # to know previous values of SHARDS, REPLICAS and REFRESH_INTERVAL
@@ -162,6 +184,12 @@ BRIG_CASSANDRA_KEYSPACE=<YOUR_C*_KEYSPACE>
 1. Create the new index
    ```bash
    docker run "quay.io/wire/brig-index:$WIRE_VERSION" create \
+       --pg-pool-size 10 \
+       --pg-pool-acquisition-timeout 10s \
+       --pg-pool-aging-timeout 1d \
+       --pg-pool-idleness-timeout 1h \
+       --pg-settings "$PG_SETTINGS" \
+       --pg-password-file "$PG_PASSWORD_FILE" \
        --elasticsearch-server "http://$ES_NEW_HOST:$ES_NEW_PORT" \
        --elasticsearch-index "$ES_NEW_INDEX" \
        --elasticsearch-shards "$SHARDS" \
@@ -175,12 +203,18 @@ BRIG_CASSANDRA_KEYSPACE=<YOUR_C*_KEYSPACE>
 4. Reindex data to the new index
    ```bash
    docker run "quay.io/wire/brig-index:$WIRE_VERSION" migrate-data \
+       --pg-pool-size 10 \
+       --pg-pool-acquisition-timeout 10s \
+       --pg-pool-aging-timeout 1d \
+       --pg-pool-idleness-timeout 1h \
+       --pg-settings "$PG_SETTINGS" \
+       --pg-password-file "$PG_PASSWORD_FILE" \
        --elasticsearch-server "http://$ES_NEW_HOST:$ES_NEW_PORT" \
        --elasticsearch-index "$ES_NEW_INDEX" \
        --cassandra-host "$BRIG_CASSANDRA_HOST" \
        --cassandra-port "$BRIG_CASSANDRA_PORT" \
-       --cassandra-keyspace "$BRIG_CASSANDRA_KEYSPACE"
-       --galley-host "$GALLEY_HOST"
+       --cassandra-keyspace "$BRIG_CASSANDRA_KEYSPACE" \
+       --galley-host "$GALLEY_HOST" \
        --galley-port "$GALLEY_PORT"
    ```
 5. Remove `elasticsearch.additionalWriteIndex` and

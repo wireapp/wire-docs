@@ -20,6 +20,7 @@ Release notes of `wire-server` can be found [here](https://github.com/wireapp/wi
 # Contents:
 
 * [Installation](how-to/install/README.md)
+* [Upgrade](how-to/upgrade/README.md)
 * [Administration](how-to/administrate/README.md)
 * [Reference](understand/README.md)
 * [Developers Notes](developer/README.md)

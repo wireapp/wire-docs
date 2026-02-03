@@ -33,6 +33,7 @@ Apply each configuration change to your templates as applicable to your model.
 ## References
 
 - [Wire Server 5.24.0](config-references/wire-server-5.24.0.md)
+- [Wire Server 5.25.0](config-references/wire-server-5.25.0.md)
 
 ## Contributing
 

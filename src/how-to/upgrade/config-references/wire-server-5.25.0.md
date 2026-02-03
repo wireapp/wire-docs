@@ -26,6 +26,7 @@ nginx-ingress-services:
 ```
 
 Options are:
+
 * Always (default) - regenerates key on each renewal
 * Never - preserves key across renewals (for key pinning)
 

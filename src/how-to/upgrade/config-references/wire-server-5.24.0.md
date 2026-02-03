@@ -2,6 +2,8 @@
 
 The following reference was written based on the following [`build.json` charts](https://raw.githubusercontent.com/wireapp/wire-builds/79660a72c74c8644fb3717bd147368e4c5848117/build.json).
 
+For additional details, you can also read our [release chagelog](https://github.com/wireapp/wire-server/releases/tag/v2025-11-26).
+
 ## Mandatory (breaking) changes
 
 ### `brig`
@@ -12,8 +14,9 @@ brig:
     host: rabbitmq-host-or-service
     port: 5672 # default
   secrets:
-    username: wire-server
-    password: verysecurepassword
+    rabbitmq:
+      username: wire-server
+      password: verysecurepassword
 ```
 
 ### `background-worker`

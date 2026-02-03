@@ -2,3 +2,5 @@
 wire-docs*.tar.gz
 site/
 .current_branch
+# emacs temporary files.
+*~

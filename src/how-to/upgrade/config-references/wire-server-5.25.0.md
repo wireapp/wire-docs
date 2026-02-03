@@ -4,6 +4,16 @@ The following reference was written based on the following [`build.json` charts]
 
 For additional details, you can also read our [release changelog](https://github.com/wireapp/wire-server/releases/tag/v2026-01-13).
 
+## Known bugs
+
+Bug in `brig` for non-federated environments in `wire-server-5.24.0` release has been fixed with this release. You can remove (or set to false!) the following config, if it was used as a workaround in the last release:
+
+```yaml
+brig:
+  config:
+    enableFederation: false
+```
+
 ## Mandatory (breaking) changes
 
 No mandatory changes in comparison to the last release.

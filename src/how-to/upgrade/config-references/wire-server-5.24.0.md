@@ -4,6 +4,16 @@ The following reference was written based on the following [`build.json` charts]
 
 For additional details, you can also read our [release chagelog](https://github.com/wireapp/wire-server/releases/tag/v2025-11-26).
 
+## Known bugs
+
+There is a bug with our `brig` charts failing to deploy in a non-federated environment. If you are running a non-federated environment, to work around this, set the following configuration in your `brig`:
+
+```yaml
+brig:
+  config:
+    enableFederation: true
+```
+
 ## Mandatory (breaking) changes
 
 ### `brig`

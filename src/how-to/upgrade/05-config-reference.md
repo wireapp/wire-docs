@@ -11,6 +11,7 @@ It is intended for users who:
 
 ## Categories
 
+- Known bugs - known bugs regarding charts deployment and how to work around it, if possible
 - Mandatory (breaking) changes - configuration changes that **must** be applied or services will fail to start
 - Optional changes - new features, enhancements or monitoring/logging options
 - Deprecated - configuration settings that can be removed or omitted, have no impact on the upgrade

@@ -1,5 +1,3 @@
-<a id="helm-prod"></a>
-
 # Installing wire-server (production) components using Helm
 
 ## Introduction
@@ -114,19 +112,60 @@ If you are using minio instead of AWS S3, you should also run:
 helm upgrade --install minio-external wire/minio-external -f values/minio-external/values.yaml --wait
 ```
 
-## How to install fake AWS services for SNS / SQS
+## Fake AWS (SNS/SQS) for websocket-only notifications (no FCM/APNS)
 
 AWS SNS is required to send notifications to clients. SQS is used to get notified of any devices that have discontinued using Wire (e.g. if you uninstall the app, the push notification token is removed, and the wire-server will get feedback for that using SQS).
 
-Note: *for using real SQS for real native push notifications instead, see also :ref:\`pushsns\`.*
+Note: *for using real SQS for real native push notifications instead, see also :ref:`pushsns`.*
 
 If you use the fake-aws version, clients will use the websocket method to receive notifications, which keeps connections to the servers open, draining battery.
 
-Open a terminal and run:
+To enable **websocket-only notifications** (no FCM/APNS), you must:
+
+1. Install the fake-aws services.
+2. Update the `gundeck` AWS configuration in your wire-server Helm values/secrets to point at fake-aws.
+3. **Re-deploy the wire-server Helm chart** using the updated values.
+
+#### NOTE
+- To enable push notifications using the public App Store / Play Store mobile Wire clients, see [Enable push notifications using the public appstore / playstore mobile Wire clients](../install/infrastructure-configuration.md#enable-push-notifications-using-the-public-appstore-playstore-mobile-wire-clients).
+- To read more about websockets and Wire notifications, see [Web-sockets](../../understand/overview.md#web-sockets) and [Mobile Notifications](../../understand/overview.md#mobile-notifications).
+
+First, set up the fake-aws services by running:
 
 ```shell
-cp values/fake-aws/prod-values.example.yaml values/fake-aws/values.yaml
-helm upgrade --install fake-aws wire/fake-aws -f values/fake-aws/values.yaml --wait
+helm install fake-aws ./charts/fake-aws --values ./values/fake-aws/prod-values.example.yaml
+```
+
+You can use the default values provided in the example file.
+
+Next up is changing the gundeck configuration so it does not go out to live/real AWS services and goes to the fake-aws installed. In your `values/wire-server/values.yaml`, use the following settings:
+
+```yaml
+gundeck:
+  config:
+    aws:
+      # change if using real AWS
+      account: "123456789012"
+      region: "eu-west-1"
+      arnEnv: integration
+      queueName: integration-gundeck-events
+      sqsEndpoint: http://fake-aws-sqs:4568
+      snsEndpoint: http://fake-aws-sns:4575
+```
+
+For secrets, in your `values/wire-server/secrets.yaml`, set:
+
+```yaml
+gundeck:
+  secrets:
+    awsKeyId: dummykey
+    awsSecretKey: dummysecret
+```
+
+Finally, redeploy the wire-server charts using the updated values files:
+
+```shell
+helm upgrade --install wire-server charts/wire-server -f values/wire-server/values.yaml -f values/wire-server/secrets.yaml
 ```
 
 You should see some pods being created in your first terminal as the above command completes.

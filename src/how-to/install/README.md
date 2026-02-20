@@ -57,7 +57,7 @@
   - [Watching changes as they happen](helm-prod.md#watching-changes-as-they-happen)
   - [General installation notes](helm-prod.md#general-installation-notes)
   - [How to install charts that provide access to external databases](helm-prod.md#how-to-install-charts-that-provide-access-to-external-databases)
-  - [How to install fake AWS services for SNS / SQS](helm-prod.md#how-to-install-fake-aws-services-for-sns-sqs)
+  - [Fake AWS (SNS/SQS) for websocket-only notifications (no FCM/APNS)](helm-prod.md##fake-aws-snssqs-for-websocket-only-notifications-no-fcmapns)
   - [Preparing to install wire-server](helm-prod.md#preparing-to-install-wire-server)
   - [How to install RabbitMQ](helm-prod.md#how-to-install-rabbitmq)
   - [How to configure real SMTP (email) services](helm-prod.md#how-to-configure-real-smtp-email-services)

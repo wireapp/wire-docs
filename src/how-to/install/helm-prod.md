@@ -126,6 +126,20 @@ To enable **websocket-only notifications** (no FCM/APNS), you must:
 2. Update the `gundeck` AWS configuration in your wire-server Helm values/secrets to point at fake-aws.
 3. **Re-deploy the wire-server Helm chart** using the updated values.
 
+### What is the [fake-aws](https://github.com/wireapp/wire-server/tree/develop/charts/fake-aws) Helm chart?
+
+The fake-aws Helm chart deploys two internal services inside the Kubernetes cluster:
+- **fake-aws-sns** – a dummy, ephemeral SNS service based on LocalStack. LocalStack allows you to use the SNS APIs in your local environment to coordinate the delivery of messages to subscribing endpoints or clients.
+- **fake-aws-sqs** – a dummy, ephemeral SQS service that mocks the Amazon SQS API.
+
+Both services include lightweight custom initialization logic required for Wire’s internal service-to-service communication. They are not intended to replace real AWS in production with native push, but to provide compatible SNS/SQS APIs inside the cluster for websocket-only setups.
+
+### Why are these Helm charts required when not using APNS/FCM?
+
+Even when APNS (Apple Push Notification Service) or FCM (Firebase Cloud Messaging) are not used, the `wire-server` component **gundeck** still depends on SNS and SQS APIs for handling notifications and user device events.
+
+When running in websocket-only mode, `gundeck` must still interact with SNS and SQS endpoints. Therefore, these APIs need to be mocked privately inside the Kubernetes cluster. The `fake-aws` Helm chart provides these mocked services so that `gundeck` can function correctly without connecting to real AWS infrastructure.
+
 #### NOTE
 - To enable push notifications using the public App Store / Play Store mobile Wire clients, see [Enable push notifications using the public appstore / playstore mobile Wire clients](../install/infrastructure-configuration.md#enable-push-notifications-using-the-public-appstore-playstore-mobile-wire-clients).
 - To read more about websockets and Wire notifications, see [Web-sockets](../../understand/overview.md#web-sockets) and [Mobile Notifications](../../understand/overview.md#mobile-notifications).
@@ -138,7 +152,12 @@ helm install fake-aws ./charts/fake-aws --values ./values/fake-aws/prod-values.e
 
 You can use the default values provided in the example file.
 
-Next up is changing the gundeck configuration so it does not go out to live/real AWS services and goes to the fake-aws installed. In your `values/wire-server/values.yaml`, use the following settings:
+Next up is changing the gundeck configuration so it does not go out to live/real AWS services and goes to the fake-aws installed.
+
+> **Important:** The following values must be compatible with the AWS Haskell library (amazonka) used by `gundeck`. These cannot be arbitrary strings. Even though fake-aws is used, values such as `account`, `region`, `arnEnv`, and `queueName` must be syntactically valid and well-formed so that the AWS client library can initialize properly.
+
+
+In your `values/wire-server/values.yaml`, use the following settings:
 
 ```yaml
 gundeck:

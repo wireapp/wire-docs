@@ -136,7 +136,7 @@ Both services include lightweight custom initialization logic required for Wireâ
 
 ### Why are these Helm charts required when not using APNS/FCM?
 
-Even when APNS (Apple Push Notification Service) or FCM (Firebase Cloud Messaging) are not used, the `wire-server` component **gundeck** still depends on SNS and SQS APIs for handling notifications and user device events.
+Even when APNS (Apple Push Notification Service) or FCM (Firebase Cloud Messaging) are not used, the `wire-server` component **gundeck** still depends on SQS APIs for handling user events.
 
 When running in websocket-only mode, `gundeck` must still interact with SNS and SQS endpoints. Therefore, these APIs need to be mocked privately inside the Kubernetes cluster. The `fake-aws` Helm chart provides these mocked services so that `gundeck` can function correctly without connecting to real AWS infrastructure.
 

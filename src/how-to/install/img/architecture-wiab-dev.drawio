@@ -1,0 +1,87 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:147.0) Gecko/20100101 Firefox/147.0" version="29.6.0">
+  <diagram name="Page-1" id="ywB2PeAJIgeIX0av0BU1">
+    <mxGraphModel dx="2528" dy="938" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="YIF4Q_mGijN3VtVrsyNS-1" parent="1" style="text;strokeColor=none;fillColor=none;html=1;fontSize=24;fontStyle=1;verticalAlign=middle;align=center;" value="Wire in a Box Dev Architecture" vertex="1">
+          <mxGeometry height="40" width="725" x="-20" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="YIF4Q_mGijN3VtVrsyNS-2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;shadow=0;comic=0;strokeColor=#6c8ebf;strokeWidth=2;fillColor=#dae8fc;fontFamily=Verdana;fontSize=28;align=center;arcSize=11;verticalAlign=top;" value="" vertex="1">
+          <mxGeometry height="450" width="580" x="550" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="YIF4Q_mGijN3VtVrsyNS-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=20;fillColor=#f8cecc;strokeColor=#b85450;" value="Loadbalancer(s)" vertex="1">
+          <mxGeometry height="40" width="230" x="692" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="YIF4Q_mGijN3VtVrsyNS-10" edge="1" parent="1" style="endArrow=none;dashed=1;html=1;strokeWidth=1;fontSize=18;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="1200" y="220" as="sourcePoint" />
+            <mxPoint x="200" y="219" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YIF4Q_mGijN3VtVrsyNS-11" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;" value="Public Internet or Customer&#39;s Intranet" vertex="1">
+          <mxGeometry height="20" width="300" x="203" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="YIF4Q_mGijN3VtVrsyNS-12" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;" value="DMZ Network" vertex="1">
+          <mxGeometry height="20" width="136" x="198" y="225" as="geometry" />
+        </mxCell>
+        <mxCell id="YIF4Q_mGijN3VtVrsyNS-13" edge="1" parent="1" style="endArrow=classic;html=1;strokeWidth=1;fontSize=18;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="806.88" y="150" as="sourcePoint" />
+            <mxPoint x="806.88" y="180" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YIF4Q_mGijN3VtVrsyNS-120" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=20;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;p style=&quot;line-height: 40%&quot;&gt;&lt;/p&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;p&gt;&lt;/p&gt;" vertex="1">
+          <mxGeometry height="260" width="458" x="612" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="YIF4Q_mGijN3VtVrsyNS-121" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;align=left;" value="&lt;div align=&quot;left&quot;&gt;nginx ingress&lt;/div&gt;" vertex="1">
+          <mxGeometry height="29" width="130.25" x="653.6400000000001" y="411" as="geometry" />
+        </mxCell>
+        <mxCell id="YIF4Q_mGijN3VtVrsyNS-122" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;align=center;direction=south;" value="&lt;div align=&quot;center&quot;&gt;wire-server components&lt;br&gt;&lt;div&gt;(replica=1)&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="84.5" width="150" x="653.64" y="457.75" as="geometry" />
+        </mxCell>
+        <mxCell id="YIF4Q_mGijN3VtVrsyNS-125" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;align=left;" value="&lt;div align=&quot;left&quot;&gt;sftd pod&lt;/div&gt;" vertex="1">
+          <mxGeometry height="40" width="80" x="880" y="417.75" as="geometry" />
+        </mxCell>
+        <mxCell id="YIF4Q_mGijN3VtVrsyNS-126" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;align=left;" value="coturn pod" vertex="1">
+          <mxGeometry height="40" width="100" x="880" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="YIF4Q_mGijN3VtVrsyNS-130" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;align=center;" value="&lt;div align=&quot;center&quot;&gt;Cassandra pod&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="150" x="656" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="YIF4Q_mGijN3VtVrsyNS-131" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;align=center;" value="&lt;div align=&quot;center&quot;&gt;Postgresql pod&amp;nbsp;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="159.32" x="880.68" y="570" as="geometry" />
+        </mxCell>
+        <mxCell id="YIF4Q_mGijN3VtVrsyNS-132" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;align=center;" value="&lt;div align=&quot;center&quot;&gt;Elasticsearch pod&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="169.32" x="880.68" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="YIF4Q_mGijN3VtVrsyNS-133" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;align=center;" value="&lt;div align=&quot;center&quot;&gt;RabbitMQ&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="138.11" x="885.68" y="610" as="geometry" />
+        </mxCell>
+        <mxCell id="YIF4Q_mGijN3VtVrsyNS-134" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;align=center;" value="Minio pod" vertex="1">
+          <mxGeometry height="30" width="120" x="656" y="610" as="geometry" />
+        </mxCell>
+        <mxCell id="YIF4Q_mGijN3VtVrsyNS-172" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="804.82" y="220" as="sourcePoint" />
+            <mxPoint x="804.82" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YIF4Q_mGijN3VtVrsyNS-176" edge="1" parent="1" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="YIF4Q_mGijN3VtVrsyNS-2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="845.3571428571431" y="780" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YIF4Q_mGijN3VtVrsyNS-175" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=#b85450;fillColor=#f8cecc;align=center;verticalAlign=middle;rounded=1;glass=0;sketch=1;curveFitting=1;jiggle=2;" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;Minikube single node k8s cluster with stateless services&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="358" x="653.64" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="YIF4Q_mGijN3VtVrsyNS-179" edge="1" parent="1" source="YIF4Q_mGijN3VtVrsyNS-177" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="YIF4Q_mGijN3VtVrsyNS-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YIF4Q_mGijN3VtVrsyNS-177" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=#e1d5e7;align=center;verticalAlign=middle;rounded=1;sketch=1;curveFitting=1;jiggle=2;" value="&lt;font style=&quot;font-size: 19px;&quot;&gt;Ubuntu 24 VM acting as Adminhost and Assethost&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="438" x="622" y="720" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

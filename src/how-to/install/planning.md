@@ -5,11 +5,11 @@ There are three types of installation targets for Wire: **WIAB Dev (formerly WIA
 
 ## Deployment options at a glance
 
-| Option          | Purpose                                  | Scale & Topology                          | Persistence           | Typical Audience                     |
+| Option          | Best for                                  | Scale & Topology                          | Persistent Data           | Typical Audience                     |
 |-----------------|-------------------------------------------|-------------------------------------------|------------------------|--------------------------------------|
-| WIAB Dev        | Quick functional demo on a single VM     | 1 Ubuntu 24.04 VM with Minikube           | No (ephemeral data)    | Developers, PoC, quick evaluations   |
-| WIAB Staging    | Realistic multi-VM, non-production setup | ~7 Ubuntu 22.04 VMs on 1 physical host    | Yes (multi-service)    | Infra/ops testing, training     |
-| Production      | High-availability, long-term deployment  | Separate DB VMs + 2 Kubernetes cluster      | Yes (HA, backups, etc.)| Production operations                |
+| WIAB (Wire-in-a-Box) Dev        | Quick functional demo on a single VM     | 1 Ubuntu 24.04 VM with Minikube (without hypervisor)          | No (ephemeral data)    | Developers, PoC   |
+| WIAB (Wire-in-a-Box) Staging    | Realistic multi-VM, non-production setup | ~7 Ubuntu 22.04 VMs on 1 physical host    | Yes (multi-service)    | Infra/ops testing, training     |
+| Production      | High-availability, long-term deployment  | Separate DB VMs + 2 Kubernetes clusters distributed in 3 Availability zones    | Yes (HA,failure domains etc)| Production operations                |
 
 - **WIAB Dev** is a self-contained, single-node demo environment (previously called *WIAB Demo*). All core services run on one VM, using in-cluster, ephemeral datastores. It is ideal for trying out functionality but **not suitable for production**.
 - **WIAB Staging** reproduces the production architecture using a fixed set of virtual machines hosted on a single physical box. It is persistent but still a single failure domain and therefore **not production-grade**.
@@ -37,7 +37,7 @@ There are three types of installation targets for Wire: **WIAB Dev (formerly WIA
 
 For full demo architecture, requirements, deployment steps, and cleanup instructions, see:
 
-- **Guide:** [`WIAB Dev (Demo Wire-in-a-Box) Deployment`](demo-wiab.md#wiab-dev-demo-wire-in-a-box-deployment-guide)
+- **Guide:** [`WIAB Dev (Demo Wire-in-a-Box) Deployment`](wiab-dev.md#wiab-dev-demo-wire-in-a-box-deployment-guide)
 
 > **Internet requirement for WIAB Dev:** The WIAB Dev playbook assumes that the deploy_node has outbound internet connectivity during installation. Tooling such as Minikube, Docker, kubectl, Python packages, and system packages are downloaded from public repositories and are **not shipped inside the artifact bundle**. After installation, you can lock down outbound access more aggressively, but Let’s Encrypt certificate renewal (if used) will still require periodic internet access.
 
@@ -55,7 +55,7 @@ For full demo architecture, requirements, deployment steps, and cleanup instruct
 - Typically **7 VMs** (Ubuntu 22.04) to simulate a production layout:
   - `assethost`  – asset and artifact host.
   - `kubenode1–3`  – Kubernetes control-plane and worker nodes running Wire services and calling.
-  - `datanode1–3`  – data services such as Cassandra, RabbitMQ, Postgresql, Minio and Elasticsearch.
+  - `datanode1–3`  – data services such as Cassandra, RabbitMQ, PostgreSQL, MinIO and Elasticsearch.
 - Wire is deployed using an offline artifact bundle (`wire-server-deploy`), Ansible, and Helm.
 - Suitable for up to **100 users** with teams smaller than **100 users per team**; capacity here is for staging realism, not for production sizing.
 
@@ -75,32 +75,32 @@ What you need:
 - a way to create **SSL/TLS certificates** for your domain name (to allow connecting via `https://wire.example.com`)
 - two **kubernetes clusters with at least 3 worker nodes each** (some cloud providers offer a managed kubernetes cluster these days)
   - First (primary) kubernetes cluster will be used by wire-server and supporting services. Second kubernetes cluster aka secondary would be used for calling workload. Calling infrastructure is designed to operate in a Zero trust / DMZ environment, so that the networking requirements of calling can be separated from the sensitive data stored in your Wire backend (primary) k8s cluster. Read more about Wire architecture [here](../../understand/overview.md#backend-routing)
-- minimum **23 virtual machines** for components outside kubernetes (cassandra, minio, elasticsearch, rabbitmq, postgresql)
+- minimum **15 virtual machines** for components outside kubernetes (Cassandra, MinIO, Elasticsearch, RabbitMQ, PostgreSQL)
 
 A recommended installation of Wire-server in any regular data centre, configured with high-availability will require the following virtual servers:
 
 | Name                                                 | VM Count | CPU Cores per VM | Memory (GB) per VM | Disk Space (GB) per VM|
 |------------------------------------------------------|----------|--------------|---------------|-------------------|
 | Cassandra                                            | 3        | 1            | 2             | 80                |
-| Postgresql                                           | 3        | 1            | 2             | 80                |
+| postgreSQL                                           | 3        | 1            | 2             | 80                |
 | MinIO                                                | 3        | 1            | 2             | 400               |
 | ElasticSearch                                        | 3        | 1            | 2             | 60                |
 | RabbitMQ                                             | 3        | 2            | 4             | 80                |
 | Primary Kubernetes (k8s control/worker node)         | 3        | 6            | 8             | 80                |
 | Admin Host                                           | 1        | 1            | 4             | 90                |
 | Asset Host                                           | 1        | 1            | 4             | 100               |
-| Stateful Services Totals per physical node           | -        | 14 CPU Cores | 32 GB Memory  | 970 GB Disk Space |
+| Stateful Services Totals per physical node           | -        | 14 CPU Cores | 28 GB Memory  | 970 GB Disk Space |
 | Secondary Kubernetes (Calling Services)           | 3        | 4            | 10            | 70                |
-| Single Server Totals                                 |  -       | 18 CPU Cores | 44 GB Memory  | 1060 GB Disk Space |
+| Single Server Totals                                 |  -       | 18 CPU Cores | 38 GB Memory  | 1040 GB Disk Space |
 
 > Notes:
 > - Secondary kubernetes hosts may need more resources to support heavy conference calling. For concurrent SFT users (SFT = «Selective Forwarding Turn» server, ie. Conference calling), we recommend an extra 3% of CPU allocation, evenly distributed across the nodes (i.e. 1% more CPU per kubernetes server). So for every 100 users plan on adding one CPU core on each Kubernetes node. The SFT component runs inside of Kubernetes, and does not require a separate virtual machine for operation.  
 > - Admin Host and Asset Host can run on any one of the 3 servers, but the respective server must allocate additional resources as indicated in the table above.  
-> - Wire requires the usage of CPUs built on the AMD64 architecture, and assumes these are running at the equivalent CPU/Memory performance of a recent Intel/AMD server system clocked at at least 2.5Ghz. For reference, please refer to https://cpubenchmark.net/high_end_cpus.html  
-> - Systems which are running under virtualization must be using Hardware Virtualization Support.  
+> - Wire requires the usage of CPUs built on the AMD64 architecture, and assumes these are running at the equivalent CPU/Memory performance of a recent Intel/AMD server system clocked at at least 2.5 Ghz. For reference, please refer to https://cpubenchmark.net/high_end_cpus.html  
+> - Systems running inside a virtualized environment must have nested hardware virtualization enabled, with support for a hardware hypervisor such as KVM (or an equivalent).   
 > - Each Virtual core should correspond to a reservation of one physical core, not a thread.  
 > - Note that some performance will be lost with mitigations for Spectre, Meltdown, and other security patching, so plan reserve capacity as appropriate.  
-> - Disk space requirements are referring to formatted, local disk space. The use of network file storage solutions may be incompatible with Wire deployment and operation. Let us know if you are considering this type of solution.  
+> - Disk space requirements are referring to formatted, local disk space. The use of network file storage solutions may be incompatible with Wire deployment and operation.  
 > - Disk space must be SSD or NVMe. We recommend against using spinning disks. 
 
 General Hardware Requirements: 
@@ -118,7 +118,7 @@ A production installation will look a bit like this:
 ![Wire Server Architecture HA](img/architecture-prod-ha.png)
 ![Calling Architecture HA](img/architecture-calling-ha.png)
 
-If you use a private datacenter (not a cloud provider), the easiest is to have three physical servers, each with one virtual machine for each server component (cassandra, minio, elasticsearch, rabbitmq, postgresql).
+If you use a private datacenter (not a cloud provider), the easiest is to have three physical servers, each with one virtual machine for each server component (cassandra, minio, elasticsearch, rabbitmq, postgreSQL).
 
 It’s up to you how you create these VMs - kvm on a bare metal machine, VM on a cloud provider, etc. Make sure they run ubuntu 22.04.
 

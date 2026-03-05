@@ -23,7 +23,7 @@ There are three types of installation targets for Wire: **WIAB Dev (formerly WIA
 
 - You want to see Wire running quickly.
 - You are evaluating features or doing development integration.
-- You are happy to lose the data when you tear down the VM or during restart
+- You are happy to lose the data when you tear down the VM or during restart.
 
 **Key characteristics:**
 
@@ -74,7 +74,7 @@ What you need:
 - a way to create **DNS records** for your domain name (e.g. `wire.example.com`)
 - a way to create **SSL/TLS certificates** for your domain name (to allow connecting via `https://wire.example.com`)
 - two **kubernetes clusters with at least 3 worker nodes each** (some cloud providers offer a managed kubernetes cluster these days)
-  - First i.e. primary kubernetes cluster will be used by wire-server and supporting services. Second kubernetes cluster aka secondary would be used for calling workload. Calling infrastructure is designed to operate in a Zero trust / DMZ environment, so that the networking requirements of calling can be separated from the sensitive data stored in your Wire backend i.e. primary k8s cluster. Read more about Wire architecture [here](../../understand/overview.md#backend-routing)
+  - First (primary) kubernetes cluster will be used by wire-server and supporting services. Second kubernetes cluster aka secondary would be used for calling workload. Calling infrastructure is designed to operate in a Zero trust / DMZ environment, so that the networking requirements of calling can be separated from the sensitive data stored in your Wire backend (primary) k8s cluster. Read more about Wire architecture [here](../../understand/overview.md#backend-routing)
 - minimum **23 virtual machines** for components outside kubernetes (cassandra, minio, elasticsearch, rabbitmq, postgresql)
 
 A recommended installation of Wire-server in any regular data centre, configured with high-availability will require the following virtual servers:
@@ -90,11 +90,11 @@ A recommended installation of Wire-server in any regular data centre, configured
 | Admin Host                                           | 1        | 1            | 4             | 90                |
 | Asset Host                                           | 1        | 1            | 4             | 100               |
 | Stateful Services Totals per physical node           | -        | 14 CPU Cores | 32 GB Memory  | 970 GB Disk Space |
-| Secondary Kubernetes (Calling Services)**            | 3        | 4            | 10            | 70                |
+| Secondary Kubernetes (Calling Services)           | 3        | 4            | 10            | 70                |
 | Single Server Totals                                 |  -       | 18 CPU Cores | 44 GB Memory  | 1060 GB Disk Space |
 
 > Notes:
-> - Secondary kubernetes hosts may need more resources to support heavy conference calling. For concurrent SFT users (SFT = Selective Forwarding Turn-server, ie. Conference calling), we recommend an extra 3% of CPU allocation, evenly distributed across the nodes (i.e. 1% more CPU per kubernetes server). So for every 100 users plan on adding one CPU core on each Kubernetes node. The SFT component runs inside of Kubernetes, and does not require a separate virtual machine for operation.  
+> - Secondary kubernetes hosts may need more resources to support heavy conference calling. For concurrent SFT users (SFT = «Selective Forwarding Turn» server, ie. Conference calling), we recommend an extra 3% of CPU allocation, evenly distributed across the nodes (i.e. 1% more CPU per kubernetes server). So for every 100 users plan on adding one CPU core on each Kubernetes node. The SFT component runs inside of Kubernetes, and does not require a separate virtual machine for operation.  
 > - Admin Host and Asset Host can run on any one of the 3 servers, but the respective server must allocate additional resources as indicated in the table above.  
 > - Wire requires the usage of CPUs built on the AMD64 architecture, and assumes these are running at the equivalent CPU/Memory performance of a recent Intel/AMD server system clocked at at least 2.5Ghz. For reference, please refer to https://cpubenchmark.net/high_end_cpus.html  
 > - Systems which are running under virtualization must be using Hardware Virtualization Support.  

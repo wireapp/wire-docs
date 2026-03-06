@@ -91,6 +91,109 @@ This is the command to list the nodes in the cluster:
 ssh <ip of elasticsearch node> curl 'http://localhost:9200/_cat/nodes?v&h=id,ip,name'
 ```
 
+## How to recreate ES index
+
+Charts for `elasticsearch-migrate` will be needed:
+
+```
+wget wget https://s3-eu-west-1.amazonaws.com/public.wire.com/charts-develop/elasticsearch-migrate-0.1.0.tgz
+```
+
+Create a `values.yaml` to configure it:
+
+```
+reindexType: "reindex"
+runReindex: false
+elasticsearch:
+  host: # your elasticsearch host here
+  index: directory_new
+cassandra:
+  host: # your cassandra host here
+image:
+  tag: 5.23.0 # or whichever version you are running atm, the current method has been tested with 5.23 and 5.25
+```
+
+This will create a new index called `directory_new` after it has been run.
+
+Run it with helm (mind the following cmd assumes some paths which might not be applicable in your installation):
+
+```
+helm upgrade --install elasticsearch-migrate charts/elasticsearch-migrate -f values/elasticsearch-migrate/values.yaml
+```
+
+Configure brig to use both the standard and the newly created index (usually in `values/wire-server/values.yaml`):
+
+```
+brig:
+  config:
+    elasticsearch:
+      host: elasticsearch-external
+      index: directory
+      additionalWriteIndex: directory_new
+```
+
+Apply it (same assumptions regarding paths as our standard deployment process):
+
+```
+helm upgrade --install wire-server charts/wire-server -f values/wire-server/values.yaml -f values/wire-server/values.yaml
+```
+
+To backfill the new index, edit `values.yaml` for `elasticsearch-migrate` charts and set `runReindex` to true:
+
+```
+reindexType: "reindex"
+runReindex: true
+elasticsearch:
+  host: # your elasticsearch host here
+  index: directory_new
+cassandra:
+  host: # your cassandra host here
+image:
+  tag: 5.23.0 # or whichever version you are running atm, the current method has been tested with 5.23 and 5.25
+```
+
+Apply it again:
+
+```
+helm upgrade --install elasticsearch-migrate charts/elasticsearch-migrate -f elasticsearch-migrate/values.yaml
+```
+
+This should start a kubernetes `Job` named `elasticsearch-migrate-data` that might take several hours to run, depending on the amount of data it needs to re-create.
+Galley pods might get OOMKilled during this, if that is the case, increase galley memory for requests and limits (we found in Wire Cloud prod 8Gi is sufficient):
+
+```
+galley:
+  resources:
+    requests:
+      memory: 8Gi
+    limits:
+      memory: 8Gi
+```
+
+Reapply:
+
+```
+helm upgrade --install wire-server charts/wire-server -f values/wire-server/values.yaml -f values/wire-server/values.yaml
+```
+
+And then restart `elasticsearch-migrate`.
+
+After the reindexing is complete, configure wire-server to read from the new index:
+
+```
+brig:
+  config:
+    elasticsearch:
+      index: directory_new
+elasticsearch-index:
+  elasticsearch:
+    index: directory_new
+```
+
+After verifying all is okay on the client side (check your Team Settings UI, if you can see your team user list). You can delete the old index in your ES cluster with:
+
+curl -X DELETE “localhost:9200/directory”
+
 ## Troubleshooting
 
 Description:

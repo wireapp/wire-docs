@@ -128,16 +128,16 @@ An **artifact** is a collection of binaries, Ansible playbooks, Bash scripts, He
 
 A typical production or WIAB Staging artifact bundle contains (folder names may vary slightly by release):
 
-- `ansible/`  – playbooks, roles, templates, and example inventories.
+- `containers-adminhost/wire-server-deploy-*.tar` - A container image containing ansible, helm, and other tools and their dependencies in versions verified to be compatible with the current wire stack. Published to quay.io/wire/wire-server-deploy as well, but shipped in the artifacts tarball for convenience.
+- `ansible/`  – These contain all the ansible playbooks the rest of the guide refers to, as well as an example inventory, which should be configured according to the environment this is installed into.
 - `bin/`  – helper scripts for Ansible runs, VM provisioning, secret generation, and Helm operations.
-- `binaries.tar`  – datastore binaries and tooling to support the Kubernetes cluster.
-- `charts/`  – Helm charts for Wire and supporting components.
-- `containers-adminhost/`  – helper container images with Ansible/Helm/kubectl tooling.
-- `containers-helm.tar`  – container images for Wire and supporting Helm charts.
-- `containers-system.tar`  – container images for Kubernetes and base system components.
+- `binaries.tar`  – This contains static binaries, both used during the kubespray-based kubernetes bootstrapping, as well as to provide some binaries that are installed during other ansible playbook runs.
+- `charts/`  – Helm charts for Wire and supporting components. We don't use an external helm repository, every helm chart dependency is resolved already.
+- `containers-helm.tar`  – These are the container images our charts (and charts we depend on) refer to. Also come as tarballs, and are seeded like the system containers.
+- `containers-system.tar`  – These are the container images needed to bootstrap kubernetes itself (currently using kubespray).
 - `dashboards/`  – Grafana dashboard definitions.
-- `debs-jammy.tar`  – deb packages for Ubuntu 22.04 (jammy) to support installation without public APT.
-- `values/`  – templated Helm values for on-prem deployments for a specific wire-server installation
+- `debs-jammy.tar`  – This acts as a self-contained dump of all packages required to install kubespray, as well as all other packages that are installed by ansible playbooks on nodes that don't run kubernetes. There's an ansible playbook copying these assets to an "assethost", starting a little webserver there serving it, and configuring all nodes to use it as a package repo.
+- `values/`  – Contains helm chart values and secrets. Needs to be tweaked to the environment.
 - `versions/`  – version metadata for images and binaries.
 
 The default Ansible inventories on the **master** branch of `wire-server-deploy` reference **pre-configured artifacts** for **WIAB Dev** and **WIAB Staging**. These bundles differ per solution type and are tied to a specific Wire backend version and its dependencies.

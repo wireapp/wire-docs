@@ -112,11 +112,19 @@ If you are using minio instead of AWS S3, you should also run:
 helm upgrade --install minio-external wire/minio-external -f values/minio-external/values.yaml --wait
 ```
 
-## Fake AWS (SNS/SQS) for websocket-only notifications (no FCM/APNS)
+## Fake AWS (SNS/SQS) for websocket-only notifications (no FCM/APNS) on Android devices
 
 AWS SNS is required to send notifications to clients. SQS is used to get notified of any devices that have discontinued using Wire (e.g. if you uninstall the app, the push notification token is removed, and the wire-server will get feedback for that using SQS).
 
-Note: *for using real SQS for real native push notifications instead, see also :ref:`pushsns`.*
+> When native notification channels such as **APNS** (Apple Push Notification Service) and **FCM** (Firebase Cloud Messaging) are disabled, notifications can only be delivered while the Wire application **is actively connected to the server via WebSockets.**
+>
+> This means that notifications will be received **only when the application is active or running with an open WebSocket connection.** If the application has been **stopped or the connection is not active**, there will be no active WebSocket between the device and the Wire server, and therefore **notifications cannot be delivered to the device**.
+>
+> For the **Wire Android application**, there is a specific setting called **“Keep connection to websocket on”** under **Network Settings**. When this setting is enabled, the application attempts **to maintain a persistent WebSocket connection with the server even when the app is in the background**, allowing notifications to be received.
+>
+> If this setting is **disabled**, the application may consume **less battery**, but notifications will **not be received while Wire is running in the background**. This setting applies to **all Wire accounts configured on the device**.
+>
+>  Check [Enable push notifications using the public appstore / playstore mobile Wire clients](infrastructure-configuration.md#enable-push-notifications-using-the-public-appstore-playstore-mobile-wire-clients) to enable FCM/APNS notifications.
 
 If you use the fake-aws version, clients will use the websocket method to receive notifications, which keeps connections to the servers open, draining battery.
 
@@ -129,16 +137,18 @@ To enable **websocket-only notifications** (no FCM/APNS), you must:
 ### What is the [fake-aws](https://github.com/wireapp/wire-server/tree/develop/charts/fake-aws) Helm chart?
 
 The fake-aws Helm chart deploys two internal services inside the Kubernetes cluster:
-- **fake-aws-sns** – a dummy, ephemeral SNS service based on LocalStack. LocalStack allows you to use the SNS APIs in your local environment to coordinate the delivery of messages to subscribing endpoints or clients.
-- **fake-aws-sqs** – a dummy, ephemeral SQS service that mocks the Amazon SQS API.
+- **fake-aws-sns** – a lightweight mock SNS service based on LocalStack. In websocket-only setups, SNS is not used for message delivery; it mainly exists so that the gundeck service has a compatible SNS endpoint available during initialization.
+- **fake-aws-sqs** – a dummy, ephemeral SQS service that mocks the Amazon SQS API. This service is actually used for inter-service communication, allowing components such as gundeck to process user events through an SQS-compatible interface without relying on AWS.
 
-Both services include lightweight custom initialization logic required for Wire’s internal service-to-service communication. They are not intended to replace real AWS in production with native push, but to provide compatible SNS/SQS APIs inside the cluster for websocket-only setups.
+Both services include minimal initialization logic required for Wire’s internal service communication. They are not intended to replace real AWS infrastructure in production environments that use native push notifications.
 
 ### Why are these Helm charts required when not using APNS/FCM?
 
 Even when APNS (Apple Push Notification Service) or FCM (Firebase Cloud Messaging) are not used, the `wire-server` component **gundeck** still depends on SQS APIs for handling user events.
 
-When running in websocket-only mode, `gundeck` must still interact with SNS and SQS endpoints. Therefore, these APIs need to be mocked privately inside the Kubernetes cluster. The `fake-aws` Helm chart provides these mocked services so that `gundeck` can function correctly without connecting to real AWS infrastructure.
+In websocket-only mode, `gundeck` continues to interact with an SQS-compatible queue for event processing. Therefore, an SQS endpoint must still exist within the Kubernetes cluster. The fake-aws Helm chart provides this mocked SQS service.
+
+The included SNS mock exists primarily so that gundeck can complete its startup initialization with a valid SNS endpoint, even though SNS itself is not used for message delivery in websocket-only setups.
 
 #### NOTE
 - To enable push notifications using the public App Store / Play Store mobile Wire clients, see [Enable push notifications using the public appstore / playstore mobile Wire clients](../install/infrastructure-configuration.md#enable-push-notifications-using-the-public-appstore-playstore-mobile-wire-clients).

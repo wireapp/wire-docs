@@ -32,7 +32,22 @@
   - [Troubleshooting](demo-wiab.md#troubleshooting)
   - [Cleaning/Uninstalling Wire-in-a-Box](demo-wiab.md#cleaninguninstalling-wire-in-a-box)
 
-## 5. Introduction
+## 5. How to install Wire in a box (Staging)
+- [WIAB Staging Deployment Guide](wiab-staging.md)
+  - [Introduction](wiab-staging.md#introduction)
+  - [Architecture overview](wiab-staging.md#architecture-overview)
+  - [Relation to production](wiab-staging.md#relation-to-production)
+  - [Requirements](wiab-staging.md#requirements)
+  - [VM Provisioning](wiab-staging.md#vm-provisioning)
+  - [Getting the Ansible playbooks](wiab-staging.md#getting-the-ansible-playbooks)
+  - [Secondary inventory for the VMs](wiab-staging.md#secondary-inventory-for-the-vms)
+  - [Kubernetes & Data Services Deployment](wiab-staging.md#kubernetes--data-services-deployment)
+  - [Helm Operations to install Wire services and supporting Helm charts](wiab-staging.md#helm-operations-to-install-wire-services-and-supporting-helm-charts)
+  - [Network Traffic Configuration](wiab-staging.md#network-traffic-configuration)
+    - [cert-manager behaviour in NAT / bridge environments](wiab-staging.md#cert-manager-behaviour-in-nat--bridge-environments)
+  - [Next steps and troubleshooting](wiab-staging.md#next-steps-and-troubleshooting)
+
+## 6. Introduction
 - [Introduction](prod-intro.md)
   - [What will be installed by following these parts?](prod-intro.md#what-will-be-installed-by-following-these-parts)
   - [What will not be installed?](prod-intro.md#what-will-not-be-installed)
@@ -40,21 +55,21 @@
   - [Getting support](prod-intro.md#getting-support)
   - [Next steps for high-available production installation](prod-intro.md#next-steps-for-high-available-production-installation)
 
-## 6. Installing Kubernetes and Databases
+## 7. Installing Kubernetes and Databases
 - [How to install kubernetes and databases](ansible-VMs.md)
   - [Introduction](ansible-VMs.md#introduction)
   - [Assumptions](ansible-VMs.md#assumptions)
   - [Preparing to run ansible](ansible-VMs.md#preparing-to-run-ansible)
   - [Running ansible to install software on your machines](ansible-VMs.md#running-ansible-to-install-software-on-your-machines)
 
-## 7. Configuring AWS Services
+## 8. Configuring AWS Services
 - [How to configure AWS services](aws-prod.md)
   - [Introduction](aws-prod.md#introduction)
   - [Using real AWS services for SNS](aws-prod.md#using-real-aws-services-for-sns)
   - [Using real AWS services for SES / SQS](aws-prod.md#using-real-aws-services-for-ses-sqs)
   - [Using real AWS services for S3](aws-prod.md#using-real-aws-services-for-s3)
 
-## 8. Installing Wire-Server using Helm
+## 9. Installing Wire-Server using Helm
 - [How to install wire-server using Helm](helm-prod.md)
   - [Introduction](helm-prod.md#introduction)
   - [Prerequisites](helm-prod.md#prerequisites)
@@ -70,7 +85,7 @@
   - [How to install wire-server itself](helm-prod.md#how-to-install-wire-server-itself)
   - [DNS records](helm-prod.md#dns-records)
 
-## 9. Multi-Ingress Configuration
+## 10. Multi-Ingress Configuration
 - [How to configure a Wire deployment for Multi-Ingress](multi-ingress.md)
   - [What is a Multi-ingress setup?](multi-ingress.md#what-is-a-multi-ingress-setup)
   - [How is multi-ingress useful?](multi-ingress.md#how-is-multi-ingress-useful)
@@ -82,7 +97,7 @@
   - [Calling](multi-ingress.md#calling)
   - [How to setup VPS for each domain between a client and wire-backend](multi-ingress.md#how-to-setup-vps-for-each-domain-between-a-client-and-wire-backend)
 
-## 10. Infrastructure Configuration
+## 11. Infrastructure Configuration
 - [Infrastructure configuration](infrastructure-configuration.md)
   - [Redirect some traffic through a http(s) proxy](infrastructure-configuration.md#redirect-some-traffic-through-a-http-s-proxy)
   - [Enable push notifications using the public appstore / playstore mobile Wire clients](infrastructure-configuration.md#enable-push-notifications-using-the-public-appstore-playstore-mobile-wire-clients)
@@ -104,11 +119,11 @@
   - [S3 Addressing Style](infrastructure-configuration.md#s3-addressing-style)
   - [I have a team larger than 500 users](infrastructure-configuration.md#i-have-a-team-larger-than-500-users)
 
-## 11. Monitoring Wire-Server
+## 12. Monitoring Wire-Server
 - [How to monitor wire-server](monitoring.md)
   - [Dashboards](monitoring.md#dashboards)
 
-## 12. Centralized Logs for Wire-Server
+## 13. Centralized Logs for Wire-Server
 - [How to see centralized logs for wire-server](logging.md)
   - [Introduction](logging.md#introduction)
   - [Status](logging.md#status)
@@ -120,28 +135,28 @@
   - [Nuking it all.](logging.md#nuking-it-all)
   - [Debugging](logging.md#debugging)
 
-## 13. Ingress-Controller (Getting Traffic In)
+## 14. Ingress-Controller (Getting Traffic In)
 - [Ingress-controller (getting traffic in)](ingress.md)
   - [Installing in a cloud-like environment](ingress.md#installing-in-a-cloud-like-environment)
   - [Installing on bare-metal without dynamic load balancer support](ingress.md#installing-on-bare-metal-without-dynamic-load-balancer-support)
 
-## 14. Web App Settings
+## 15. Web App Settings
 - [Web app settings](web-app-settings.md)
   - [Enforce desktop application only](web-app-settings.md#enforce-desktop-application-only)
   - [Enforce constant bit rate](web-app-settings.md#enforce-constant-bit-rate)
   - [Disable media plugins](web-app-settings.md#disable-media-plugins)
   - [Enable extra entropy (only on Windows)](web-app-settings.md#enable-extra-entropy-only-on-windows)
 
-## 15. Installing Conference Calling 2.0 (aka SFT)
+## 16. Installing Conference Calling 2.0 (aka SFT)
 - [Installing Conference Calling 2.0 (aka SFT)](sft.md)
   - [Background](sft.md#background)
 
-## 16. Installing Restund
+## 17. Installing Restund
 - [Installing Restund](restund.md)
   - [Background](restund.md#background)
   - [Installation instructions](restund.md#installation-instructions)
 
-## 17. Configure TLS Ciphers
+## 18. Configure TLS Ciphers
 - [Configure TLS ciphers](tls.md)
   - [Ingress Traffic (wire-server)](tls.md#ingress-traffic-wire-server)
   - [Egress Traffic (wire-server/federation)](tls.md#egress-traffic-wire-server-federation)
@@ -151,16 +166,16 @@
   - [Restund (ansible)](tls.md#restund-ansible)
   - [Restund (kubernetes)](tls.md#restund-kubernetes)
 
-## 18. Managing Authentication with Ansible
+## 19. Managing Authentication with Ansible
 - [Managing authentication with ansible](ansible-authentication.md)
   - [How to use password authentication when you ssh to a machine with ansible](ansible-authentication.md#how-to-use-password-authentication-when-you-ssh-to-a-machine-with-ansible)
   - [Configuring SSH keys](ansible-authentication.md#configuring-ssh-keys)
   - [Sudo without password](ansible-authentication.md#sudo-without-password)
 
-## 19. Using Tinc
+## 20. Using Tinc
 - [Using tinc](ansible-tinc.md)
 
-## 20. Troubleshooting During Installation
+## 21. Troubleshooting During Installation
 - [Troubleshooting during installation](troubleshooting.md)
   - [Problems with CSP on the web based applications (webapp, team-settings, account-pages)](troubleshooting.md#problems-with-csp-on-the-web-based-applications-webapp-team-settings-account-pages)
   - [Problems with ansible and python versions](troubleshooting.md#problems-with-ansible-and-python-versions)
@@ -172,7 +187,7 @@
   - [Diagnosing issues with installation steps.](troubleshooting.md#diagnosing-issues-with-installation-steps)
   - [Verifying correct deployment of DNS / DNS troubleshooting.](troubleshooting.md#verifying-correct-deployment-of-dns-dns-troubleshooting)
 
-## 21. Verifying Your Installation
+## 22. Verifying Your Installation
 - [Verifying your installation](post-install.md)
   - [NTP Checks](post-install.md#ntp-checks)
   - [Logs and Data Protection checks](post-install.md#logs-and-data-protection-checks)

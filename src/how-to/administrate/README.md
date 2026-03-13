@@ -106,4 +106,7 @@
 ## 13. Wire-utility
 
 - [Wire utility tool](wire-utility-tool.md)
+
+## 14. Postgresql(On prem)
+- [Setup postgresql cluster for on-prem environment](postgresql-cluster.md)
 <!-- TODO: .. include:: administration/redis.rst -->

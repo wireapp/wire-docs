@@ -101,6 +101,7 @@
 ## 12. Migration
 
 - [Migrate team features](migrate-team-features.md)
+- [Migrate to postgresql](migrate-to-postgresql.md)
 
 ## 13. Wire-utility
 

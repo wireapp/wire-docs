@@ -101,8 +101,12 @@
 ## 12. Migration
 
 - [Migrate team features](migrate-team-features.md)
+- [Migrate to postgresql](migrate-to-postgresql.md)
 
 ## 13. Wire-utility
 
 - [Wire utility tool](wire-utility-tool.md)
+
+## 14. Postgresql(On prem)
+- [Setup postgresql cluster for on-prem environment](postgresql-cluster.md)
 <!-- TODO: .. include:: administration/redis.rst -->

@@ -323,7 +323,7 @@ The playbook generates Helm values and secrets files under `{{ ansible_user_dir 
 
 ## Trying Things Out post installation
 
-At this point, with a bit of luck, everything should be working. If not, refer to the [Troubleshooting](#troubleshooting) section below.
+At this point, wire-server installation should be working. If not, refer to the [Troubleshooting](#troubleshooting) section below.
 
 Can you reach the nginz server?
 

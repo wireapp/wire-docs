@@ -2,7 +2,7 @@
 
 ## Introduction
 
-**Wire in a Box (WIAB) Staging** is a demo installation of Wire running on a single physical machine using KVM-based virtual machines. This setup replicates the multi-node production Wire architecture in a consolidated environment suitable for testing, evaluation, and learning about Wire's infrastructure—but **not for production use**.
+**Wire in a Box (WIAB) Staging** is a staging installation of Wire running on a single physical machine using KVM-based virtual machines. This setup replicates the multi-node production Wire architecture in a consolidated environment suitable for testing, evaluation, and learning about Wire's infrastructure—but **not for production use**.
 
 > **Important:** This is a sandbox environment. Data from a staging installation **cannot be migrated to production**. WIAB Staging is designed for experimentation, validation, and understanding Wire's deployment model.
 
@@ -27,7 +27,7 @@ Key differences from production:
 - Calling services run with limited resources (replicas=1).
 - [Calling services](../../understand/overview.md#calling) will share the same k8s cluster as Wire stateful services hence, all infrastructure will be DMZ (De-militarized zone).
 
-If you need a fully supported, highly-available, multi-datacenter deployment, use the **Production** path instead (see `ansible-VMs.md` and `helm-prod.md`).
+If you need a fully supported, highly-available, secure, multi-datacenter deployment, use the **Production** path instead (see `ansible-VMs.md` and `helm-prod.md`).
 
 ## Requirements
 
@@ -73,11 +73,11 @@ We would require 7 VMs as per the following details, you can choose to use your 
 
 - **kubenodes (kubenode1, kubenode2, kubenode3):** Run the Kubernetes cluster and host Wire backend services
 - **datanodes (datanode1, datanode2, datanode3):** Run distributed data services:
-  - Cassandra (distributed database)
-  - PostgreSQL (operational database)
-  - Elasticsearch (search engine)
-  - Minio (S3-compatible object storage)
-  - RabbitMQ (message broker)
+  - Cassandra
+  - PostgreSQL
+  - Elasticsearch
+  - Minio
+  - RabbitMQ
 - **assethost:** Hosts static assets like container images and debian binaries to be used by kubenodes and datanodes during installation.
 
 ## Getting the Ansible playbooks

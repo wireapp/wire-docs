@@ -106,16 +106,16 @@ reindexType: "reindex"
 runReindex: false
 elasticsearch:
   host: # your elasticsearch host here
-  index: directory_new
+  index: directory_new # name of new index
 cassandra:
   host: # your cassandra host here
 image:
   tag: 5.23.0 # or whichever version you are running atm, the current method has been tested with 5.23 and 5.25
 ```
 
-This will create a new index called `directory_new` after it has been run.
+This will create a new index called `directory_new` after it has been run. The name of a new index can be of your choosing, `directory_new` was selected as the previous default one was `directory`.
 
-Run it with helm (mind the following cmd assumes some paths which might not be applicable in your installation):
+Run it with helm (mind the following command assumes some paths which might not be applicable in your installation):
 
 ```
 helm upgrade --install elasticsearch-migrate charts/elasticsearch-migrate -f values/elasticsearch-migrate/values.yaml
@@ -128,8 +128,8 @@ brig:
   config:
     elasticsearch:
       host: elasticsearch-external
-      index: directory
-      additionalWriteIndex: directory_new
+      index: directory # current default name of index
+      additionalWriteIndex: directory_new # new index (should match the name set in previous step)
 ```
 
 Apply it (same assumptions regarding paths as our standard deployment process):

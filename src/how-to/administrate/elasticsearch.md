@@ -93,6 +93,85 @@ ssh <ip of elasticsearch node> curl 'http://localhost:9200/_cat/nodes?v&h=id,ip,
 
 ## How to recreate ES index
 
+### Native way (somewhat)
+
+Charts for `wire-server` will be needed, specifically, subchart `elasticsearch-index`.
+
+Create a new index with the new mappings by configuring a `values.yaml` file like so:
+
+```
+elasticsearch:
+  host: your-elasticsearch-host
+  index: new-index-name # default/current is directory, so pick something else
+image:
+  tag: 5.23.0 # minimal wire-server version this was tested with
+```
+
+Find your current `elasticsearch-index-create` job and delete it:
+
+```
+kubectl get pods | grep elasticsearch
+kubectl delete pod elasticsearch-index-create-xxxx
+```
+
+Then helm install the elasticsearch-index charts with the previously configured `values.yaml`:
+
+```
+helm install --upgrade elasticsearch-index charts/wire-server/charts/elasticsearch-index -f values.yaml
+```
+
+This will create a new index in ES cluster, to verify, log onto your ES cluster machine and run:
+
+```
+curl "localhost:9200/_cat/indices"
+```
+
+Depending on your ES setup, you might need to use https and provide credentials.
+In the output you should see your new index there.
+
+Next, configure `wire-server` values file to use both the new index and the old one (until we populate the new with old index data).
+
+```
+brig:
+  config:
+    elasticsearch:
+      index: directory # default wire-server value
+      additionalWriteIndex: new-index-name-here
+```
+
+Apply it:
+
+```
+kubectl upgrade --install wire-server charts/wire-server -f values/wire-server/values.yaml -f values/wire-server/secrets.yaml
+```
+
+Now use native reindex ES API in your ES cluster like so:
+
+```
+curl "localhost:9200/_reindex?wait_for_completion" -H 'Content-Type: application/json' -d '{"source": {"index": "directory"}, "dest": {"index": "new-index-name-here"}}'
+```
+
+Wait for the result. Now switch the main/additional indexes in `wire-server`.
+
+```
+brig:
+  config:
+    elasticsearch:
+      index: new-index-name-here
+      additionalWriteIndex: directory
+```
+
+Apply it:
+
+```
+kubectl upgrade --install wire-server charts/wire-server -f values/wire-server/values.yaml -f values/wire-server/secrets.yaml
+```
+
+Now log onto Team Settings and check your member list if it is correct.
+If it is, you can stop using `additionalWriteIndex` and delete the old one.
+
+### Helm way
+
 Charts for `elasticsearch-migrate` will be needed:
 
 ```
@@ -193,6 +272,13 @@ elasticsearch-index:
 After verifying all is okay on the client side (check your Team Settings UI, if you can see your team user list). You can delete the old index in your ES cluster with:
 
 curl -X DELETE “localhost:9200/directory”
+
+## Aliasing
+
+To alias an index, use the Native Elasticsearch API in your ES cluster like so:
+
+```
+curl -X POST "localhost:9200/_aliases" -H 'Content-Type: application/json' -d '{"actions": [{"add": {"index": "directory-name-here", "alias": "alias-for-that-directory"}}]}'
 
 ## Troubleshooting
 

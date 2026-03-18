@@ -96,7 +96,7 @@ ssh <ip of elasticsearch node> curl 'http://localhost:9200/_cat/nodes?v&h=id,ip,
 Charts for `elasticsearch-migrate` will be needed:
 
 ```
-wget wget https://s3-eu-west-1.amazonaws.com/public.wire.com/charts-develop/elasticsearch-migrate-0.1.0.tgz
+wget https://s3-eu-west-1.amazonaws.com/public.wire.com/charts-develop/elasticsearch-migrate-0.1.0.tgz
 ```
 
 Create a `values.yaml` to configure it:

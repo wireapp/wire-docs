@@ -4,9 +4,9 @@
 
 This guide provides detailed instructions for deploying Wire-in-a-Box (WIAB Dev) using Ansible on an Ubuntu 24.04 system. The deployment corresponds to **WIAB Dev (previously called *WIAB Demo*)** in the [planning overview](planning.md#wiab-dev-single-vm-wire-in-a-box). It is a single-node, Minikube-based environment intended for functional testing and evaluation only.
 
-This will install the wire-server components including the databases in a dev capacity. This setup is not recommended in production but will get you started. Dev version means no data persistence, as everything is stored in memory and will be lost if restarted. It does not require any external storage solutions to function. 
+This will install the wire-server components including the databases in a fashion ready for development or evaluation. This setup is not recommended for production use, but will get you started with learning the product. This configuration has NO data persistence, as everything is stored in memory and will be lost if restarted. It does not require any external storage solutions to function. 
 
-> Read the section [Cleaning/Uninstalling Wire-in-a-Box](#cleaninguninstalling-wire-in-a-box) to clean the installation post testing the dev solution.
+> Read the section [Cleaning/Uninstalling Wire-in-a-Box](#cleaninguninstalling-wire-in-a-box) to clean the installation once your testing or evaluation is complete.
 
 ### What will be installed?
 
@@ -36,7 +36,7 @@ This will install the wire-server components including the databases in a dev ca
 
 ![Wire in a Box Dev Architecture](img/architecture-wiab-dev.png)
 
-The deployment process is structured into multiple blocks within the Ansible playbooks, offering flexibility in execution. It is designed to configure a remote node, such as example.com (referred to as deploy_node), to install Wire with a custom domain, example.com (referred to as target_domain). These variables must be verified in the file `ansible/inventory/demo/host.yml` (as explained below) before running the pipeline.
+The deployment process is structured into multiple sections within the Ansible playbooks, offering flexibility in execution. It is designed to configure a remote node (referred to as deploy_node), to install Wire with a given domain(referred to as target_domain). These variables must be verified in the file `ansible/inventory/demo/host.yml` (as explained below) before running the pipeline.
 
 > **Note:** This guide and the shipped playbooks are highly tailored to make testing straightforward on a single VM that has a public IP address.  
 > Using a public IP simplifies obtaining HTTPS certificates (for example via cert-manager HTTP challenges) and making external call configurations during tests.  

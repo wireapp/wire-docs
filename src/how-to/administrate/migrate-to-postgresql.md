@@ -61,7 +61,7 @@ background-worker:   5 * 3 = 15
 total:                         615
 ```
 
-If you use this layout, set `max_connections` above `605` and keep additional headroom for:
+If you use this layout, set `max_connections` above `615` and keep additional headroom for:
 
 - PostgreSQL administrative sessions
 - Monitoring and maintenance jobs

@@ -125,7 +125,7 @@ kubectl delete pod elasticsearch-index-create-xxxx
 Then helm install the elasticsearch-index charts with the previously configured `values.yaml`:
 
 ```
-helm install --upgrade elasticsearch-index charts/wire-server/charts/elasticsearch-index -f values.yaml
+helm upgrade  --install elasticsearch-index charts/wire-server/charts/elasticsearch-index -f values.yaml
 ```
 
 This will create a new index ('new-index-name') in ES cluster.

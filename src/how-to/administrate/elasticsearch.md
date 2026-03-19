@@ -93,7 +93,13 @@ ssh <ip of elasticsearch node> curl 'http://localhost:9200/_cat/nodes?v&h=id,ip,
 
 ## How to recreate ES index
 
-### Native way (somewhat)
+If you are facing issues with an existing index due to conflicting mappings or seeing this error when updating `wire-server`:
+
+```
+400 - {"error":{"type":"illegal_argument_exception", "reason":"Mapper for [email_unvalidated] conflicts with existing mapping"}}
+```
+
+### Using existing charts, existing index and ES native API
 
 Charts for `wire-server` will be needed, specifically, subchart `elasticsearch-index`.
 
@@ -120,11 +126,14 @@ Then helm install the elasticsearch-index charts with the previously configured 
 helm install --upgrade elasticsearch-index charts/wire-server/charts/elasticsearch-index -f values.yaml
 ```
 
-This will create a new index in ES cluster, to verify, log onto your ES cluster machine and run:
+This will create a new index ('new-index-name') in ES cluster. 
+To verify, log onto your ES cluster machine and run:
 
 ```
 curl "localhost:9200/_cat/indices"
 ```
+
+Or `exec` into a `brig` pod, and curl it with your Elasticsearch service name from the `brig` pod.
 
 Depending on your ES setup, you might need to use https and provide credentials.
 In the output you should see your new index there.
@@ -170,7 +179,7 @@ kubectl upgrade --install wire-server charts/wire-server -f values/wire-server/v
 Now log onto Team Settings and check your member list if it is correct.
 If it is, you can stop using `additionalWriteIndex` and delete the old one.
 
-### Helm way
+### Using modified Helm charts to build it from scratch
 
 Charts for `elasticsearch-migrate` will be needed:
 

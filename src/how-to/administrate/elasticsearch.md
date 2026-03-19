@@ -179,9 +179,9 @@ kubectl upgrade --install wire-server charts/wire-server -f values/wire-server/v
 Now log onto Team Settings and check your member list if it is correct.
 If it is, you can stop using `additionalWriteIndex` and delete the old one.
 
-### Using modified Helm charts to build it from scratch
+### Using modified Helm charts (and building it from scratch)
 
-Charts for `elasticsearch-migrate` will be needed:
+The following process uses charts for `elasticsearch-migrate` (which is a modified `elasticsearch-index` subchart of wire-server). If you are building an index from scratch, you can ignore "dual" writing with `additionalWriteIndex`.
 
 ```
 wget https://s3-eu-west-1.amazonaws.com/public.wire.com/charts-develop/elasticsearch-migrate-0.1.0.tgz

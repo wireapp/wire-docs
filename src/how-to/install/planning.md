@@ -122,7 +122,20 @@ If you use a private datacenter (not a cloud provider), the easiest is to have t
 
 It’s up to you how you create these VMs - kvm on a bare metal machine, VM on a cloud provider, etc. Make sure they run ubuntu 22.04.
 
-### Artifact bundle and offline deployment
+In a typical production network layout:
+
+- Core messaging components and databases run in a protected cluster.
+- Calling services (coturn/SFTD) are deployed on nodes or a cluster placed in a **DMZ** or dedicated edge network, with:
+  - Public reachability on UDP 3478 and the configured media port range.
+  - Controlled, internal connectivity back to the messaging cluster for signalling.
+
+See [Network Ports and Connectivity](network-ports.md#production-network-architecture-messaging-vs-calling) for more details on how messaging and calling traffic are separated in production.
+
+For detailed production cluster installation steps, see:
+
+- **Guide:** [`Production Installation`](prod-intro.md)
+
+## Artifact bundle and offline deployment
 
 An **artifact** is a collection of binaries, Ansible playbooks, Bash scripts, Helm charts, and container images that has been verified to work together and is compatible for deploying a specific version of Wire Server. Having an artifact also allows deployments in **private or offline environments** without needing direct access to the public internet.
 
@@ -149,21 +162,3 @@ Relationship to each solution:
 - **WIAB Dev (Demo)**  – uses the bundle primarily for Helm charts and container images, but still requires internet access for system and tooling packages during installation (see the WIAB Dev guide).
 - **WIAB Staging**  – relies heavily on the artifact for offline deployment of Kubernetes components, data services, and Wire itself after the initial VM provisioning.
 - **Production**  – can use artifact bundles to perform fully offline or tightly controlled deployments where direct internet access from the cluster nodes is not allowed.
-
-When planning an offline or staging-style deployment, also consider:
-
-- How and where secrets are generated and stored (see [Secrets Overview](secrets-overview.md)).
-- Which environments will be allowed to reach external services (Let’s Encrypt, package mirrors, monitoring, etc.).
-
-### Next steps for high-available production installation
-
-Your next step will be [Installing kubernetes and databases on VMs with ansible](ansible-VMs.md#ansible-vms) and [Installing wire-server (production) components using Helm](helm-prod.md).
-
-In a typical production network layout:
-
-- Core messaging components and databases run in a protected cluster.
-- Calling services (coturn/SFTD) are deployed on nodes or a cluster placed in a **DMZ** or dedicated edge network, with:
-  - Public reachability on UDP 3478 and the configured media port range.
-  - Controlled, internal connectivity back to the messaging cluster for signalling.
-
-See [Network Ports and Connectivity](network-ports.md#production-network-architecture-messaging-vs-calling) for more details on how messaging and calling traffic are separated in production.

@@ -288,6 +288,7 @@ To alias an index, use the Native Elasticsearch API in your ES cluster like so:
 
 ```
 curl -X POST "localhost:9200/_aliases" -H 'Content-Type: application/json' -d '{"actions": [{"add": {"index": "directory-name-here", "alias": "alias-for-that-directory"}}]}'
+```
 
 ## Troubleshooting
 

@@ -1,6 +1,17 @@
 # Migrate Galley Data from Cassandra to PostgreSQL
 
-Use this procedure to migrate Galley-managed data from Cassandra to PostgreSQL. The migration path is available starting with `wire-server` `5.24`. This migration is only required if you need channel search and channel management from Team Settings on releases that support PostgreSQL-backed conversation data.
+Use this procedure to migrate Galley-managed data from Cassandra to PostgreSQL. This migration is only required if you need channel search and channel management from Team Settings on releases that support PostgreSQL-backed conversation data.
+
+The PostgreSQL tables used by these migrations, including `collaborators`, `schema_migrations`, `user_group`, and `user_group_member`, are defined in `postgres-schema.sql` and created during installation. They are empty by default until the matching migration is enabled and backfilled.
+
+## Feature Availability
+
+| Feature | Available from |
+| --- | --- |
+| `conversation` migration | `5.24.0` |
+| `conversationCodes` migration | `5.26.0` |
+| `teamFeatures` migration | `5.27.0` |
+
 
 This guide covers these data domains:
 
@@ -14,7 +25,7 @@ After the migration is complete, PostgreSQL becomes the authoritative store for 
 
 Make sure all of the following are true before changing any migration settings:
 
-- You are running `wire-server` `5.24` or later, with support for PostgreSQL-backed conversation data.
+- You are running a `wire-server` release that supports the domain you want to migrate. See [Feature Availability](#feature-availability).
 - PostgreSQL is deployed and reachable from the cluster. If you still need to set it up on your on-prem environment with our custom postgresql cluster, see [PostgreSQL High Availability Cluster - Quick Setup](postgresql-cluster.md).
 - `galley` and `background-worker` both have PostgreSQL host, database, user, and password configured.
 - The `cassandra-migrations` job for your Wire upgrade has already completed successfully.

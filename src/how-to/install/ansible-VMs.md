@@ -1,340 +1,382 @@
-<a id="ansible-vms"></a>
-
 # Installing kubernetes and databases on VMs with ansible
 
 ## Introduction
 
-In a production environment, some parts of the wire-server
-infrastructure (such as e.g. cassandra databases) are best configured
-outside kubernetes. Additionally, kubernetes can be rapidly set up with
-kubespray, via ansible. This section covers installing VMs with ansible.
+In a production environment, some parts of the wire-server infrastructure (such as e.g. Cassandra, PostgresSQL, RabbitMQ, Minio etc databases) are best configured outside kubernetes. Additionally, kubernetes can be rapidly set up with kubespray, via ansible. This section covers installing k8s services and databases with ansible.
 
-## Assumptions
+Please ensure that we have created VMs as per the [production architecture](planning.md#production-installation-persistent-data-high-availability), we would be using this information in the next step of creating inventory.
 
-- A bare-metal setup (no cloud provider)
-- All machines run ubuntu 18.04
-- All machines have static IP addresses
-- Time on all machines is being kept in sync
-- You have the following virtual machines:
+![Wire Server Architecture HA](img/architecture-prod-ha.png)
 
-| Name                                                 | Amount   | CPU Cores    | Memory (GB)   | Disk Space (GB)   |
-|------------------------------------------------------|----------|--------------|---------------|-------------------|
-| Cassandra                                            | 3        | 2            | 4             | 80                |
-| MinIO                                                | 3        | 1            | 2             | 400               |
-| ElasticSearch                                        | 3        | 1            | 2             | 60                |
-| postgresql                                           | 3        | 1            | 2             | 50                |
-| Kubernetes³                                          | 3        | 6¹           | 8             | 40                |
-| Restund⁴                                             | 2        | 1            | 2             | 10                |
-| **Per-Server Totals**                                | —        | 12 CPU Cores | 20 GB Memory  | 640 GB Disk Space |
-| Admin Host²                                          | 1        | 1            | 4             | 40                |
-| Asset Host²                                          | 1        | 1            | 4             | 100               |
-| **Per-Server Totals with<br/>Admin and Asset Hosts** | —        | 14 CPU Cores | 28 GB Memory  | 780 GB Disk Space |
-- ¹ Kubernetes hosts may need more resources to support SFT (Conference Calling). See “Conference Calling Hardware Requirements” below.
-- ² Admin and Asset Hosts can run on any one of the 3 servers, but that server must not allocate additional resources as indicated in the table above.
-- ³ Etcd is run inside of Kubernetes, hence no specific resource allocation
-- ⁴ Restund may be hosted on only 2 of the 3 servers, or all 3. Two nodes are enough to ensure high availability of Restund services
+## Downloading and extracting the artifact
 
-General Hardware Requirements
+Create a fresh workspace to download the artifacts:
 
-- Minimum 3 physical servers required
-- Wire has a minimum requirement for a total of 16 Ubuntu 18.04 virtual machines across the 3 servers (in accordance with the table above)
+```bash
+$ cd ...  # you pick a good location!
+```
+Obtain the latest airgap artifact for wire-server-deploy. Please contact us to get it.
 
-Conference Calling Hardware Requirements
+Extract the above listed artifacts into your workspace:
 
-- Kubernetes Hosts may need additional resources for SFT services. For concurrent SFT users (SFT = Selective Forwarding Turn-server, ie. Conference calling), we recommend an extra 3% of CPU allocation, evenly distributed across the nodes (i.e. 1% more CPU per kubernetes server). So for every 100 users plan on adding one CPU core on each Kubernetes node. The SFT component runs inside of Kubernetes, and does not require a separate virtual machine for operation.
+```bash
+$ wget https://s3-eu-west-1.amazonaws.com/public.wire.com/artifacts/wire-server-deploy-static-<HASH>.tgz
+$ tar xvzf wire-server-deploy-static-<HASH>.tgz
+```
+Where `<HASH>` above is the hash of your deployment artifact, given to you by Wire, or acquired by looking at the above build job.
+Extract this tarball.
 
-(It’s up to you how you create these machines - kvm on a bare metal
-machine, VM on a cloud provider, real physical machines, etc.)
+Make sure that the admin host can `ssh` into all the machines that you want to provision. Our [docker container](dependencies.md#making-tooling-available-in-your-environment) will use the `.ssh` folder and the `ssh-agent` of the user running the scripts.
 
-## Preparing to run ansible
+There's also a docker image containing the tooling inside this repo.
 
-<!-- TODO: section header unifications/change -->
+## Editing the inventory
 
-### Adding IPs to hosts.ini
+Copy [ansible/inventory/offline/99-static](https://github.com/wireapp/wire-server-deploy/blob/master/ansible/inventory/offline/99-static)  to `ansible/inventory/offline/hosts.ini`, and backup the original.
 
-Go to your checked-out wire-server-deploy/ansible folder:
-
-```default
-cd wire-server-deploy/ansible
+```bash
+cp ansible/inventory/offline/99-static ansible/inventory/offline/hosts.ini
+mv ansible/inventory/offline/99-static ansible/inventory/offline/orig.99-static
 ```
 
-Copy the example hosts file:
+Edit `ansible/inventory/offline/hosts.ini`. Here, you will describe the topology of your offline deploy as explained in the next section.
 
-```default
-cp hosts.example.ini hosts.ini
+Add one entry in the `all` section of this file for each machine you are managing via ansible. This will be all of the machines in your Wire cluster.
+
+If you are using username/password to log into and sudo up, in the `all:vars` section, add:
+```ini
+ansible_user=<USERNAME>
+ansible_password=<PASSWORD>
+ansible_become_pass=<PASSWORD>
 ```
 
-- Edit the hosts.ini, setting the permanent IPs of the hosts you are
-  setting up wire on.
-- On each of the lines declaring a database service node (
-  lines in the `[all]` section beginning with cassandra, elasticsearch,
-  or minio) replace the `ansible_host` values (`X.X.X.X`) with the
-  IPs of the nodes that you can connect to via SSH. these are the
-  ‘internal’ addresses of the machines, not what a client will be
-  connecting to.
-- On each of the lines declaring a kubernetes node (lines in the `[all]`
-  section starting with ‘kubenode’) replace the `ip` values
-  (`Y.Y.Y.Y`) with the IPs which you wish kubernetes to provide
-  services to clients on, and replace the `ansible_host` values
-  (`X.X.X.X`) with the IPs of the nodes that you can connect to via
-  SSH. If the IP you want to provide services on is the same IP that
-  you use to connect, remove the `ip=Y.Y.Y.Y` completely.
-- On each of the lines declaring an `etcd` node (lines in the `[all]`
-  section starting with etcd), use the same values as you used on the
-  coresponding kubenode lines in the prior step.
-- If you are deploying Restund for voice/video services then on each of the
-  lines declaring a `restund` node (lines in the `[all]` section
-  beginning with restund), replace the `ansible_host` values (`X.X.X.X`)
-  with the IPs of the nodes that you can connect to via SSH.
-- Edit the minio variables in `[minio:vars]` (`prefix`, `domain` and `deeplink_title`)
-  by replacing `example.com` with your own domain.
+> Note: Make sure that `assethost` is present in the inventory file with the correct `ansible_host` (and `ip` values if required)
 
-There are more settings in this file that we will set in later steps.
+### Updating Database Group Memberships
+It's recommended to update the lists of what nodes belong to which group, so ansible knows what to install on these nodes.
 
-<!-- TODO: remove this warning, and remove the hostname run from the cassandra playbook, or find another way to deal with it. -->
+These sections can be divided into individual host groups, reflecting the architecture of the target infrastructure. Examples with individual nodes for Elastic, MinIO, PostgreSQL, RabbitMQ and Cassandra are commented out below.
+```ini
+[elasticsearch]
+elasticsearch1
+elasticsearch2
+elasticsearch3
 
-#### WARNING
-Some of these playbooks mess with the hostnames of their targets. You
-MUST pick different hosts for playbooks that rename the host. If you
-e.g. attempt to run Cassandra and k8s on the same 3 machines, the
-hostnames will be overwritten by the second installation playbook,
-breaking the first.
+[minio]
+minio1
+minio2
+minio3
 
-At the least, we know that the cassandra, kubernetes and restund playbooks are
-guilty of hostname manipulation.
+[cassandra]
+cassandra1
+cassandra2
+cassandra3
 
-### Authentication
+[cassandra_seed]
+cassandraseed1
 
-#### NOTE
-If you use ssh *keys*, and the user you login with is either root or can elevate to root without a password, you don’t need to do anything further to use ansible. If, however, you use password authentication for ssh access, and/or your login user needs a password to become root, see [Manage ansible authentication settings](ansible-authentication.md#ansible-authentication).
+[postgresql]
+postgresql1
+postgresql2
+postgresql3
 
-## Running ansible to install software on your machines
+[postgresql_rw]
+postgresql1
 
-You can install kubernetes, cassandra, restund, etc in any order.
+[postgresql_ro]
+postgresql2
+postgresql3
 
-#### NOTE
-In case you only have a single network interface with public IPs but wish to protect inter-database communication, you may use the `tinc.yml` playbook to create a private network interface. In this case, ensure tinc is setup BEFORE running any other playbook. See [tinc](ansible-tinc.md#tinc)
+[rmq-cluster]
+rabbitmq1
+rabbitmq2
+rabbitmq3
 
-### Installing kubernetes
-
-Kubernetes is installed via ansible.
-
-To install kubernetes:
-
-From `wire-server-deploy/ansible`:
-
-```default
-ansible-playbook -i hosts.ini kubernetes.yml -vv
 ```
 
-When the playbook finishes correctly (which can take up to 20 minutes), you should have a folder `artifacts` containing a file `admin.conf`. Copy this file:
+### Configuring kubernetes and etcd
 
-```default
-mkdir -p ~/.kube
-cp artifacts/admin.conf ~/.kube/config
-```
-
-Make sure you can reach the server:
-
-```default
-kubectl version
-```
-
-should give output similar to this:
-
-```default
-Client Version: version.Info{Major:"1", Minor:"19", GitVersion:"v1.19.7", GitCommit:"1dd5338295409edcfff11505e7bb246f0d325d15", GitTreeState:"clean", BuildDate:"2021-01-13T13:23:52Z", GoVersion:"go1.15.5", Compiler:"gc", Platform:"linux/amd64"}
-Server Version: version.Info{Major:"1", Minor:"19", GitVersion:"v1.19.7", GitCommit:"1dd5338295409edcfff11505e7bb246f0d325d15", GitTreeState:"clean", BuildDate:"2021-01-13T13:15:20Z", GoVersion:"go1.15.5", Compiler:"gc", Platform:"linux/amd64"}
-```
-
-### Cassandra
-
-- If you would like to change the name of the cluster, in your
-  ‘hosts.ini’ file, in the `[cassandra:vars]` section, uncomment
-  the line that changes ‘cassandra_clustername’, and change default
-  to be the name you want the cluster to have.
-- If you want cassandra nodes to talk to each other on a specific
-  network interface, rather than the one you use to connect via SSH,
-  In your ‘hosts.ini’ file, in the `[all:vars]` section,
-  uncomment, and set ‘cassandra_network_interface’ to the name of
-  the ethernet interface you want cassandra nodes to talk to each
-  other on. For example:
+To run Kubernetes, at least three nodes are required, which need to be added to the `[kube-master]`, `[etcd]`  and `[kube-node]` groups of the inventory file. Any additional nodes should only be added to the `[kube-node]` group, for example:
 
 ```ini
+[kube-master]
+kubemaster1
+kubemaster2
+kubemaster3
+
+[etcd]
+etcd1 etcd_member_name=etcd1
+etcd2 etcd_member_name=etcd2
+etcd3 etcd_member_name=etcd3
+
+[kube-node]
+prodnode1
+prodnode2
+prodnode3
+prodnode4
+```
+
+### Setting up databases and kubernetes to talk over the correct (private) interface
+If you are deploying wire on servers that are expected to use one interface to talk to the public, and a separate interface to talk amongst themselves, you will need to add "ip=" declarations for the private interface of each node. for instance, if the first kubenode was expected to talk to the world on 192.168.122.21, but speak to other wire services (kubernetes, databases, etc) on 192.168.0.2, you should edit its entry like the following:
+```
+kubenode1 ansible_host=192.168.122.21 ip=192.168.0.2
+```
+Repeat this for all of the instances.
+
+### Setting up Database network interfaces and service specific variables:
+- Make sure that `cassandra_network_interface` is set to the name of the network interface on which the kubenodes should talk to cassandra and on which the cassandra nodes should communicate among each other. Run `ip addr` on one of the cassandra nodes to determine the network interface names, and which networks they correspond to. In Ubuntu 22.04 for example, interface names are predictable and individualized, eg. `enp41s0`.
+- Similarly `elasticsearch_network_interface`, `rabbitmq_network_interface`, `postgresql_network_interface` and `minio_network_interface` should be set to the network interface names to the service specific groups to ensure communicatation with kubernetes and among each other.
+- RabbitMQ requires the variable `rabbitmq_cluster_master` to configure one of the `rmq-cluster` nodes as master.
+- PostgreSQL requires following variables to define the database topology and database to create:
+```ini
+wire_dbname= wire-server
+repmgr_node_config = {"postgresql1": {"node_id": 1, "priority": 150, "role": "primary"}, "postgresql2": {"node_id": 2, "priority": 100, "role": "standby"}, "postgresql3": {"node_id": 3, "priority": 50, "role": "standby"}}
+```
+- In an INI inventory, the `repmgr_node_config` keys must match the PostgreSQL inventory hostnames.
+- To read more about specific PostgreSQL configuration, reat at [PostgreSQL High Availability Cluster - Quick Setup](../administrate/postgresql-cluster.md).
+
+### Example hosts.ini
+
+Here is an example hosts.ini file for the primary k8s cluster and database services.
+
+```ini
+[all:vars]
+ansible_user=<USERNAME>
+ansible_password=<PASSWORD>
+ansible_become_pass=<PASSWORD>
+
+[assethost]
+assethost ansible_host=10.1.1.1
+
+[cassandra]
+cassandra1 ansible_host=10.1.1.17
+cassandra2 ansible_host=10.1.1.2
+cassandra3 ansible_host=10.1.1.16
+
 [cassandra:vars]
-# cassandra_clustername: default
+cassandra_network_interface=enp7s0
 
-[all:vars]
-## set to True if using AWS
-is_aws_environment = False
-## Set the network interface name for cassandra to bind to if you have more than one network interface
-cassandra_network_interface = eth0
+[cassandra_seed]
+cassandra3
+
+[elasticsearch]
+elasticsearch1 ansible_host=10.1.1.9
+elasticsearch2 ansible_host=10.1.1.15
+elasticsearch3 ansible_host=10.1.1.19
+
+[elasticsearch:vars]
+elasticsearch_network_interface=enp7s0
+
+[elasticsearch_master:children]
+elasticsearch
+
+[kube-node]
+kubenode1 ansible_host=10.1.1.3 etcd_member_name=kubenode1 ip=10.1.1.3
+kubenode2 ansible_host=10.1.1.4 etcd_member_name=kubenode2 ip=10.1.1.4
+kubenode3 ansible_host=10.1.1.8 etcd_member_name=kubenode3 ip=10.1.1.8
+
+[kube-master:children]
+kube-node
+
+[etcd:children]
+kube-master
+
+[k8s-cluster:children]
+kube-master
+kube-node
+
+[k8s-cluster:vars]
+calico_mtu=1450
+calico_veth_mtu=1430
+
+[minio]
+minio1 ansible_host=10.1.1.6
+minio2 ansible_host=10.1.1.7
+minio3 ansible_host=10.1.1.20
+
+[minio:vars]
+minio_network_interface=enp7s0
+
+[postgresql]
+postgresql1 ansible_host=10.1.1.11
+postgresql2 ansible_host=10.1.1.5
+postgresql3 ansible_host=10.1.1.12
+
+[postgresql:vars]
+postgresql_network_interface=enp7s0
+wire_dbname=wire-server
+repmgr_node_config={"postgresql1":{"node_id":1,"priority":150,"role":"primary"},"postgresql2":{"node_id":2,"priority":100,"role":"standby"},"postgresql3":{"node_id":3,"priority":50,"role":"standby"}}
+
+[postgresql_ro]
+postgresql2
+postgresql3
+
+[postgresql_rw]
+postgresql1
+
+[rmq-cluster]
+rabbitmq1 ansible_host=10.1.1.18
+rabbitmq2 ansible_host=10.1.1.13
+rabbitmq3 ansible_host=10.1.1.14
+
+[rmq-cluster:vars]
+rabbitmq_cluster_master=rabbitmq3
+rabbitmq_network_interface=enp7s0
 ```
 
-(see
-[defaults/main.yml](https://github.com/wireapp/ansible-cassandra/blob/master/defaults/main.yml)
-for a full list of variables to change if necessary)
+## Generating random secrets for the services
 
-- Use ansible to deploy Cassandra:
+Minio and coturn services have shared secrets with the `wire-server` helm chart. Run the folllowing script that generates a fresh set of secrets for these components:
 
-```default
-ansible-playbook -i hosts.ini cassandra.yml -vv
+```bash
+./bin/offline-secrets.sh
 ```
 
-### ElasticSearch
+This should generate 3 secret files as:
+- `./ansible/inventory/group_vars/all/secrets.yaml` - This file will be used by ansible playbooks to configure service secrets.
+- `values/wire-server/secrets.yaml` - This contains the secrets for Wire services and share some secrets from coturn and database services.
+- `values/coturn/secrets.yaml` - This contains a secret for the coturn service.
 
-- In your ‘hosts.ini’ file, in the `[all:vars]` section, uncomment
-  and set ‘elasticsearch_network_interface’ to the name of the
-  interface you want elasticsearch nodes to talk to each other on.
-- If you are performing an offline install, or for some other reason
-  are using an APT mirror other than the default to retrieve
-  elasticsearch-oss packages from, you need to specify that mirror
-  by setting ‘es_apt_key’ and ‘es_apt_url’ in the `[all:vars]`
-  section of your hosts.ini file.
+Read more secrets management at [Secrets Overview for Wire Deployments](secrets-overview.md).
+
+## Deploying Kubernetes and stateful services
+
+In order to deploy all mentioned services, run:
+```
+d ./bin/offline-cluster.sh
+```
+
+This wrapper runs the following Ansible playbooks in order:
+
+1. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/setup-offline-sources.yml`: prepares the `assethost`, copies offline artifacts, and configures the other hosts to fetch packages and images from it.
+2. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/kubernetes.yml --tags bastion,bootstrap-os,preinstall,container-engine`: runs the first Kubernetes bootstrap phase so the container runtime is ready.
+3. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/seed-offline-containerd.yml`: loads the offline container images onto the nodes after the runtime is available.
+4. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/sync_time.yml -v`: installs and configures time synchronization before the rest of the cluster comes up.
+5. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/kubernetes.yml --skip-tags bootstrap-os,preinstall,container-engine,multus`: finishes the remaining Kubernetes deployment after the prerequisites are in place.
+6. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/cassandra.yml`: deploys the Cassandra nodes.
+7. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/elasticsearch.yml`: deploys Elasticsearch.
+8. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/minio.yml`: deploys MinIO.
+9. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/postgresql-deploy.yml`: deploys the PostgreSQL cluster.
+10. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/roles/rabbitmq-cluster/tasks/configure_dns.yml`: prepares DNS entries required by the RabbitMQ cluster.
+11. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/rabbitmq.yml`: deploys RabbitMQ.
+12. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/helm_external.yml`: writes the external service IPs into the Helm values files so the charts can target those services. This step is a [pre-requiste](#installing-helm-charts---prerequisites) before continuing with helm operations.
+
+The order matters: offline package sources and container runtime must be ready before image seeding, time sync should happen before the cluster stabilizes, Kubernetes must exist before the rest of the platform is wired around it, and `helm_external.yml` comes last because it depends on the database and messaging nodes already being deployed.
+
+If one step fails and you want to run the playbooks manually, use the `d` alias shown above and execute the specific command directly in the same order.
+
+### Ensuring Kubernetes is healthy.
+
+Ensure the k8s cluster comes up healthy. The container also contains `kubectl`, so check the node status:
+
+```bash
+d kubectl get nodes -owide
+```
+They should all report ready.
+
+### Troubleshooting external services
+Cassandra, Minio, PostgresSQL, RabbitMQ and Elasticsearch are running outside Kubernets cluster, make sure those machines have necessary ports open -
+
+On each of the machines running Cassandra, Minio, PostgresSQL, RabbitMQ and Elasticsearch, run the following commands to open the necessary ports, if needed:
+```bash
+sudo bash -c '
+set -eo pipefail;
+
+# cassandra
+ufw allow 9042/tcp;
+ufw allow 9160/tcp;
+ufw allow 7000/tcp;
+ufw allow 7199/tcp;
+
+# elasticsearch
+ufw allow 9300/tcp;
+ufw allow 9200/tcp;
+
+# minio
+ufw allow 9000/tcp;
+ufw allow 9092/tcp;
+
+#rabbitmq
+ufw allow 5671/tcp;
+ufw allow 5672/tcp;
+ufw allow 4369/tcp;
+ufw allow 25672/tcp;
+
+#postgresql
+ufw allow 5432/tcp;
+'
+```
+
+## Deploying secondary k8s cluster for calling services
+
+Now we are done with configuring primary k8s cluster and databases. Now, we would be installing a secondary k8s cluster.
+
+![Calling Architecture HA](img/architecture-calling-ha.png)
+
+### Marking kubenodes for calling servers (SFT/Coturn)
+
+The SFT & Coturn Calling server should be running on a kubernetes nodes that are connected to the public internet. If not all kubernetes nodes match these criteria, you should specifically label the nodes that do match these criteria, so that you're sure SFT is deployed correctly.
+
+By using a `node_label` you can make sure SFT & Coturn are only deployed on certain nodes like `call_kubenode1` & `call_kubenode2`:
 
 ```ini
 [all:vars]
-# default first interface on ubuntu on kvm:
-elasticsearch_network_interface=ens3
+ansible_user=<USERNAME>
+ansible_password=<PASSWORD>
+ansible_become_pass=<PASSWORD>
 
-## Set these in order to use an APT mirror other than the default.
-# es_apt_key = "https://<mymirror>/linux/ubuntu/gpg"
-# es_apt_url = "deb [trusted=yes] https://<mymirror>/apt bionic stable"
+[assethost]
+assethost ansible_host=10.1.1.1
+
+[kube-node]
+call_kubenode1  ansible_host=10.1.1.33 etcd_member_name=call_kubenode1 ip=10.1.1.33 node_labels="{'wire.com/role': 'sftd'}" node_annotations="{'wire.com/external-ip': 'a.b.c.d'}"
+call_kubenode2 ansible_host=10.1.1.34 etcd_member_name=call_kubenode2 ip=10.1.1.34 node_labels="{'wire.com/role': 'coturn'}""
+call_kubenode3 ansible_host=10.1.1.36 etcd_member_name=call_kubenode3 ip=10.1.1.36
+
+[kube-master:children]
+kube-node
+
+[etcd:children]
+kube-master
+
+[k8s-cluster:children]
+kube-master
+kube-node
+
+[k8s-cluster:vars]
+calico_mtu=1450
+calico_veth_mtu=1430
 ```
 
-- Use ansible and deploy ElasticSearch:
+If the node does not know its onw public IP (e.g. becuase it's behind NAT) then you should also set the `wire.com/external-ip` annotation to the public IP of the node.
 
-```default
-ansible-playbook -i hosts.ini elasticsearch.yml -vv
-```
-
-### Minio
-
-Minio is used for asset storage, in the case that you are not
-running on AWS infrastructure, or feel uncomfortable storing assets
-in S3 in encrypted form. If you are using S3 instead of Minio, skip
-this step.
-
-- In your ‘hosts.ini’ file, in the `[all:vars]` section, make sure
-  you set the ‘minio_network_interface’ to the name of the interface
-  you want minio nodes to talk to each other on. The default from the
-  playbook is not going to be correct for your machine.
-
-```ini
-[all:vars]
-# Default first interface on ubuntu on kvm:
-minio_network_interface=ens3
-```
-
-#### Configure Access Key and Secret Key for MinIO and Cargohold Service
-
-**Purpose**: Configure a secure, least-privilege access method for the Cargohold service to utilize the MinIO object storage.
-
-**Security Model**:
-- **MinIO root credentials**: Used only for administrative purposes
-- **Cargohold IAM user**: A least privileged user with a policy that only gives access to the `assets` bucket
-- **Service account**: Separate access/secret key pair for Cargohold service operations
-
-## Setup Process
-
-1. **Generate credentials**: Run `./bin/offline-secrets.sh` from the wire-server-deploy directory.
-
-   This generates a `secrets.yaml` file in `ansible/inventory/offline/group_vars/all/` with:
-   ```yaml
-   minio_access_key: "<MINIO ROOT ACCESS KEY>"
-   minio_secret_key: "<MINIO ROOT SECRET KEY>"
-   minio_cargohold_access_key: "<MINIO CARGOHOLD ACCESS KEY>"
-   minio_cargohold_secret_key: "<MINIO CARGOHOLD SECRET KEY>"
-   ```
-
-2. **For existing Wire systems** - Backup and regenerate secrets:
-   ```bash
-   # Backup current secrets file
-   cp ansible/inventory/offline/group_vars/all/secrets.yaml \
-      ansible/inventory/offline/group_vars/all/secrets.yaml.backup
-
-   # Remove current secrets and generate new ones
-   rm ansible/inventory/offline/group_vars/all/secrets.yaml
-   ./bin/offline-secrets.sh
-   ```
-
-3. **Migration step**: Replace the newly generated `minio_access_key` and `minio_secret_key` with the values from `secrets.yaml.backup` to maintain compatibility.
-
-4. **Deploy MinIO configuration**:
-   ```bash
-   ansible-playbook -i hosts.ini minio.yml -vv
-   ```
-
-5. **Update Cargohold service configuration** in `values/wire-server/secrets.yaml`:
-   ```yaml
-   cargohold:
-     secrets:
-       # Replace with values from ansible/inventory/offline/group_vars/all/secrets.yaml
-       awsKeyId: dummykey     # replace with minio_cargohold_access_key
-       awsSecretKey: dummysecret # replace with minio_cargohold_secret_key
-   ```
-
-6. **Deploy updated Wire Server**:
-   ```bash
-   helm upgrade --install wire-server ./charts/wire-server \
-     --timeout=15m0s \
-     --values ./values/wire-server/values.yaml \
-     --values ./values/wire-server/secrets.yaml
-   ```
-
-This configures the Cargohold service with its IAM user credentials to securely manage the `assets` bucket.
-
-### Postgresql cluster
-
-To set up a high-availability PostgreSQL cluster for Wire Server, refer to the [PostgreSQL High Availability Cluster - Quick Setup](../administrate/postgresql-cluster.md) guide. This will walk you through deploying a three-node PostgreSQL cluster with automatic failover capabilities using repmgr.
-
-The setup includes:
-- Three PostgreSQL nodes (one primary, two replicas)
-- Automatic failover and split-brain protection
-- Integration with Kubernetes via the postgres-endpoint-manager
-
-After deploying the PostgreSQL cluster, make sure to install the `postgresql-external` helm chart as described in the guide to integrate it with your Wire Server deployment.
-
-### Restund
-
-For instructions on how to install Restund, see [this page](restund.md#install-restund).
-
-### IMPORTANT checks
+## Post Installation checks
 
 > After running the above playbooks, it is important to ensure that everything is setup correctly. Please have a look at the post install checks in the section [Verifying your installation](post-install.md#checks)
-```default
+```bash
 ansible-playbook -i hosts.ini cassandra-verify-ntp.yml -vv
 ```
 
 ### Installing helm charts - prerequisites
 
-The `helm_external.yml` playbook is used to write or update the IPs of the
-databases servers in the `values/<database>-external/values.yaml` files, and
-thus make them available for helm and the `<database>-external` charts (e.g.
-`cassandra-external`, `elasticsearch-external`, etc).
+The `helm_external.yml` playbook is used to write or update the IPs of the databases servers in the `values/<database>-external/values.yaml` files, and thus make them available for helm and the `<database>-external` charts (e.g. `cassandra-external`, `elasticsearch-external`, `minio-external`, `postgresql-external` etc).
 
-Due to limitations in the playbook, make sure that you have defined the
-network interfaces for each of the database services in your hosts.ini,
-even if they are running on the same interface that you connect to via SSH.
-In your hosts.ini under `[all:vars]`:
+Due to limitations in the playbook, make sure that you have defined the network interfaces for each of the database services in your hosts.ini, even if they are running on the same interface that you connect to via SSH.
 
-```ini
-[all:vars]
-minio_network_interface = ...
-cassandra_network_interface = ...
-elasticsearch_network_interface = ...
-# if you're using redis external...
-redis_network_interface = ...
-```
+> **Note:** If you have already ran the script [/bin/offline-cluster.sh](#deploying-kubernetes-and-stateful-services) then this playbook might have already been ran for you. You can confirm this by looking into the database specific helm values, if they have entries for each database service:
+> - `values/cassandra-external/values.yaml`
+> - `values/elasticsearch-external/values.yaml`
+> - `values/minio-external/values.yaml`
+> - `values/postgresql-external/values.yaml`
+> - `values/rabbitmq-external/values.yaml`
 
 Now run the helm_external.yml playbook, to populate network values for helm:
 
-```default
-ansible-playbook -i hosts.ini -vv --diff helm_external.yml
+```bash
+d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/helm_external.yml
 ```
+You can now can continue with the installation of helm charts.
 
-You can now can install the helm charts.
-
-#### Next steps for high-available production installation
+## Next steps for high-available production installation
 
 Your next step will be [Installing wire-server (production) components using Helm](helm-prod.md#helm-prod)

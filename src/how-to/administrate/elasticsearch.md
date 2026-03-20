@@ -99,7 +99,9 @@ If you are facing issues with an existing index due to conflicting mappings or s
 400 - {"error":{"type":"illegal_argument_exception", "reason":"Mapper for [email_unvalidated] conflicts with existing mapping"}}
 ```
 
-### Using existing charts, existing index and ES native API
+### Using existing charts, existing index and ES native API with a multi-step approach.
+
+This is the safest approach if you don't want any downtime of your user search result in the teams.
 
 Charts for `wire-server` will be needed, specifically, subchart `elasticsearch-index`.
 
@@ -123,10 +125,10 @@ kubectl delete pod elasticsearch-index-create-xxxx
 Then helm install the elasticsearch-index charts with the previously configured `values.yaml`:
 
 ```
-helm install --upgrade elasticsearch-index charts/wire-server/charts/elasticsearch-index -f values.yaml
+helm upgrade  --install elasticsearch-index charts/wire-server/charts/elasticsearch-index -f values.yaml
 ```
 
-This will create a new index ('new-index-name') in ES cluster. 
+This will create a new index ('new-index-name') in ES cluster.
 To verify, log onto your ES cluster machine and run:
 
 ```
@@ -178,6 +180,66 @@ kubectl upgrade --install wire-server charts/wire-server -f values/wire-server/v
 
 Now log onto Team Settings and check your member list if it is correct.
 If it is, you can stop using `additionalWriteIndex` and delete the old one.
+
+
+### ### Re-creating the Elasticsearch index using existing charts with simple steps
+
+> **Downtime warning:** User search will return empty results between Step 1 and Step 2
+> (index deletion until migrate-data completes). With ~1000 users this window is
+> very short (seconds to a minute). Inform your users of the brief search downtime.
+
+**Step 1: Delete the corrupted indices**
+
+*Using wire-utility sts pod for operations*
+
+`wire-utility-0` is a StatefulSet pod created by the `wire-utility` chart to facilitate operational tasks. For setup and usage details, see [Wire Utility Tool](wire-utility-tool.md).
+
+```bash
+kubectl exec -it wire-utility-0 -- bash
+
+# use brig pod when wire-utility is not in your environment
+kubectl exec -it <brig-pod> -- bash
+
+# Deletes the corrupted index — user data is safe in Cassandra
+curl -XDELETE http://<elasticsearch-host>:9200/directory
+
+# Resets migration version counter so migrate-data runs again
+curl -XDELETE http://<elasticsearch-host>:9200/wire_brig_migrations
+```
+
+
+**Step 2: Redeploy elasticsearch-index chart**
+
+This will:
+
+Create a fresh directory index with the correct mapping.
+Refill it with all users from Cassandra via migrate-data
+
+```bash
+helm upgrade --install elasticsearch-index charts/wire-server/charts/elasticsearch-index \
+  --set elasticsearch.host=<elasticsearch-host> \
+  --set cassandra.host=<cassandra-host>
+```
+Monitor progress:
+
+# Watch create + update-mapping (pre-hook)
+`kubectl logs -f $(kubectl get pods | grep elasticsearch-index-create | awk '{print $1}')`
+
+# Watch migrate-data (post-hook)
+`kubectl logs -f $(kubectl get pods | grep brig-index-migrate-data | awk '{print $1}')`
+
+Step 3: Verify
+
+*From the brig pod*
+
+# Both directory and wire_brig_migrations index should be available
+`curl http://<elasticsearch-host>:9200/_cat/indices`
+# Doc count should match your user count
+`curl http://<elasticsearch-host>:9200/directory/_count`
+
+*From wire-utility-0*
+
+Just run  `es indices` or `es all` command which will provide all the Elasticsearch node related info.
 
 ### Using modified Helm charts (and building it from scratch)
 

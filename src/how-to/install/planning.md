@@ -1,58 +1,71 @@
 # Implementation plan
 
-There are two types of implementation: demo and production.
 
-## Demo installation (trying functionality out)
+There are three types of installation targets for Wire: **WIAB Dev (formerly WIAB Demo)**, **WIAB Staging**, and **Production**. This page helps you choose the right one and points you to the corresponding guides.
 
-Please note that there is no way to migrate data from a demo
-installation to a production installation - it is really meant as a way
-to try things out.
+## Deployment options at a glance
 
-Please note your data will be in-memory only and may disappear at any given moment!
+| Option          | Best for                                  | Scale & Topology                          | Persistent Data           | Typical Audience                     |
+|-----------------|-------------------------------------------|-------------------------------------------|------------------------|--------------------------------------|
+| WIAB (Wire-in-a-Box) Dev        | Quick functional demo on a single VM     | 1 Ubuntu 24.04 VM with Minikube (without hypervisor)          | No (ephemeral data)    | Developers, PoC   |
+| WIAB (Wire-in-a-Box) Staging    | Realistic multi-VM, non-production setup | ~7 Ubuntu 22.04 VMs on 1 physical host    | Yes (multi-service)    | Infra/ops testing, training     |
+| Production      | High-availability, long-term deployment  | Separate DB VMs + 2 Kubernetes clusters distributed in 3 Availability zones    | Yes (HA,failure domains etc)| Production operations                |
 
-### What you need:
+- **WIAB Dev** is a self-contained, single-node demo environment (previously called *WIAB Demo*). All core services run on one VM, using in-cluster, ephemeral datastores. It is ideal for trying out functionality but **not suitable for production**.
+- **WIAB Staging** reproduces the production architecture using a fixed set of virtual machines hosted on a single physical box. It is persistent but still a single failure domain and therefore **not production-grade**.
+- **Production** uses dedicated virtual machines for databases and a Kubernetes cluster for Wire services. It is designed for **durability, scale, and high availability**.
 
-- **System**: Ubuntu 24.04 (Focal) on amd64 architecture with following requirements:
-    - CPU cores >= 16
-    - Memory > 16 GiB
-    - Disk > 200 GiB
-- **DNS Records**: 
-    - a way to create DNS records for your domain name (e.g. wire.example.com) 
-    - Find a detailed explanation at [How to set up DNS records](demo-wiab.md#dns-requirements)
-- **SSL/TLS certificates**:
-    - a way to create SSL/TLS certificates for your domain name (to allow connecting via https://)
-    - To ease out the process of managing certs, we recommend using [Let\'s Encrypt](https://letsencrypt.org/getting-started/) &
-[cert-manager](https://cert-manager.io/docs/tutorials/acme/http-validation/)
-- **Network**: No interference from UFW or other system specific firewalls, and IP forwarding enabled between network cards. Public internet access to download Wire artifacts and Ubuntu packages.
-- **Packages**: Ansible and unzip (or git) on the localhost (any machine you have access to)
-    - Ansible version: [core 2.16.3] or compatible
-    - Note: The deployment will automatically install additional required packages on the deploy_node (see [Package Installation](#4-package-installation) section). You can skip this step using `--skip-tags install_pkgs` if these packages are already installed
-- **Permissions**: Sudo access required for installation on remote_node
-- **Ansible Playbooks**: 
-  - The `ansible` directory from [wire-server-deploy repository](https://github.com/wireapp/wire-server-deploy)
-  - Obtain it using **either** method:
-    - **Download as ZIP:** [wire-server-deploy/archive/master.zip](https://github.com/wireapp/wire-server-deploy/archive/refs/heads/master.zip) (requires unzip)
-    - **Clone with Git:** `git clone https://github.com/wireapp/wire-server-deploy.git` (requires git)
-- **Network Access Requirements**:
+> **Important:** There is no supported migration path from WIAB Dev or WIAB Staging to Production. Treat them as disposable environments.
 
-| Protocol | Port(s)     | Purpose                                    |
-|----------|-------------|--------------------------------------------|
-| TCP      | 22          | SSH access (for remote management)         |
-| TCP      | 80          | HTTP (certificate renewal)                 |
-| TCP      | 443         | HTTPS (primary Wire access)                |
-| TCP      | 3478        | Alternative STUN/TURN traffic              |
-| UDP      | 3478        | STUN/TURN for voice/video calls            |
-| UDP      | 32768-65535 | Voice/video calling traffic (Coturn/SFTD)  |
+## WIAB Dev (single-VM Wire-in-a-Box)
 
-- Note: If outbound traffic is restricted, [Note on port ranges](https://docs.wire.com/latest/understand/notes/port-ranges.html) should be followed.
+**Use this if:**
 
+- You want to see Wire running quickly.
+- You are evaluating features or doing development integration.
+- You are happy to lose the data when you tear down the VM or during restart.
 
-### Next steps for demo installation
+**Key characteristics:**
 
-When the above [requirements](#what-you-need) are achieved, continue with  the ansible playbook instructions for the [demo wire in a box](demo-wiab.md) installation. 
+- Single Ubuntu 24.04 VM (No hypervisor support required)
+- Minikube-based Kubernetes cluster runs on the same node.
+- Ephemeral datastores (no external DBs or storage appliances required).
+- Includes webapp, account pages, team settings page, demo SMTP, coturn, and a cert-manager with Let’s Encrypt (unless you choose bring-your-own certificates).
+- Intended for roughly **15-50 users** in small test teams; this is guidance only, not a performance benchmark.
 
+![Wire in a Box Dev Architecture](img/architecture-wiab-dev.png)
 
-<a id="planning-prod"></a>
+For full demo architecture, requirements, deployment steps, and cleanup instructions, see:
+
+- **Guide:** [`WIAB Dev (Demo Wire-in-a-Box) Deployment`](wiab-dev.md#wiab-dev-demo-wire-in-a-box-deployment-guide)
+
+> **Internet requirement for WIAB Dev:** The WIAB Dev playbook assumes that the deploy_node has outbound internet connectivity during installation. Tooling such as Minikube, Docker, kubectl, Python packages, and system packages are downloaded from public repositories and are **not shipped inside the artifact bundle**. After installation, you can lock down outbound access more aggressively, but Let’s Encrypt certificate renewal (if used) will still require periodic internet access.
+
+## WIAB Staging (multi-VM KVM-based test cluster)
+
+**Use this if:**
+
+- You want to rehearse a production-style deployment or upgrade process.
+- You want realistic separation of roles (kubernetes vs data services vs assets) on multiple VMs.
+- You want a staging Wire server with stateful services.
+
+**Key characteristics:**
+
+- One physical machine with hardware virtualization support (KVM).
+- Typically **7 VMs** (Ubuntu 22.04) to simulate a production layout:
+  - `assethost`  – asset and artifact host.
+  - `kubenode1–3`  – Kubernetes control-plane and worker nodes running Wire services and calling.
+  - `datanode1–3`  – data services such as Cassandra, RabbitMQ, PostgreSQL, MinIO and Elasticsearch.
+- Wire is deployed using an offline artifact bundle (`wire-server-deploy`), Ansible, and Helm.
+- Suitable for up to **100 users** with teams smaller than **100 users per team**; capacity here is for staging realism, not for production sizing.
+
+![Wire in a Box Staging Architecture](img/architecture-wiab-stag.png)
+
+> **Internet requirement for WIAB Staging provisioning:** If you use the WIAB Staging provisioning Ansible playbook to create the VMs on your physical host, that provisioning step will require internet access to download the supporting tools and images it needs (for example VM cloud images and KVM/libvirt tooling). Once the VMs and the Wire artifact are in place, subsequent deployment stages can run with limited or no internet, depending on your TLS/certificate setup.
+
+For detailed requirements, VM sizing, playbook usage, and follow-up cluster deployment steps, see:
+
+- **Guide:** [`WIAB Staging Deployment`](wiab-staging.md)
 
 ## Production installation (persistent data, high-availability)
 
@@ -60,54 +73,92 @@ What you need:
 
 - a way to create **DNS records** for your domain name (e.g. `wire.example.com`)
 - a way to create **SSL/TLS certificates** for your domain name (to allow connecting via `https://wire.example.com`)
-- A **kubernetes cluster with at least 3 worker nodes and at least 3 etcd nodes** (some cloud providers offer a managed kubernetes cluster these days)
-- minimum **17 virtual machines** for components outside kubernetes (cassandra, minio, elasticsearch, redis, restund)
+- two **kubernetes clusters with at least 3 worker nodes each** (some cloud providers offer a managed kubernetes cluster these days)
+  - First (primary) kubernetes cluster will be used by wire-server and supporting services. Second kubernetes cluster aka secondary would be used for calling workload. Calling infrastructure is designed to operate in a Zero trust / DMZ environment, so that the networking requirements of calling can be separated from the sensitive data stored in your Wire backend (primary) k8s cluster. Read more about Wire architecture [here](../../understand/overview.md#backend-routing)
+- minimum **15 virtual machines** for components outside kubernetes (Cassandra, MinIO, Elasticsearch, RabbitMQ, PostgreSQL)
 
-A recommended installation of Wire-server in any regular data centre,
-configured with high-availability will require the following virtual
-servers:
+A recommended installation of Wire-server in any regular data centre, configured with high-availability will require the following virtual servers:
 
-| Name                                                 | Amount   | CPU Cores    | Memory (GB)   | Disk Space (GB)   |
+| Name                                                 | VM Count | CPU Cores per VM | Memory (GB) per VM | Disk Space (GB) per VM|
 |------------------------------------------------------|----------|--------------|---------------|-------------------|
-| Cassandra                                            | 3        | 2            | 4             | 80                |
+| Cassandra                                            | 3        | 1            | 2             | 80                |
+| postgreSQL                                           | 3        | 1            | 2             | 80                |
 | MinIO                                                | 3        | 1            | 2             | 400               |
 | ElasticSearch                                        | 3        | 1            | 2             | 60                |
-| Kubernetes³                                          | 3        | 6¹           | 8             | 40                |
-| Restund⁴                                             | 2        | 1            | 2             | 10                |
-| **Per-Server Totals**                                | —        | 11 CPU Cores | 18 GB Memory  | 590 GB Disk Space |
-| Admin Host²                                          | 1        | 1            | 4             | 40                |
-| Asset Host²                                          | 1        | 1            | 4             | 100               |
-| **Per-Server Totals with<br/>Admin and Asset Hosts** | —        | 13 CPU Cores | 26 GB Memory  | 730 GB Disk Space |
-- ¹ Kubernetes hosts may need more ressources to support SFT (Conference Calling). See “Conference Calling Hardware Requirements” below.
-- ² Admin and Asset Hosts can run on any one of the 3 servers, but that server must not allocate additional resources as indicated in the table above.
-- ³ Etcd is run inside of Kubernetes, hence no specific resource allocation
-- ⁴ Restund may be hosted on only 2 of the 3 servers, or all 3. Two nodes are enough to ensure high availability of Restund services
+| RabbitMQ                                             | 3        | 2            | 4             | 80                |
+| Primary Kubernetes (k8s control/worker node)         | 3        | 6            | 8             | 80                |
+| Admin Host                                           | 1        | 1            | 4             | 90                |
+| Asset Host                                           | 1        | 1            | 4             | 100               |
+| Stateful Services Totals per physical node           | -        | 14 CPU Cores | 28 GB Memory  | 970 GB Disk Space |
+| Secondary Kubernetes (Calling Services)           | 3        | 4            | 10            | 70                |
+| Single Server Totals                                 |  -       | 18 CPU Cores | 38 GB Memory  | 1040 GB Disk Space |
 
-General Hardware Requirements
+> Notes:
+> - Secondary kubernetes hosts may need more resources to support heavy conference calling. For concurrent SFT users (SFT = «Selective Forwarding Turn» server, ie. Conference calling), we recommend an extra 3% of CPU allocation, evenly distributed across the nodes (i.e. 1% more CPU per kubernetes server). So for every 100 users plan on adding one CPU core on each Kubernetes node. The SFT component runs inside of Kubernetes, and does not require a separate virtual machine for operation.  
+> - Admin Host and Asset Host can run on any one of the 3 servers, but the respective server must allocate additional resources as indicated in the table above.  
+> - Wire requires the usage of CPUs built on the AMD64 architecture, and assumes these are running at the equivalent CPU/Memory performance of a recent Intel/AMD server system clocked at at least 2.5 Ghz. For reference, please refer to https://cpubenchmark.net/high_end_cpus.html  
+> - Systems running inside a virtualized environment must have nested hardware virtualization enabled, with support for a hardware hypervisor such as KVM (or an equivalent).   
+> - Each Virtual core should correspond to a reservation of one physical core, not a thread.  
+> - Note that some performance will be lost with mitigations for Spectre, Meltdown, and other security patching, so plan reserve capacity as appropriate.  
+> - Disk space requirements are referring to formatted, local disk space. The use of network file storage solutions may be incompatible with Wire deployment and operation.  
+> - Disk space must be SSD or NVMe. We recommend against using spinning disks. 
 
-- Minimum 3 physical servers required
-- Wire has a minimum requirement for a total of 16 Ubuntu 18.04 virtual machines across the 3 servers (in accordance with the table above)
+General Hardware Requirements: 
+- Minimum 3 physical servers required in 3 availability zones.
+- Wire has a minimum requirement for a total of 23 Ubuntu 22.04 virtual machines across the 3 servers (in accordance with the table above)
 
-Conference Calling Hardware Requirements
+### Capacity and scalability
 
-- Kubernetes Hosts may need additional resources for SFT services. For concurrent SFT users (SFT = Selective Forwarding Turn-server, ie. Conference calling), we recommend an extra 3% of CPU allocation, evenly distributed across the nodes (i.e. 1% more CPU per kubernetes server). So for every 100 users plan on adding one CPU core on each Kubernetes node. The SFT component runs inside of Kubernetes, and does not require a separate virtual machine for operation.
+This architecture is specified to support **4,000 or fewer messaging (chat, IM) users**, divided into teams of **less than 1,500 users per team**. For larger deployments, a modified architecture and additional capacity planning may be advised.
+
+This infrastructure is **scalable**. The 4,000-user figure is an initial sizing point, not a hard upper bound. You can scale out further (more nodes, more resources) based on your requirements. For a full infrastructure guide and scaling plan tailored to your use case, contact **Wire deployment support** via <https://support.wire.com/>.
 
 A production installation will look a bit like this:
 
-![image](img/architecture-server-ha.png)
+![Wire Server Architecture HA](img/architecture-prod-ha.png)
+![Calling Architecture HA](img/architecture-calling-ha.png)
 
-If you use a private datacenter (not a cloud provider), the easiest is
-to have three physical servers, each with one virtual machine for each
-server component (cassandra, minio, elasticsearch, redis, kubernetes,
-restund)
+If you use a private datacenter (not a cloud provider), the easiest is to have three physical servers, each with one virtual machine for each server component (cassandra, minio, elasticsearch, rabbitmq, postgreSQL).
 
-It’s up to you how you create these VMs - kvm on a bare metal machine,
-VM on a cloud provider, etc. Make sure they run ubuntu 18.04.
+It’s up to you how you create these VMs - kvm on a bare metal machine, VM on a cloud provider, etc. Make sure they run ubuntu 22.04.
 
-Ensure that your VMs have IP addresses that do not change.
+In a typical production network layout:
 
-Avoid `10.x.x.x` network address schemes, and instead use something like `192.168.x.x` or `172.x.x.x`. This is because internally, Kubernetes already uses a `10.x.x.x` address scheme, creating a potential conflict.
+- Core messaging components and databases run in a protected cluster.
+- Calling services (coturn/SFTD) are deployed on nodes or a cluster placed in a **DMZ** or dedicated edge network, with:
+  - Public reachability on UDP 3478 and the configured media port range.
+  - Controlled, internal connectivity back to the messaging cluster for signalling.
 
-### Next steps for high-available production installation
+See [Network Ports and Connectivity](network-ports.md#production-network-architecture-messaging-vs-calling) for more details on how messaging and calling traffic are separated in production.
 
-Your next step will be [Installing kubernetes and databases on VMs with ansible](ansible-VMs.md#ansible-vms)
+For detailed production cluster installation steps, see:
+
+- **Guide:** [`Production Installation`](prod-intro.md)
+
+## Artifact bundle and offline deployment
+
+An **artifact** is a collection of binaries, Ansible playbooks, Bash scripts, Helm charts, and container images that has been verified to work together and is compatible for deploying a specific version of Wire Server. Having an artifact also allows deployments in **private or offline environments** without needing direct access to the public internet.
+
+A typical production or WIAB Staging artifact bundle contains (folder names may vary slightly by release):
+
+- `containers-adminhost/wire-server-deploy-*.tar` - A container image containing ansible, helm, and other tools and their dependencies in versions verified to be compatible with the current wire stack. Published to quay.io/wire/wire-server-deploy as well, but shipped in the artifacts tarball for convenience.
+- `ansible/`  – These contain all the ansible playbooks the rest of the guide refers to, as well as an example inventory, which should be configured according to the environment this is installed into.
+- `bin/`  – helper scripts for Ansible runs, VM provisioning, secret generation, and Helm operations.
+- `binaries.tar`  – This contains static binaries, both used during the kubespray-based kubernetes bootstrapping, as well as to provide some binaries that are installed during other ansible playbook runs.
+- `charts/`  – Helm charts for Wire and supporting components. We don't use an external helm repository, every helm chart dependency is resolved already.
+- `containers-helm.tar`  – These are the container images our charts (and charts we depend on) refer to. Also come as tarballs, and are seeded like the system containers.
+- `containers-system.tar`  – These are the container images needed to bootstrap kubernetes itself (currently using kubespray).
+- `dashboards/`  – Grafana dashboard definitions.
+- `debs-jammy.tar`  – This acts as a self-contained dump of all packages required to install kubespray, as well as all other packages that are installed by ansible playbooks on nodes that don't run kubernetes. There's an ansible playbook copying these assets to an "assethost", starting a little webserver there serving it, and configuring all nodes to use it as a package repo.
+- `values/`  – Contains helm chart values and secrets. Needs to be tweaked to the environment.
+- `versions/`  – version metadata for images and binaries.
+
+The default Ansible inventories on the **master** branch of `wire-server-deploy` reference **pre-configured artifacts** for **WIAB Dev** and **WIAB Staging**. These bundles differ per solution type and are tied to a specific Wire backend version and its dependencies.
+
+If the default bundle for WIAB Dev or WIAB Staging does not meet your needs (for example, you require a different Wire version), please reach out to **Wire support**. They can provide a download link for a compatible artifact bundle to assist with your deployment.
+
+Relationship to each solution:
+
+- **WIAB Dev (Demo)**  – uses the bundle primarily for Helm charts and container images, but still requires internet access for system and tooling packages during installation (see the WIAB Dev guide).
+- **WIAB Staging**  – relies heavily on the artifact for offline deployment of Kubernetes components, data services, and Wire itself after the initial VM provisioning.
+- **Production**  – can use artifact bundles to perform fully offline or tightly controlled deployments where direct internet access from the cluster nodes is not allowed.

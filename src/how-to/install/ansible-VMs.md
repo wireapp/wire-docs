@@ -192,7 +192,7 @@ calico_veth_mtu=1430
 [minio]
 minio1 ansible_host=10.1.1.6
 minio2 ansible_host=10.1.1.7
-minio2 ansible_host=10.1.1.20
+minio3 ansible_host=10.1.1.20
 
 [minio:vars]
 minio_network_interface=enp7s0

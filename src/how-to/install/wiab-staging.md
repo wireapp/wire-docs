@@ -2,7 +2,7 @@
 
 ## Introduction
 
-**Wire in a Box (WIAB) Staging** is a staging installation of Wire running on a single physical machine using KVM-based virtual machines. This setup replicates the multi-node production Wire architecture in a consolidated environment suitable for testing, evaluation, and learning about Wire's infrastructure—but **not for production use**.
+**Wire in a Box (WIAB) Staging** is an installation of Wire running on a single physical machine using KVM-based virtual machines. This setup replicates the multi-node production Wire architecture in a consolidated environment suitable for testing, evaluation, and learning about Wire's infrastructure—but **not for production use**. The main use of this package is to verify that automation inside and outside of the wire product functions in the fashion you expect, before you run said automation in production. This will not test your network environment, load based behaviors, or the interface between wire and it's callingservices when using a DMZ'd network configuration.
 
 > **Important:** This is a sandbox environment. Data from a staging installation **cannot be migrated to production**. WIAB Staging is designed for experimentation, validation, and understanding Wire's deployment model.
 

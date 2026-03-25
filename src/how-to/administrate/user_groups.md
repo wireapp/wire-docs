@@ -53,8 +53,10 @@ Where:
 * `$GROUP_NAME` is the name of the group to create
 * `$USER_ID_1` and `$USER_ID_2` are the UUIDs of users to include in the group
 
-Notes:
+What does this do?:
+* This creates your user group, then provides you with the UUID of your newly created user group.
 
+Notes:
 * The team ID is extracted from the SCIM token. You do not have to supply it.
 * All users added must already exist and be managed by SCIM.
 * If any referenced user does not exist in Wire, the whole request fails.
@@ -102,7 +104,6 @@ Where:
 * `$SCIM_TOKEN` is your SCIM authentication token
 
 Notes:
-
 * Only groups with `managed_by: scim` are visible through this endpoint.
 * This endpoint may support name filtering, depending on the filters supplied by the client.
 

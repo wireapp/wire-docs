@@ -101,8 +101,16 @@
 ## 12. Migration
 
 - [Migrate team features](migrate-team-features.md)
+- [Migrate to postgresql](migrate-to-postgresql.md)
 
 ## 13. Wire-utility
 
 - [Wire utility tool](wire-utility-tool.md)
+
+## 14. PostgreSQL
+
+- [PostgreSQL](postgresql.md)
+  - [PostgreSQL Connection Budget](postgresql.md#postgresql-connection-budget)
+  - [PostgreSQL High Availability Cluster - Quick Setup](postgresql-cluster.md)
+  - [Migrate Galley Data from Cassandra to PostgreSQL](migrate-to-postgresql.md)
 <!-- TODO: .. include:: administration/redis.rst -->

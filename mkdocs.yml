@@ -13,7 +13,7 @@ nav:
       - How to plan an installation: how-to/install/planning.md
       - Version requirements: how-to/install/version-requirements.md
       - Dependencies on operator’s machine: how-to/install/dependencies.md
-      - How to install Wire in a box (Demo): how-to/install/demo-wiab.md
+      - How to install Wire in a box (Dev): how-to/install/wiab-dev.md
       - How to install Wire in a box (Staging): how-to/install/wiab-stag.md
       - Introduction: how-to/install/prod-intro.md
       - How to install kubernetes and databases: how-to/install/ansible-VMs.md

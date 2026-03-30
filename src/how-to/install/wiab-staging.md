@@ -37,22 +37,22 @@ If you need a fully supported, highly-available, secure, multi-datacenter deploy
   - **Storage:** 850 GB disk space (thin-provisioned)
   - 7 VMs with [Ubuntu 22](https://releases.ubuntu.com/jammy/) as per (#VM-Provisioning)
 - **DNS Records**: 
-    - a way to create DNS records for your domain name (e.g. wire.example.com) 
+    - A method to create DNS records for your domain name (e.g. wire.example.com) 
     - See [DNS Requirements for Wire Deployments](dns-requirements.md) for the full list of required hostnames and examples.
 - **SSL/TLS certificates**:
-    - a way to create SSL/TLS certificates for your domain name (to allow connecting via https://)
+    - A method to create SSL/TLS certificates for your domain name (to allow connecting via https://)
     - To simplify certificate management, we recommend using **Let’s Encrypt** together with **cert-manager** where internet access is available. See [TLS and Certificates](tls-certificates.md) to choose between cert‑manager + Let’s Encrypt and bring‑your‑own certificates.
 - **Network**: 
-    - SSH to the physical host and to the VMs.
+    - SSH access to the physical host.
     - HTTP/HTTPS and UDP traffic from clients to the cluster, without interference from host-level firewalls (UFW, nftables) on required ports.
     - IP forwarding between the host’s network interfaces when following the reference topology. Check [Network Traffic Configuration](#network-traffic-configuration) for more details.
 - **Wire-server-deploy artifact**: Access to a `wire-server-deploy` offline artifact bundle (contact Wire support for the latest stable artifact). This tarball contains all required Bash scripts, deb packages, Ansible playbooks, Helm charts and container images to perform the installation. See the [planning overview](planning.md#artifact-bundle-and-offline-deployment) for how artifacts are used across WIAB Dev, WIAB Staging and Production.
 
-> Note: Check [WIAB Dev](./planning.md#wiab-dev-single-vm-wire-in-a-box) solution if looking for more light weight installation of wire-server.
+> Note: Check [WIAB Dev](./planning.md#wiab-dev-single-vm-wire-in-a-box) solution if looking for a lighter weight installation of wire-server, for development uses.
 
 ## VM Provisioning
 
-We would require 7 VMs as per the following details, you can choose to use your own hypervisor to manage the VMs or use our [Wiab staging ansible provisioning playbook](https://github.com/wireapp/wire-server-deploy/blob/master/ansible/wiab-staging-provision.yml) against your physical node to setup the VMs.
+Our deployment will be into 7 VMs, shown in the below VM Archetecture and Resource Allocation table, You can choose to use your own hypervisor to manage the VMs or use our [Wiab staging ansible provisioning playbook](https://github.com/wireapp/wire-server-deploy/blob/master/ansible/wiab-staging-provision.yml) against your physical node to setup the VMs.
 
 **VM Architecture and Resource Allocation:**
 
@@ -159,7 +159,7 @@ For a deeper explanation of offline inventories and VM roles in production-like 
 
 ## Next steps
 
-Since the secondary inventory is ready, please continue with the following steps:
+Once the secondary inventory is ready, please continue with the following steps:
 
 > **Note**: All next steps assume that the wire-server-deploy artifact has been downloaded on the `adminhost` (your physical machine) and extracted at `/home/ansible_user/wire-server-deploy`. All commands from here on will be issued from this directory on the `adminhost`, ssh on the node before proceeding.
 

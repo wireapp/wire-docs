@@ -1,6 +1,6 @@
 # Migrate Galley Data from Cassandra to PostgreSQL
 
-Use this procedure to migrate Galley-managed data from Cassandra to PostgreSQL. This migration is only required if you need channel search and channel management from Team Settings on releases that support PostgreSQL-backed conversation data.
+Use this procedure to migrate Galley-managed data from Cassandra to PostgreSQL. Currently, this migration is only required if you need channel search and channel management from Team Settings on releases that support PostgreSQL-backed conversation data.
 
 The PostgreSQL tables used by these migrations, including `collaborators`, `schema_migrations`, `user_group`, and `user_group_member`, are defined in `postgres-schema.sql` and created during installation. They are empty by default until the matching migration is enabled and backfilled.
 

@@ -1,10 +1,10 @@
-# Second-factor authentication (2FA)
+# Email OTP
 
 ## Overview
 
 Wire can require team users to enter a 6-digit verification code (sent to their email) when performing sensitive operations. It's controlled by the `sndFactorPasswordChallenge` [feature flag](team-feature-settings.md) in galley, and it's off by default.
 
-## What operations require 2FA
+## What operations require OTP
 
 When enabled, a verification code is required for:
 
@@ -13,22 +13,22 @@ When enabled, a verification code is required for:
 - **Creating [SCIM](../developer/reference/provisioning/scim-token.md) provisioning tokens**
 - **Deleting a team**
 
-Personal (non-team) users aren't affected, the `2FA` feature is only for team accounts. 
+Personal (non-team) users aren't affected, the `Email OTP` feature is only for team accounts. 
 
 [SSO](single-sign-on/README.md) users aren't affected either since they authenticate through their identity provider (idP) instead of Wire's password flow. 
 
-If you want 2FA for SSO users, you need to set it up in your idP if it supports it. 
+If you want `Email OTP` for SSO users, you need to set it up in your idP if it supports it. 
 
 ## Prerequisites
 
-2FA sends codes by email, so you need a working email delivery path. That's either:
+OTP sends codes by email, so you need a working email delivery path. That's either:
 
 - A production SMTP relay configured as a smarthost
 - The [`demo-smtp`](../how-to/install/troubleshooting.md) chart for testing (emails stay in the pod's local mail queue, never actually delivered)
 
-If email delivery is broken, users won't be able to log in once 2FA is on, because they'll never get their code, so it's critical to get email sending working first.
+If email delivery is broken, users won't be able to log in once `Email OTP` is on, because they'll never get their code, so it's critical to get email sending working first.
 
-## Enabling 2FA
+## Enabling Email OTP
 
 Add this to `values/wire-server/values.yaml` under galley's [feature flags](team-feature-settings.md). If you're not familiar with helm values overrides, read [Overriding helm configuration settings](helm.md#overriding-helm-configuration-settings) first.
 
@@ -55,16 +55,16 @@ Galley pods will restart with the new config. For the full helm deployment proce
 
 ### Lock status
 
-The `lockStatus` setting controls whether team admins can change this setting (`2FA` enabled or not) on a per-team basis:
+The `lockStatus` setting controls whether team admins can change this setting (`Email OTP` enabled or not) on a per-team basis:
 
 | Value      | Behavior                                                                               |
 |------------|----------------------------------------------------------------------------------------|
 | `locked`   | Team admins can't change it. Your default applies to all teams.                        |
-| `unlocked` | Team admins can toggle 2FA for their own team via the team management API.             |
+| `unlocked` | Team admins can toggle `Email OTP` for their own team via the team management API.             |
 
-For most setups you'll want `locked`, since 2FA is typically meant to be enforced across the organization.
+For most setups you'll want `locked`, since `Email OTP` is typically meant to be enforced across the organization.
 
-## Disabling 2FA
+## Disabling Email OTP
 
 Set status to `disabled`:
 
@@ -127,7 +127,7 @@ This is more fully documented in the [`troubleshooting page`](../how-to/install/
 
 ## Troubleshooting
 
-**Users can't log in after enabling 2FA**: Most likely email delivery is broken. If using `demo-smtp`, check that `RELAY_NETWORKS` includes the pod network CIDR (usually `10.233.0.0/16` or whatever your cluster uses). Look at brig logs:
+**Users can't log in after enabling Email OTP**: Most likely email delivery is broken. If using `demo-smtp`, check that `RELAY_NETWORKS` includes the pod network CIDR (usually `10.233.0.0/16` or whatever your cluster uses). Look at brig logs:
 
 ```sh
 kubectl logs -l app=brig --tail=50 | grep -i smtp

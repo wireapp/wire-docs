@@ -13,7 +13,7 @@ The PostgreSQL tables used by these migrations, including `collaborators`, `sche
 | `teamFeatures` migration | `5.27.0` |
 
 
-This guide covers these data domains:
+This guide covers these data categories:
 
 - Conversations
 - Conversation codes
@@ -35,7 +35,19 @@ The `cassandra-migrations` job only prepares schema and metadata. It does not co
 
 ## PostgreSQL Connection Budget
 
-Before starting the migration, make sure you have enough connections available. See [PostgreSQL Connection Budget](postgresql.md#postgresql-connection-budget) for how to calculate your connection budget, default and low-traffic starting points, and how to tune from observed traffic.
+Before starting the migration, make sure you have enough connections available. The budget planning itself belongs in the dedicated guide, so keep this step as a pointer to the canonical reference.
+
+See [PostgreSQL Connection Budget](postgresql.md#postgresql-connection-budget) for how to calculate your connection budget, default and low-traffic starting points, and how to tune from observed traffic.
+
+## Recommended Domain Order
+
+Migrate domains in this order:
+
+1. Conversations
+2. Conversation codes
+3. Team features
+
+This keeps the largest and most operationally sensitive migration first, when your rollback options are still best for the remaining domains.
 
 ## Migration States
 
@@ -144,6 +156,8 @@ After the rollout:
 
 ### Step 2: Start the backfill
 
+Backfill means copying the existing data for the domain from Cassandra into PostgreSQL while dual-write mode is already enabled.
+
 Enable the matching migration flag on `background-worker`.
 
 Flags by domain:
@@ -186,6 +200,50 @@ Useful log patterns:
 
 Useful Prometheus metrics:
 
+- If you do not have Prometheus set up yet, use `kubectl logs` and/or directly check `background-worker` database queries in Postgres with `pg_stat_activity` and relevant counter tables to confirm migration progress.
+
+  - Example from a background-worker pod (direct wire-server DB query, as in wire-utility-tool):
+
+    ```bash
+    kubectl exec -n <namespace> deploy/background-worker -- psql "postgresql://wire-server:password@postgresql-external-rw:5432/wire-server" -c "SELECT pid, usename, state, query_start, query FROM pg_stat_activity WHERE datname='wire-server' ORDER BY query_start DESC;"
+    ```
+
+  - If you have the `wire-utility-tool` helper script on your admin host, use:
+
+    ```bash
+    psql -c "SELECT pid, usename, query_start, query FROM pg_stat_activity WHERE state != 'idle';"
+    ```
+
+  - For more PostgreSQL troubleshooting and `pg_stat_activity` examples, see [Wire utility tool – PostgreSQL inspection](wire-utility-tool.md#postgresql-query-debugging).
+
+  - You can also collect one-shot Prometheus / metrics scraping from individual services using `/i/metrics` (documented in [administrate/users.md](users.md#how-to-retrieve-metric-values-manually)).
+
+    Example for service pod port-forwarding:
+
+    ```bash
+    kubectl --kubeconfig <path> -n wire port-forward service/galley 7777:8080
+    curl -s http://127.0.0.1:7777/i/metrics | grep wire_hasql_pool_session_failure_count
+    ```
+
+  - Interpreting `pg_stat_activity` for this migration path:
+
+    - `datname='wire-server'` and `usename='wire-server'` are normal.
+    - `application_name` should be `background-worker` or `galley` for migration progress; if it is empty and `query` is app-domain SQL (e.g., `SELECT ... FROM apps WHERE ...`), that is normal application traffic.
+    - `state='active'` with long `now()-query_start` means a query currently running; `state='idle'` means waiting on the client.
+    - `wait_event_type` / `wait_event` show lock wait if non-empty.
+    - `query` text like `SELECT * FROM pg_stat_activity ...` is your own monitoring query; ignore it for migration status.
+
+  - Example migration-focused query:
+
+    ```sql
+    SELECT pid, usename, application_name, state, now() - query_start AS duration, query
+    FROM pg_stat_activity
+    WHERE datname='wire-server'
+      AND application_name IN ('background-worker', 'galley')
+    ORDER BY query_start DESC
+    LIMIT 20;
+    ```
+
 | Metric | Meaning |
 | --- | --- |
 | `wire_local_convs_migration_finished` | Local conversation migration is complete when the value is `1` |
@@ -223,16 +281,6 @@ background-worker:
 ```
 
 After this rollout, the selected domain reads from PostgreSQL only.
-
-## Recommended Domain Order
-
-Migrate domains in this order:
-
-1. Conversations
-2. Conversation codes
-3. Team features
-
-This keeps the largest and most operationally sensitive migration first, when your rollback options are still best for the remaining domains.
 
 ## Final Configuration
 

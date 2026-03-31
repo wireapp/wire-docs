@@ -91,8 +91,8 @@
 ## 13. Security and Messaging
 - [Messaging Layer Security (MLS)](mls.md)
 
-## 14. Second-factor Authentication
-- [Second-factor authentication (2FA)](second-factor-authentication.md)
+## 14. Email OTP
+- [Email OTP](second-factor-authentication.md)
 
 ## 15. User Searchability
 - [User Searchability](searchability.md)

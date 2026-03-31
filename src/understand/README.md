@@ -92,7 +92,7 @@
 - [Messaging Layer Security (MLS)](mls.md)
 
 ## 14. Email OTP
-- [Email OTP](second-factor-authentication.md)
+- [Email OTP](email-otp.md)
 
 ## 15. User Searchability
 - [User Searchability](searchability.md)

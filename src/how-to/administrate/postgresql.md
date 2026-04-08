@@ -14,7 +14,7 @@ This section covers PostgreSQL administration for Wire deployments.
 
 `postgresqlPool.size` is a per-pod setting. To estimate how many PostgreSQL connections Wire can open, multiply each service pool size by the number of replicas for that service, then sum the results. In a standard Wire deployment sharing the same PostgreSQL primary, this means at least `brig`, `galley`, and `background-worker`.
 
-Use this formula:
+Calculate the total like this:
 
 ```text
 total_postgresql_connections =
@@ -23,7 +23,7 @@ total_postgresql_connections =
   (background_worker_pool_size * background_worker_replicas)
 ```
 
-This number is the minimum application-side connection budget you should plan for on the PostgreSQL primary when Wire connects through the read-write service.
+This value is the minimum application-side connection budget to plan for on the PostgreSQL primary when Wire connects through the read-write service.
 
 ### Default starting point
 

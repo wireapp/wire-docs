@@ -149,9 +149,7 @@ Wire has two distinct connection flows depending on the accounts involved:
 1. From the sender's client, search for the recipient by name or username.
 2. Open their profile and send a connection request.
    - Verify the sender's view shows the conversation in a **Sent** / pending state.
-   - Verify the recipient receives a notification of the incoming request. On mobile this
-     should arrive as a push notification (subject to the same APNs/FCM caveats as other
-     notifications). On the webapp it should appear without requiring a refresh.
+   - Verify the recipient receives a notification of the incoming request. On mobile this should arrive as a push notification (subject to the same APNs/FCM caveats as other notifications). On the webapp it should appear without requiring a refresh.
 
 **Accepting the connection request:**
 
@@ -172,7 +170,6 @@ Wire has two distinct connection flows depending on the accounts involved:
 - **Blocking:** With an accepted connection in place, have one user block the other. Verify
   the blocked user cannot add the blocker to conversations. Note that blocking does **not**
   remove the blocked user from existing group conversations they share.
-
 
 ### 1-to-1 Messaging
 
@@ -214,13 +211,14 @@ Wire has two distinct connection flows depending on the accounts involved:
 2. Add at least two other team members (Client B, Client C).
    - Verify all clients successfully join the MLS group.
 3. Send a text message from Client A.
-   - Verify delivery to Client B and Client C.
+   - Verify message delivery to Client B and Client C.
 4. Send a reply from Client B and another from Client C.
    - Verify all messages appear correctly for all participants.
 5. Send a file attachment.
    - Verify all participants can retrieve it.
 6. Have Client C leave the conversation or be removed.
    - Verify that Client C can no longer receive messages.
+     - The easiest platform to do this in is webapp. Ensure you see no activity at the moment a message is sent in the conversation).
 7. Confirm (via the web inspector's Network tab) that message traffic is going through MLS endpoints rather than Proteus ones.
 
 > NOTE: Clients that have not yet uploaded their MLS key packages need to open the app once to register them.
@@ -250,12 +248,12 @@ Wire has two distinct connection flows depending on the accounts involved:
 
 > Requires two clients logged in as separate users.
 
-1. From Client A, initiate an audio call to Client B.
+1. From Client A, initiate a call to Client B.
    - Verify Client B receives the incoming call notification.
 2. Client B answers the call.
    - Verify two-way audio is established. Both participants should be able to hear each other.
 3. (If video is supported/enabled) Enable video on Client A.
-   - Verify Client B can see Client A's video feed, and vice versa.
+   - Verify Client B can see Client A's video feed, and vice versa. ensure that your video is not too choppy (try counting to five, holding up fingers, and seengi all five sets of fingers)
 4. End the call from Client A.
    - Verify the call ends cleanly on both sides with no lingering "call in progress" state.
 
@@ -264,7 +262,7 @@ Wire has two distinct connection flows depending on the accounts involved:
 > Requires at least three clients. Requires SFT to be deployed and reachable via HTTPS from all clients.
 
 1. From Client A, start a group call in a group conversation containing Client B and Client C.
-   - Client A contacts the SFT servers via HTTPS (`CONFCONN` request). Verify no errors at this stage.
+   - Client A contacts the SFT servers via HTTPS (`CONFCONN` request).
 2. Client B and Client C join the call.
    - Verify all three participants can hear each other (two-way audio for all).
 3. (If video is enabled) Enable video from one participant.
@@ -282,10 +280,10 @@ Wire has two distinct connection flows depending on the accounts involved:
 1. Set up a group call as above (at least Clients A and B connected normally via SFT).
 2. Have Client C — who **cannot** reach the SFT server directly via HTTP — attempt to join the call.
    - On windows or linux workstations, this is easily done, by changing the 'hosts' file, adding the SFT servers in question as 127.0.0.1.
-   - The client should fall back to connecting via a Restund (TURN) relay. The SFT and the Restund server must have UDP connectivity between them for this path to work.
-   - Verify Client C successfully joins the call via TURN, and that audio is established between all participants.
+   - The client should fall back to connecting via a TURN relay. The SFT and the Coturn server must have UDP connectivity between them for this path to work.
+   - Verify Client C successfully joins the call, and that audio is established between all participants.
 3. Confirm (via log inspection) that Client C's media path is flowing through the TURN server rather than directly to SFT.
-4. End the call and verify clean teardown.
+4. End the call and verify clean teardown for all participants.
 5. Collect logs from all participants for evidence.
 
 ---
@@ -307,3 +305,4 @@ Wire has two distinct connection flows depending on the accounts involved:
    - Verify the remaining three participants continue uninterrupted.
 6. End the call and verify clean teardown on both backends.
 7. If the customer's environment uses TURN for SFT-to-SFT federation traffic (to avoid exposing SFTs directly to the internet), confirm via wire-debugger that SFT inter-domain traffic is routing through the federation TURN server rather than directly between SFT instances.
+8. Collect logs from all participants for evidence.

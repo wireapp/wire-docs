@@ -97,6 +97,7 @@
 
 - [Test an ingress is working from inside the cluster](manuals.md#test-an-ingress-is-working-from-inside-the-cluster)
 - [Load an image into containerd in an offline/airgapped environment](manuals.md#load-an-image-into-containerd-in-an-offlineairgapped-environment)
+- [Managing User Groups via SCIM](user_groups.md)
 
 ## 12. Migration
 

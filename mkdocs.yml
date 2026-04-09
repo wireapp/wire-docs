@@ -72,6 +72,7 @@ nav:
       - Federation: understand/configure-federation.md
       - Installing and setting up Legal Hold: understand/legalhold.md
       - Messaging Layer Security (MLS): understand/mls.md
+      - Email OTP: understand/email-otp.md
       - User Searchability: understand/searchability.md
       - Server and team feature settings: understand/team-feature-settings.md
   - Developer Notes:

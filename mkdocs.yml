@@ -38,9 +38,9 @@ nav:
       - Upgrade process: how-to/upgrade/03-upgrade.md
       - Troubleshooting: how-to/upgrade/04-troubleshooting.md
       - Configuration Reference:
-        - Overview: how-to/upgrade/05-config-reference.md
-        - Wire Server 5.24: how-to/upgrade/config-references/wire-server-5.24.0.md
-        - Wire Server 5.25: how-to/upgrade/config-references/wire-server-5.25.0.md
+          - Overview: how-to/upgrade/05-config-reference.md
+          - Wire Server 5.24: how-to/upgrade/config-references/wire-server-5.24.0.md
+          - Wire Server 5.25: how-to/upgrade/config-references/wire-server-5.25.0.md
   - Administration:
       - Overview: how-to/administrate/README.md
       - kubernetes: how-to/administrate/kubernetes/README.md
@@ -77,45 +77,41 @@ nav:
   - Developer Notes:
       - Overview: developer/README.md
       - Developer:
-        - API versioning: developer/developer/api-versioning.md
-        - How to build wire-server: developer/developer/building.md
-        - Writing code interacting with cassandra: developer/developer/cassandra-interaction.md
-        - Changelog: developer/developer/changelog.md
-        - Coding conventions: developer/developer/coding-conventions.md
-        - Dependencies: developer/developer/dependencies.md
-        - Editor setup: developer/developer/editor-setup.md
-        - Features: developer/developer/features.md
-        - Federation API Conventions: developer/developer/federation-api-conventions.md
-        - Federation Design Aspects: developer/developer/federation-design-aspects.md
-        - Developer how-to’s: developer/developer/how-to.md
-        - Refactoring galley to support large conversations: developer/developer/large-conversations.md
-        - Linting: developer/developer/linting.md
-        - OpenTelemetry Instrumentation: developer/developer/open-telemetry.md
-        - PR Guidelines: developer/developer/pr-guidelines.md
-        - Internal processes: developer/developer/processes.md
-        - Storing SCIM-related data: developer/developer/scim/storage.md
-        - Servant: developer/developer/servant.md
-        - Testing the wire-server Haskell code base: developer/developer/testing.md
-        - Upgrading: developer/developer/upgrading.md
+          - API versioning: developer/developer/api-versioning.md
+          - How to build wire-server: developer/developer/building.md
+          - Writing code interacting with cassandra: developer/developer/cassandra-interaction.md
+          - Changelog: developer/developer/changelog.md
+          - Coding conventions: developer/developer/coding-conventions.md
+          - Dependencies: developer/developer/dependencies.md
+          - Editor setup: developer/developer/editor-setup.md
+          - Features: developer/developer/features.md
+          - Federation API Conventions: developer/developer/federation-api-conventions.md
+          - Federation Design Aspects: developer/developer/federation-design-aspects.md
+          - Developer how-to’s: developer/developer/how-to.md
+          - Refactoring galley to support large conversations: developer/developer/large-conversations.md
+          - Linting: developer/developer/linting.md
+          - OpenTelemetry Instrumentation: developer/developer/open-telemetry.md
+          - PR Guidelines: developer/developer/pr-guidelines.md
+          - Internal processes: developer/developer/processes.md
+          - Storing SCIM-related data: developer/developer/scim/storage.md
+          - Servant: developer/developer/servant.md
+          - Testing the wire-server Haskell code base: developer/developer/testing.md
+          - Upgrading: developer/developer/upgrading.md
       - Reference:
-        - Config Options: developer/reference/config-options.md
-        - Creating and populating conversations: developer/reference/conversation.md
-        - Maintaining ElasticSearch: developer/reference/elastic-search.md
-        - ElasticSearch migration instructions for release 2021-02-16: developer/reference/elasticsearch-migration-2021-02-16.md
-        - Make docker and QEMU: developer/reference/make-docker-and-qemu.md
-        - OAuth: developer/reference/oauth.md
-        - SCIM tokens: developer/reference/provisioning/scim-token.md
-        - RabbitMQ Consumer: developer/reference/rabbitmq-consumer.md
-        - Spar braindump: developer/reference/spar-braindump.md
-        - Legal hold: developer/reference/team/legalhold.md
-        - User Activation: developer/reference/user/activation.md
-        - Connection: developer/reference/user/connection.md
-        - User Registration: developer/reference/user/registration.md
-        - User Rich info: developer/reference/user/rich-info.md
-  - Apps SDK:
-      - Understanding Apps: integrations/README.md
-      - Quickstart: integrations/quickstart.md
-      - Events: integrations/events.md
+          - Config Options: developer/reference/config-options.md
+          - Creating and populating conversations: developer/reference/conversation.md
+          - Maintaining ElasticSearch: developer/reference/elastic-search.md
+          - ElasticSearch migration instructions for release 2021-02-16: developer/reference/elasticsearch-migration-2021-02-16.md
+          - Make docker and QEMU: developer/reference/make-docker-and-qemu.md
+          - OAuth: developer/reference/oauth.md
+          - SCIM tokens: developer/reference/provisioning/scim-token.md
+          - RabbitMQ Consumer: developer/reference/rabbitmq-consumer.md
+          - Spar braindump: developer/reference/spar-braindump.md
+          - Legal hold: developer/reference/team/legalhold.md
+          - User Activation: developer/reference/user/activation.md
+          - Connection: developer/reference/user/connection.md
+          - User Registration: developer/reference/user/registration.md
+          - User Rich info: developer/reference/user/rich-info.md
   - Security Responses:
       - Overview: security-responses/README.md
       - "2023-01-19 - Security Advisory: HTML Injection in wire.com": security-responses/2023-01-19_html_injection.md
@@ -207,7 +203,7 @@ markdown_extensions:
 extra:
   version:
     provider: mike
-    default: latest  # Default version to load
+    default: latest # Default version to load
   social:
     - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/company/wire-secure-communication

@@ -3,7 +3,7 @@
 - The '/docs' files will be included (as linked files) in the `wire-docs` repository via a submodule and will be pulled during the build process.
 - The submodule management documentation can be at [Submodule Management](../../README.md#submodule-management)
 
-*Note: The further instructions will refer to `wire-server` as the example repository containing the documentation files, but the same applies to any other repository like `wire-apps-jvm-sdk`. Feel free to include these instructions in your own repository's documentation.*
+*Note: The further instructions will refer to `wire-server` as the example repository containing the documentation files, but the same applies to any other repositories. Feel free to include these instructions in your own repository's documentation.*
 
 ## Example Diagram
 ![diagram](diagram.svg)
@@ -21,7 +21,7 @@
 **For content in wire-server/docs:**
 1. Make changes directly in the `wire-server/docs` directory
 2. Create a PR against the `wire-server:develop` branch.
-*Note: The `develop` branch is specific to `wire-server`. Other repositories may have different branch names, such as `main` for `wire-apps-jvm-sdk`.*
+*Note: The `develop` branch is specific to `wire-server`. Other repositories may have different branch names.
 3. Once merged, these changes will be picked up by `wire-docs` through submodule updates.
 4. In `wire-docs`:
    - Update the `wire-server` submodule (to the latest commit) and commit that change

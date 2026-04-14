@@ -17,6 +17,8 @@ If you are a developer, you may want to check out the “Notes for developers”
 
 Release notes of `wire-server` can be found [here](https://github.com/wireapp/wire-server/releases).
 
+Instead, if you want to develop a Wire App using our SDKs, the documentation is [here](https://dev.wire.com).]
+
 # Contents:
 
 * [Installation](how-to/install/README.md)
@@ -24,7 +26,6 @@ Release notes of `wire-server` can be found [here](https://github.com/wireapp/wi
 * [Administration](how-to/administrate/README.md)
 * [Reference](understand/README.md)
 * [Developers Notes](developer/README.md)
-* [Apps SDK](integrations/README.md)
 * [Security responses](security-responses/README.md)
 * [Release Notes](changelog/README.md)
 

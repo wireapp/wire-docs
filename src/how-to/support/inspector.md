@@ -126,10 +126,10 @@ We are now going to prepare to construct an equivalent CURL request for this req
     * curl <request URL> <-- our target, you will need quotes around the request URL.
     * -v <-- verbose mode, so we can see the resulting headers
     * -o good_request <-- our file to store the result of the request in.
-  * -X GET <-- our method
-  * -H "Origin: https://teams.wire.com"  <-- Replace teams.wire.com with the name of YOUR teams page.
-  * -H <first header>
-  * -H <second header>...
+    * -X GET <-- our method
+    * -H "Origin: https://teams.wire.com"  <-- Replace teams.wire.com with the name of YOUR teams page.
+    * -H <first header>
+    * -H <second header>...
 
 * Copy all of the headers from the GET request in your inspector on to the end of your curl command (placing quotes around each, and ensuring they are formatted "key: value"), then hit enter to run the request in curl. (**HINT:** Some web browsers have a 'Raw' slider, that shows them in a easier to cut and paste form!)
 
@@ -157,3 +157,48 @@ Copy the entire output of this terminal session for Wire. What we'll be looking 
 
 * Select the console tab in your inspector, and copy any content you see there, for wire.
     * right click anywhere, and save as (which saves all, not just the one you clicked on).
+
+
+## WebSocket Connectivity
+
+### Verifying the WebSocket Connection
+
+End User Complaint: Messages are not arriving in real time, or 'no internet' banner. The application may appear to be connected, but new messages only appear after a refresh, or not at all.
+
+#### What are we gathering
+
+This procedure should get us:
+
+* Confirmation that a WebSocket connection has been successfully established between the
+  client and the backend.
+* Confirmation that the connection is being kept alive by regular ping/pong exchanges.
+* The URL of the WebSocket endpoint, for use in further diagnosis if needed.
+
+#### Process
+
+From one of the affected webapp users' machine:
+
+* Right click anywhere in the web application, and open the inspector.
+    * The browser should now have a new window in it. This is the browser's inspector showing you the code for whatever you clicked on.
+* Select the **Network** tab of the inspector.
+    * If there are already many entries in the Network tab, hit the clear/trash icon to remove them — a clean list will be easier to work with.
+* Log in to Wire, or if already logged in, refresh the page. You should see a number of requests appear in the Network tab as the application loads.
+* Click on the **Status** column header to sort all requests by their HTTP status code.
+    * If there is no **Status** column visible, right click on any column header and enable the **Status** column.
+* Look for the entry with a status of **101**. There should be exactly one. A status of 101 is the HTTP status for "Switching Protocols" — this is how a WebSocket connection is established, and it is the only request in a normal Wire session that will carry this status.
+    * If you see no entry with status 101, the WebSocket connection has not been established successfully. To find out what happened to the attempt, you need to locate the connection request itself:
+        - Click the **Name** (or **File**) column header to sort requests alphabetically.
+        - Look for an entry whose name begins with **await** — the full URL will be in the form `wss://nginz-ssl.<domain>/await?access_token=<token>`. This is the endpoint Wire uses to establish the WebSocket connection.
+        - Click on the **await** entry and check its status code. The status you see here will indicate where the problem lies — a 401 suggests an authentication problem, a 502 or 504 suggests the backend is not reachable or the WebSocket service is down, and a 400 may indicate a misconfigured proxy that does not support WebSockets.
+        - Screenshot the entry with its full URL, status code, and headers visible, and give a copy to your support team.
+* Click on the **101** entry to open its detail pane.
+    * Make a note of the full URL. It should point to `nginz-ssl.<domain>` — this is Wire's WebSocket endpoint. If it is pointing elsewhere, note that down.
+* In the detail pane, look for a **Messages** tab (Chrome/Edge) or **Response** tab (Firefox). Select it.
+    * You should see a stream of messages being exchanged between the client and the server. At this point the list may be empty or contain only the initial handshake — that is fine.
+* **Wait Patiently.** The backend sends a ping to the client every 30 seconds, and the client responds with a pong. You are waiting to observe this exchange. Allow at least 60 seconds — long enough to be confident you would have seen at least one ping/pong cycle if the connection were healthy.
+    * In Chrome and Edge, ping frames are shown with an upward arrow and a payload of the ping data; pong frames are shown with a downward arrow. They may also be labelled explicitly as 'ping' and 'pong' depending on browser version.
+    * In Firefox, the frames are listed in the Response tab with their type and direction noted in the Type column.
+    > NOTE: A healthy connection will show a ping from the server followed shortly by a pong from the client, repeating approximately every 30 seconds.
+    * If no ping/pong frames appear after 60 seconds, the connection is either not truly established, or is being silently dropped by an intermediate proxy or load balancer.
+        - Note the browser, the backend URL, and any visible error state and report them.
+* Screenshot the Messages/Response tab showing at least one full ping/pong exchange, with the full URL of the WebSocket entry visible. Give a copy to your support team, when you are filing your support ticket.

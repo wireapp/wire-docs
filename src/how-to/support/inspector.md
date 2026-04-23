@@ -198,7 +198,7 @@ From one of the affected webapp users' machine:
 * **Wait Patiently.** The backend sends a ping to the client every 30 seconds, and the client responds with a pong. You are waiting to observe this exchange. Allow at least 60 seconds — long enough to be confident you would have seen at least one ping/pong cycle if the connection were healthy.
     * In Chrome and Edge, ping frames are shown with an upward arrow and a payload of the ping data; pong frames are shown with a downward arrow. They may also be labelled explicitly as 'ping' and 'pong' depending on browser version.
     * In Firefox, the frames are listed in the Response tab with their type and direction noted in the Type column.
-    > NOTE: A healthy connection will show a ping from the server followed shortly by a pong from the client, repeating approximately every 30 seconds.
+    > NOTE: A healthy connection will show a ping from the server followed shortly by a pong from the client, repeating approximately every 20 seconds.
     * If no ping/pong frames appear after 60 seconds, the connection is either not truly established, or is being silently dropped by an intermediate proxy or load balancer.
         - Note the browser, the backend URL, and any visible error state and report them.
 * Screenshot the Messages/Response tab showing at least one full ping/pong exchange, with the full URL of the WebSocket entry visible. Give a copy to your support team, when you are filing your support ticket.

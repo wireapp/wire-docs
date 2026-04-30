@@ -30,10 +30,24 @@ background-worker:
       conversation: postgresql
 ```
 
-## Mandatory (breaking) changes
+## What must change
 
-No mandatory changes.
+### 1. Make sure the Kubernetes cluster is at `1.27` or newer
 
-## Optional changes
+Anything below `1.27` is no longer supported. On older clusters, Kubernetes itself has to be upgraded before touching wire-server.
 
-Conversation codes can now be migrated to PostgreSQL. For details, read our [changelog](https://github.com/wireapp/wire-server/releases/tag/v2026-01-26).
+### 2. Re-fill the Elasticsearch index from Cassandra (after the upgrade)
+
+User search now returns user type info (regular, app, legacy bot). The new fields don't show up in search results until the Elasticsearch index is re-filled from Cassandra. Do this after the wire-server upgrade.
+
+For deploys that call `brig-index` directly instead of letting the chart run it, the tool needs PostgreSQL access now, on top of its existing settings. The invocation has to be updated accordingly.
+
+See [Refill ES documents from Cassandra](../../../developer/reference/elastic-search.md) for the actual procedure.
+
+### 3. Run the wire-server helm upgrade
+
+```bash
+d helm upgrade --install wire-server ./charts/wire-server --timeout=15m0s \
+  --values ./values/wire-server/values.yaml \
+  --values ./values/wire-server/secrets.yaml
+```

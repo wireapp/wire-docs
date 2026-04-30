@@ -51,3 +51,53 @@ d helm upgrade --install wire-server ./charts/wire-server --timeout=15m0s \
   --values ./values/wire-server/values.yaml \
   --values ./values/wire-server/secrets.yaml
 ```
+
+## Post-upgrade: migrate conversation codes to PostgreSQL (optional)
+
+Same shape as the conversation data migration from `5.24`. Only makes sense when conversation data has already been migrated, otherwise leave it.
+
+Step 1, in `values/wire-server/values.yaml`:
+
+```yaml
+galley:
+  config:
+    postgresMigration:
+      conversationCodes: migration-to-postgresql
+background-worker:
+  config:
+    postgresMigration:
+      conversationCodes: migration-to-postgresql
+    migrateConversationCodes: false
+```
+
+Run the helm upgrade.
+
+Step 2, set `migrateConversationCodes: true` on `background-worker` and run the helm upgrade again. Wait for the `wire_conv_codes_migration_finished` metric to hit `1.0`.
+
+Step 3, switch reads to PostgreSQL:
+
+```yaml
+galley:
+  config:
+    postgresMigration:
+      conversationCodes: postgresql
+background-worker:
+  config:
+    postgresMigration:
+      conversationCodes: postgresql
+    migrateConversationCodes: false
+```
+
+Run the helm upgrade.
+
+## Disk space note
+
+Each upgrade in this series re-runs `setup-offline-sources`, which copies the new release's binaries, container images, and debs into `/opt/assets` on the assethost. After a few versions, the assethost runs out of space and the playbook fails with `no space left on device`.
+
+When that happens, SSH into the **assethost** (not the adminhost) and clear it:
+
+```bash
+sudo rm -rvf /opt/assets
+```
+
+Then re-run `setup-offline-sources` from the adminhost.

@@ -18,16 +18,28 @@ brig:
 
 ### `brig`
 
+In `values/wire-server/values.yaml`:
+
 ```yaml
 brig:
-  rabbitmq:
-    host: rabbitmq-host-or-service
-    port: 5672 # default
+  config:
+    rabbitmq:
+      host: rabbitmq-host-or-service
+```
+
+In `values/wire-server/secrets.yaml`:
+
+```yaml
+brig:
   secrets:
     rabbitmq:
       username: wire-server
-      password: verysecurepassword
+      password: <rabbitmq-password>
 ```
+
+`port` defaults to `5672`, only set it if the RabbitMQ instance listens somewhere else.
+
+Why: starting at `5.23`, `rabbitmq` is deployed as an external service instead of in-cluster. `brig` can't rely on the in-cluster default service name anymore, so the hostname has to be set explicitly.
 
 ### `background-worker`
 

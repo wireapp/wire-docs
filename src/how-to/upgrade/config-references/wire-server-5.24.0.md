@@ -104,21 +104,50 @@ Why: `background-worker` now runs jobs that need PostgreSQL access and that talk
 
 > **Warning about the `postgresMigration.conversation` default.** At this release the `background-worker` chart defaults `postgresMigration.conversation` to `postgresql`. That default must **not** be left in place when conversations haven't been migrated yet. The data is still in Cassandra, so a `postgresql` setting points the worker at an empty table. See the migration section below. This is the bug that caused conversations to disappear at `5.25` for installs that didn't migrate.
 
-### `gundeck`
+### 4. Update `gundeck.config.redis.host`
 
-Upstream Helm chart for `redis-ephemeral` has been replaced. New Redis service hostname has been changed from `{{ .Release.Name }}-master` to `{{ .Release.Name }}`. Verify your Redis service name with:
+The Redis service hostname changed from `{{ .Release.Name }}-master` to `{{ .Release.Name }}`. With the standard `redis-ephemeral` release name, the in-cluster service is just `redis-ephemeral` now (used to be `databases-ephemeral-redis-ephemeral-master`).
+
+Check the cluster:
 
 ```bash
-kubectl get svc | grep redis
+d kubectl get svc | grep redis
 ```
 
-Then set accordingly:
+The output looks something like this (the old `databases-ephemeral-*` services will still be there until the old chart is uninstalled, see "Cleanup"):
+
+```
+databases-ephemeral-redis-ephemeral-headless   ClusterIP   None            <none>   6379/TCP
+databases-ephemeral-redis-ephemeral-master     ClusterIP   10.x.x.x        <none>   6379/TCP
+redis-ephemeral                                ClusterIP   10.x.x.x        <none>   6379/TCP
+redis-ephemeral-headless                       ClusterIP   None            <none>   6379/TCP
+```
+
+The one to use is the plain `redis-ephemeral`. In `values/wire-server/values.yaml`:
 
 ```yaml
 gundeck:
   config:
     redis:
-      host: "your-redis-service"
+      host: redis-ephemeral
+```
+
+> **Bug in `wire-server-deploy` `5.24`**: the bundled `values/wire-server/prod-values.example.yaml` ships `gundeck.config.redis.host: databases-ephemeral-redis-ephemeral` (the old service). If that file was used as a starting point, override it to `redis-ephemeral` in the local `values.yaml`.
+
+### 5. Run the wire-server helm upgrade
+
+Once all the values are in place:
+
+```bash
+d helm upgrade --install wire-server ./charts/wire-server --timeout=15m0s \
+  --values ./values/wire-server/values.yaml \
+  --values ./values/wire-server/secrets.yaml
+```
+
+Watch in another terminal:
+
+```bash
+d kubectl get events
 ```
 
 ## Optional changes

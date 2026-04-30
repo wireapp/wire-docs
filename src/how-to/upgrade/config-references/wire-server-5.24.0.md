@@ -247,7 +247,7 @@ From this point forward reads and writes both go to PostgreSQL. This configurati
 
 ## Optional changes
 
-### `background-worker` tunables
+### `background-worker` PostGreSQL tunables
 
 These are chart defaults, only set them when an actual change is needed:
 

@@ -98,18 +98,6 @@ nginx-ingress-services:
 
 Edit `values/nginx-ingress-services/values.yaml` during the nginx ingress upgrade step. Only relevant for `cert-manager`-based deploys with a key pinning requirement.
 
-### `background-worker` migration tunables
-
-When the conversation migration is being run at `5.25` rather than at `5.24`, page size and parallelism can now be tuned:
-
-```yaml
-background-worker:
-  config:
-    migrateConversationsOptions:
-      pageSize: 10000
-      parallelism: 2
-```
-
 ### New migration failure metrics
 
 Two metrics for tracking migration failures:

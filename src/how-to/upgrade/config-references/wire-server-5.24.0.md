@@ -26,9 +26,26 @@ brig:
     enableFederation: true
 ```
 
-## Mandatory (breaking) changes
+## What must change
 
-### `brig`
+Listed in the order things should be done.
+
+### 1. Deploy `redis-ephemeral` (replaces `databases-ephemeral`)
+
+The upstream chart for the in-cluster Redis was swapped. The new chart is `redis-ephemeral` and ships Redis `7.4.6` (the old chart was based on Bitnami). It only supports standalone deployments.
+
+Deploy it **before** the `wire-server` upgrade. If `wire-server` is upgraded first with `gundeck.config.redis.host` already pointing at `redis-ephemeral`, gundeck won't be able to connect.
+
+```bash
+d helm upgrade --install redis-ephemeral ./charts/redis-ephemeral \
+  --values ./values/redis-ephemeral/prod-values.example.yaml
+```
+
+Defaults are fine. Nothing should be carried over from `databases-ephemeral`, it's a different chart.
+
+The old `databases-ephemeral` chart isn't auto-removed. Don't uninstall it yet either, wait until everything else is verified. See "Cleanup" at the bottom.
+
+### 2. Edit `brig.config.rabbitmq` in the wire-server values
 
 In `values/wire-server/values.yaml`:
 

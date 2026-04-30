@@ -30,22 +30,6 @@ brig:
 
 This is fixed at `5.25`, so once `5.25` is reached the workaround can be taken back out.
 
-### `bin/helm-operations.sh` has a malformed `CERT_MASTER_EMAIL` default
-
-Only relevant for fresh installs starting from `5.23.1` (rather than upgrading an existing deployment). The line in `bin/helm-operations.sh` on the `release-5.23.1` branch reads:
-
-```bash
-CERT_MASTER_EMAIL="certmaster@${CERT_MASTER_EMAIL}:-certmaster@${TARGET_SYSTEM}"
-```
-
-Bash `:-` defaults have to live inside `${}`. The fix that's already on `master`:
-
-```bash
-CERT_MASTER_EMAIL="${CERT_MASTER_EMAIL:-certmaster@example.com}"
-```
-
-Without this fix, `cert-manager` ACME registration fails with `400 urn:ietf:params:acme:error:invalidContact: Error validating contact(s) :: unable to parse email address` in the `cert-manager-ns` pod logs. Either patch the file or pass `CERT_MASTER_EMAIL` explicitly when invoking `helm-operations.sh`.
-
 ## What must change
 
 Listed in the order things should be done.

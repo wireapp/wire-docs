@@ -9,15 +9,9 @@ Artifact:
 
 Coming from `5.24.0`. If the deploy is still at `5.24` and the conversation data migration to PostgreSQL described on the `5.24` page hasn't been done yet, do that first. There's a chart-default bug at `5.25` that silently breaks anything that hasn't migrated, so it really matters.
 
-## Known bugs
+## Notes from the previous release
 
-Bug in `brig` for non-federated environments in `wire-server-5.24.0` release has been fixed with this release. You can remove (or set to false!) the following config, if it was used as a workaround in the last release:
-
-```yaml
-brig:
-  config:
-    enableFederation: false
-```
+The `brig` non-federated bug from `5.24` is fixed at `5.25`. If `enableFederation: true` was set in `values/wire-server/values.yaml` as a workaround, it can be removed (so it falls back to the default of `false`).
 
 ## What must change
 

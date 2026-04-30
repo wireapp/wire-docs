@@ -344,7 +344,7 @@ d helm uninstall databases-ephemeral
 
 ## Disk space note
 
-Each upgrade in this series re-runs `setup-offline-sources`, which copies the new release's binaries, container images, and debs into `/opt/assets` on the assethost. After a few versions, the assethost runs out of space and the playbook fails with `no space left on device`.
+For those of you using our ansible based deployment package, each upgrade in this series re-runs `setup-offline-sources`, which copies the new release's binaries, container images, and debs into `/opt/assets` on the assethost. After a few versions, the assethost runs out of space and the playbook fails with `no space left on device`.
 
 When that happens, SSH into the **assethost** (not the adminhost) and clear it:
 

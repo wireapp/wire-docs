@@ -70,40 +70,39 @@ brig:
 
 Why: starting at `5.23`, `rabbitmq` is deployed as an external service instead of in-cluster. `brig` can't rely on the in-cluster default service name anymore, so the hostname has to be set explicitly.
 
-### `background-worker`
+### 3. Add the new `background-worker` config
+
+`background-worker` needs a few new fields. In `values/wire-server/values.yaml`:
 
 ```yaml
 background-worker:
   config:
-    federationDomain: "example.com" # must match federation domain used for the instance in other services (brig etc.)
+    federationDomain: example.com  # match the federation domain used everywhere else (brig, etc.)
     cassandraBrig:
-      host: your-cassandra-host-or-service # same as your current cassandra.host value
+      host: <cassandra-host-or-service>  # same value as the existing cassandra.host
     cassandraGalley:
-      host: your-cassandra-host-or-service # same as your current cassandra.host value
-```
-
-#### Conversation Data Migration
-
-The following configuration is only mandatory if you decide to migrate conversation data to PostgreSQL at this stage.
-
-Starting this release, migrating conversation data to PostgreSQL from Cassandra is possible. This is only required for channel search and channel management from Team Settings. Follow [this document](../../../developer/reference/config-options.md#using-postgresql-for-storing-conversation-data) for the steps and configuration required.
-
-If you do so, the following configurations are for `background-worker` are required.
-
-```yaml
-background-worker:
-  config:
+      host: <cassandra-host-or-service>  # same value as the existing cassandra.host
     postgresql:
-      host: your-postgresql-host-or-service
+      host: <postgresql-host-or-service>
 ```
 
-And for secrets:
+In `values/wire-server/secrets.yaml`:
 
 ```yaml
 background-worker:
   secrets:
-    pgPassword: "your-postgresql-password"
+    pgPassword: <postgresql-password>
 ```
+
+To grab the existing PostgreSQL password from a typical deploy:
+
+```bash
+d kubectl get secret postgresql-external -o jsonpath='{.data.password}' | base64 -d
+```
+
+Why: `background-worker` now runs jobs that need PostgreSQL access and that talk directly to the Cassandra keyspaces of `brig` and `galley`. The federation domain is needed for federation-related background tasks.
+
+> **Warning about the `postgresMigration.conversation` default.** At this release the `background-worker` chart defaults `postgresMigration.conversation` to `postgresql`. That default must **not** be left in place when conversations haven't been migrated yet. The data is still in Cassandra, so a `postgresql` setting points the worker at an empty table. See the migration section below. This is the bug that caused conversations to disappear at `5.25` for installs that didn't migrate.
 
 ### `gundeck`
 

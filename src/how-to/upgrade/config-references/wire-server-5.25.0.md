@@ -47,6 +47,25 @@ background-worker:
 
 Set this before running the wire-server helm upgrade. The default is corrected back to `cassandra` at `5.26`.
 
+### 2. Make sure `mlsPrivateKeys` is configured (even if MLS is off)
+
+Webapp builds from after November 2025 need `mlsPrivateKeys` set on the backend, even when MLS is disabled and the deploy is Proteus-only. Without the keys, the endpoint `v13/mls/public-keys` returns `400`, and the webapp throws `MLSService is required to construct ConversationService with MLS capabilities`.
+
+Check `values/wire-server/secrets.yaml` has something like:
+
+```yaml
+galley:
+  secrets:
+    mlsPrivateKeys:
+      removal:
+        ed25519: |
+          -----BEGIN PRIVATE KEY-----
+          ...
+          -----END PRIVATE KEY-----
+```
+
+If it's missing, generate the keys with `bin/offline-secrets.sh`. Environments that were originally deployed from older `wire-server-deploy` versions may not have run that script and won't have the keys.
+
 ## Optional changes
 
 ### `nginx-ingress-services`

@@ -150,6 +150,77 @@ Watch in another terminal:
 d kubectl get events
 ```
 
+## Post-upgrade: migrate conversation data to PostgreSQL
+
+This is the part that's been flaky in the past. Don't skip it.
+
+It can only be done **after** the `5.24` `wire-server` helm upgrade has succeeded. Some required services don't exist yet on `5.23`, so trying to migrate before the upgrade just fails.
+
+A Cassandra backup of `galley` should be taken before starting. Seriously.
+
+The migration runs in three steps. Each step is a values change followed by a `helm upgrade --install wire-server ...`.
+
+### Step 1: prepare wire-server for migration
+
+In `values/wire-server/values.yaml`:
+
+```yaml
+galley:
+  config:
+    postgresMigration:
+      conversation: migration-to-postgresql
+background-worker:
+  config:
+    migrateConversations: false
+    postgresMigration:
+      conversation: migration-to-postgresql
+```
+
+Run the helm upgrade. Once it's set to `migration-to-postgresql`, do not switch back to `cassandra`. New conversations from this point on are written to PostgreSQL, reads still come from Cassandra.
+
+### Step 2: run the actual migration
+
+In `values/wire-server/values.yaml`:
+
+```yaml
+background-worker:
+  config:
+    migrateConversations: true
+    postgresMigration:
+      conversation: migration-to-postgresql
+```
+
+Run the helm upgrade. The `background-worker` pods restart and start moving data. This can take a long time on a database with a lot of conversations.
+
+Watch the logs (look for `finished migration`):
+
+```bash
+d kubectl logs deployment/background-worker --tail=2000 | grep migrate-conversations
+```
+
+Or watch the metrics, both of these should hit `1.0`:
+
+* `wire_local_convs_migration_finished`
+* `wire_user_remote_convs_migration_finished`
+
+### Step 3: switch reads over to PostgreSQL
+
+Once the metrics are at `1.0`, in `values/wire-server/values.yaml`:
+
+```yaml
+galley:
+  config:
+    postgresMigration:
+      conversation: postgresql
+background-worker:
+  config:
+    migrateConversations: false
+    postgresMigration:
+      conversation: postgresql
+```
+
+Run the helm upgrade. From now on reads and writes both go to PostgreSQL. This configuration must be kept on every subsequent upgrade.
+
 ## Optional changes
 
 ### `background-worker`

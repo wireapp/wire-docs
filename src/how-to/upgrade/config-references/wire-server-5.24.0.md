@@ -1,8 +1,9 @@
-# Wire-Server 5.24.0 release
+# Wire-Server `5.24.0` release
 
-The following reference was written based on the following [`build.json` charts](https://raw.githubusercontent.com/wireapp/wire-builds/79660a72c74c8644fb3717bd147368e4c5848117/build.json).
+Reference based on these [`build.json` charts](https://raw.githubusercontent.com/wireapp/wire-builds/79660a72c74c8644fb3717bd147368e4c5848117/build.json), and the [release changelog](https://github.com/wireapp/wire-server/releases/tag/v2025-11-26).
 
-For additional details, you can also read our [release chagelog](https://github.com/wireapp/wire-server/releases/tag/v2025-11-26).
+Artifact:
+[`wire-server-deploy-static-f88a2db81e763f7376fc0f7ecc40166a3bc37ee8.tgz`](https://s3-eu-west-1.amazonaws.com/public.wire.com/artifacts/wire-server-deploy-static-f88a2db81e763f7376fc0f7ecc40166a3bc37ee8.tgz)
 
 ## Known bugs
 

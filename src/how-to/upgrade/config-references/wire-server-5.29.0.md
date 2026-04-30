@@ -1,24 +1,59 @@
-# Wire-Server 5.29.0 release
+# Wire-Server `5.29.0` release
 
-The following reference was written based on the following [`build.json` charts](https://raw.githubusercontent.com/wireapp/wire-builds/eaaec058bd49e392ab8727a02c568782f709c81a/build.json).
+> **This release is broken. Skip it. Upgrade from `5.28` directly to `5.30`.**
+>
+> The `5.29` charts have known issues that prevent reliable deployment. The wire-server release notes themselves recommend skipping this version. The changes documented below are still in effect at `5.30` (some of them tweaked further), and this page exists for reference. Real upgrade instructions are on the `5.30` page.
 
-For additional details, you can also read our [release changelog](https://github.com/wireapp/wire-server/releases/tag/v5.29.0).
+Reference based on these [`build.json` charts](https://raw.githubusercontent.com/wireapp/wire-builds/eaaec058bd49e392ab8727a02c568782f709c81a/build.json), and the [release changelog](https://github.com/wireapp/wire-server/releases/tag/v5.29.0).
 
-## Known bugs
+Artifact:
+[`wire-server-deploy-static-d5295d63b08c43a4983c27e33e5fff75acdb6663.tgz`](https://s3-eu-west-1.amazonaws.com/public.wire.com/artifacts/wire-server-deploy-static-d5295d63b08c43a4983c27e33e5fff75acdb6663.tgz)
 
-No known bugs
+## Heads up
 
-## Mandatory (breaking) changes
+Skip this version. The content below is reference material for what shipped in `5.29`. The changes are mostly carried into `5.30`, see the `5.30` page for the actual upgrade.
 
-Wire-server core services were migrated from subcharts into the umbrella chart templates. As a result, dependency tags for these services are now obsolete. Out of these, `proxy` service might be the only breaking change if it was not used previously and is unconfigured.
+For reference purposes, the prior version is treated as `5.28.0`.
 
-### `proxy`
+## What was supposed to change at this release
 
-If `proxy` was used previously and is already configured, you have no breaking changes.
+### Core services moved into the `wire-server` umbrella chart
 
-Since proxy can no longer be "toggled off" the following configuration with dummy secrets is sufficient for deploy.
+A bunch of services moved from their own subcharts into the umbrella chart templates at `charts/wire-server/templates`:
 
-```
+* `background-worker`
+* `brig`
+* `cannon`
+* `cargohold`
+* `galley`
+* `gundeck`
+* `proxy`
+* `spar`
+
+So the corresponding dependency tags become obsolete and can be removed from `values/wire-server/values.yaml`:
+
+* `tags.brig`
+* `tags.galley`
+* `tags.cannon`
+* `tags.cargohold`
+* `tags.gundeck`
+* `tags.proxy`
+* `tags.spar`
+* `tags.background-worker`
+
+For standard deploys this isn't a breaking change, the bundled environments don't toggle any of these off. It **is** a breaking change for custom deploys that had `tags.<service>: false` for any of the moved services.
+
+When the upgrade actually runs, rendered manifests will show metadata and source-path diffs (chart labels, template source paths). That's expected, and it may trigger a one-time pod rollout because of checksum annotation changes.
+
+> Note: this is partially reverted at `5.30`. At `5.30` `tags.proxy` becomes required again. See the `5.30` page.
+
+### `proxy` can no longer be toggled off
+
+Side effect of the consolidation. `proxy` doesn't have a way to be disabled anymore. Deploys that previously set `tags.proxy: false` now have to provide at least a minimal `proxy` config so the chart renders.
+
+Placeholder secrets are enough. In `values/wire-server/secrets.yaml`:
+
+```yaml
 proxy:
   secrets:
     proxy_config: |-
@@ -31,22 +66,19 @@ proxy:
       }
 ```
 
+Deploys that already had `proxy` configured at `5.28` don't need to do anything.
+
+### `metallb` wrapper chart removed
+
+The `metallb` wrapper chart is gone. It had been unmaintained for a while and the upstream Docker images aren't available anymore. Deploys that depended on this need to switch to a different load balancer setup before upgrading.
+
 ## Optional changes
 
-### `wire-server`
+### `proxy` full configuration reference
 
-This value in `wire-server` charts is now obsolete and can be removed if used:
+Full set of `proxy` chart options at their defaults. These shouldn't be set in a local `values.yaml` unless there's a reason to override them. The `secrets` block was covered above for deploys that previously had `proxy` off.
 
-```
-tags:
-  proxy: false # or true
-```
-
-### `proxy`
-
-The following is full config options for the `proxy` chart and are shown as defaults as they come set in charts. They are not required to be set in your `values.yaml`. Do not change unless necessary.
-
-```
+```yaml
 proxy:
   replicaCount: 3
   image:
@@ -70,7 +102,7 @@ proxy:
     logFormat: StructuredJSON
     logNetStrings: false
     proxy: {}
-    # Disable one ore more API versions. Please make sure the configuration value is the same in all these charts:
+    # Disable one or more API versions. Make sure the configuration value matches in all charts:
     # brig, cannon, cargohold, galley, gundeck, proxy, spar.
     disabledAPIVersions: [development]
 
@@ -84,3 +116,19 @@ proxy:
       type: RuntimeDefault
   secrets: {}
 ```
+
+### Rate-limit status code is configurable
+
+The status code returned by `nginz` and `cannon` for rate-limit responses can now be configured in helm values. The default remains `420`, so no action is required unless a different code is desired.
+
+## Disk space note
+
+Each upgrade in this series re-runs `setup-offline-sources`, which copies the new release's binaries, container images, and debs into `/opt/assets` on the assethost. After a few versions, the assethost runs out of space and the playbook fails with `no space left on device`.
+
+When that happens, SSH into the **assethost** (not the adminhost) and clear it:
+
+```bash
+sudo rm -rvf /opt/assets
+```
+
+Then re-run `setup-offline-sources` from the adminhost.

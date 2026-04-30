@@ -70,7 +70,7 @@ brig:
 
 `port` defaults to `5672`, only set it if the RabbitMQ instance listens somewhere else.
 
-Why: starting at `5.23`, `rabbitmq` is deployed as an external service instead of in-cluster. `brig` can't rely on the in-cluster default service name anymore, so the hostname has to be set explicitly.
+Why: for those using our ansible infrastructure package, starting at `5.23`, `rabbitmq` is deployed as an external service instead of in-cluster. `brig` can't rely on the in-cluster default service name anymore, so the hostname has to be set explicitly.
 
 ### 3. Add the new `background-worker` config
 

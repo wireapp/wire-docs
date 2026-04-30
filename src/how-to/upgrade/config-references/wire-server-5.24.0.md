@@ -243,7 +243,7 @@ d helm upgrade --install wire-server ./charts/wire-server --timeout=15m0s \
   --values ./values/wire-server/secrets.yaml
 ```
 
-From now on reads and writes both go to PostgreSQL. This configuration must be kept on every subsequent upgrade.
+From this point forward reads and writes both go to PostgreSQL. This configuration must be kept on every subsequent upgrade.
 
 ## Optional changes
 

@@ -15,21 +15,45 @@ Skip this version. The content below is reference material for what shipped in `
 
 For reference purposes, the prior version is treated as `5.28.0`.
 
-## Known bugs
+## What was supposed to change at this release
 
-No known bugs
+### Core services moved into the `wire-server` umbrella chart
 
-## Mandatory (breaking) changes
+A bunch of services moved from their own subcharts into the umbrella chart templates at `charts/wire-server/templates`:
 
-Wire-server core services were migrated from subcharts into the umbrella chart templates. As a result, dependency tags for these services are now obsolete. Out of these, `proxy` service might be the only breaking change if it was not used previously and is unconfigured.
+* `background-worker`
+* `brig`
+* `cannon`
+* `cargohold`
+* `galley`
+* `gundeck`
+* `proxy`
+* `spar`
 
-### `proxy`
+So the corresponding dependency tags become obsolete and can be removed from `values/wire-server/values.yaml`:
 
-If `proxy` was used previously and is already configured, you have no breaking changes.
+* `tags.brig`
+* `tags.galley`
+* `tags.cannon`
+* `tags.cargohold`
+* `tags.gundeck`
+* `tags.proxy`
+* `tags.spar`
+* `tags.background-worker`
 
-Since proxy can no longer be "toggled off" the following configuration with dummy secrets is sufficient for deploy.
+For standard deploys this isn't a breaking change, the bundled environments don't toggle any of these off. It **is** a breaking change for custom deploys that had `tags.<service>: false` for any of the moved services.
 
-```
+When the upgrade actually runs, rendered manifests will show metadata and source-path diffs (chart labels, template source paths). That's expected, and it may trigger a one-time pod rollout because of checksum annotation changes.
+
+> Note: this is partially reverted at `5.30`. At `5.30` `tags.proxy` becomes required again. See the `5.30` page.
+
+### `proxy` can no longer be toggled off
+
+Side effect of the consolidation. `proxy` doesn't have a way to be disabled anymore. Deploys that previously set `tags.proxy: false` now have to provide at least a minimal `proxy` config so the chart renders.
+
+Placeholder secrets are enough. In `values/wire-server/secrets.yaml`:
+
+```yaml
 proxy:
   secrets:
     proxy_config: |-
@@ -41,6 +65,12 @@ proxy:
               spotify    = "Basic ..."
       }
 ```
+
+Deploys that already had `proxy` configured at `5.28` don't need to do anything.
+
+### `metallb` wrapper chart removed
+
+The `metallb` wrapper chart is gone. It had been unmaintained for a while and the upstream Docker images aren't available anymore. Deploys that depended on this need to switch to a different load balancer setup before upgrading.
 
 ## Optional changes
 

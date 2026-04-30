@@ -17,7 +17,7 @@ The `brig` non-federated bug from `5.24` is fixed at `5.25`. If `enableFederatio
 
 ### 1. Set `background-worker.config.postgresMigration.conversation` explicitly
 
-The `5.25` `background-worker` chart ships with `postgresMigration.conversation` defaulting to `postgresql`. That's wrong for any deploy that hasn't migrated conversations to PostgreSQL yet, the data is still in Cassandra and the worker would be reading from an empty postgres table. This is the bug that caused conversations to disappear in real upgrades.
+The `5.25` `background-worker` chart ships with `postgresMigration.conversation` defaulting to `postgresql`. That's wrong for any deploy that hasn't migrated conversations to PostgreSQL yet, the data is still in Cassandra and the worker would be reading from an empty postgres table. This is the bug that may have caused conversations to disappear in real upgrades.
 
 It has to be set explicitly. Either of these, depending on the actual state of the deploy:
 

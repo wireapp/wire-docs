@@ -66,6 +66,22 @@ galley:
 
 If it's missing, generate the keys with `bin/offline-secrets.sh`. Environments that were originally deployed from older `wire-server-deploy` versions may not have run that script and won't have the keys.
 
+### 3. If `galley.settings.featureFlags.cells` is overridden, add the new fields
+
+The `cells` feature flag schema gained new required fields at this release: `channels`, `groups`, `one2one`, `users`, `collabora`, `publicLinks`, `storage`, `metadata`. Any local override of `cells` in the `values.yaml` has to add them.
+
+If `cells` isn't overridden and the chart default is in use, no action needed.
+
+### 4. Run the wire-server helm upgrade
+
+Once values and secrets are updated:
+
+```bash
+d helm upgrade --install wire-server ./charts/wire-server --timeout=15m0s \
+  --values ./values/wire-server/values.yaml \
+  --values ./values/wire-server/secrets.yaml
+```
+
 ## Optional changes
 
 ### `nginx-ingress-services`

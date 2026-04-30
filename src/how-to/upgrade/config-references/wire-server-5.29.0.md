@@ -74,20 +74,11 @@ The `metallb` wrapper chart is gone. It had been unmaintained for a while and th
 
 ## Optional changes
 
-### `wire-server`
+### `proxy` full configuration reference
 
-This value in `wire-server` charts is now obsolete and can be removed if used:
+Full set of `proxy` chart options at their defaults. These shouldn't be set in a local `values.yaml` unless there's a reason to override them. The `secrets` block was covered above for deploys that previously had `proxy` off.
 
-```
-tags:
-  proxy: false # or true
-```
-
-### `proxy`
-
-The following is full config options for the `proxy` chart and are shown as defaults as they come set in charts. They are not required to be set in your `values.yaml`. Do not change unless necessary.
-
-```
+```yaml
 proxy:
   replicaCount: 3
   image:
@@ -111,7 +102,7 @@ proxy:
     logFormat: StructuredJSON
     logNetStrings: false
     proxy: {}
-    # Disable one ore more API versions. Please make sure the configuration value is the same in all these charts:
+    # Disable one or more API versions. Make sure the configuration value matches in all charts:
     # brig, cannon, cargohold, galley, gundeck, proxy, spar.
     disabledAPIVersions: [development]
 
@@ -125,3 +116,19 @@ proxy:
       type: RuntimeDefault
   secrets: {}
 ```
+
+### Rate-limit status code is configurable
+
+The status code returned by `nginz` and `cannon` for rate-limit responses can now be configured in helm values. Default is still `420`, so unless an actaul change is wanted, nothing to do.
+
+## Disk space note
+
+Each upgrade in this series re-runs `setup-offline-sources`, which copies the new release's binaries, container images, and debs into `/opt/assets` on the assethost. After a few versions, the assethost runs out of space and the playbook fails with `no space left on device`.
+
+When that happens, SSH into the **assethost** (not the adminhost) and clear it:
+
+```bash
+sudo rm -rvf /opt/assets
+```
+
+Then re-run `setup-offline-sources` from the adminhost.

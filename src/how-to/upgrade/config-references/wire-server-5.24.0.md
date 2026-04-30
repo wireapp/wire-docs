@@ -108,7 +108,7 @@ Why: `background-worker` now runs jobs that need PostgreSQL access and that talk
 
 ### 4. Update `gundeck.config.redis.host`
 
-The Redis service hostname changed from `{{ .Release.Name }}-master` to `{{ .Release.Name }}`. With the standard `redis-ephemeral` release name, the in-cluster service is just `redis-ephemeral` now (used to be `databases-ephemeral-redis-ephemeral-master`).
+For those using the in-cluster Redis service shipped with our bundle, The Redis service hostname has changed from `{{ .Release.Name }}-master` to `{{ .Release.Name }}`. With the standard `redis-ephemeral` release name, the in-cluster service is just `redis-ephemeral` now (used to be `databases-ephemeral-redis-ephemeral-master`).
 
 Check the cluster:
 

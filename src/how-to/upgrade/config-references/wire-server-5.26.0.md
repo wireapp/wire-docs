@@ -15,15 +15,19 @@ Artifact:
 
 Coming from `5.25.0`. For deploys at any earlier version, do the `5.25` page first.
 
-## Known bugs
+## Notes from the previous release
 
-Previous release introduced a bug into `background-worker` default settings for `postgresMigration` and have now been correctly set to Cassandra. If you are relying on default values from our charts, but have migrated your conversations to PostgreSQL, update your config accordingly to keep using PostgreSQL. Specifically, this value:
+The `background-worker` chart default for `postgresMigration.conversation` is corrected at this release. It defaults to `cassandra` again, matching the `galley` default. Earlier versions of the chart defaulted to `postgresql`, which is exactly the bug that broke conversations on installs that hadn't migrated.
 
-```
+If `postgresMigration.conversation` was already set explicitly in `values/wire-server/values.yaml` (which `5.25` told operators to do), no action.
+
+If the chart default at `5.25` was being relied on, **and** the migration was already done, the value has to be set explicitly to `postgresql` now, otherwise the new `cassandra` default flips the worker back to reading from Cassandra:
+
+```yaml
 background-worker:
   config:
     postgresMigration:
-      conversation: postgresql | cassandra # default is cassandra, and should be if not migrated to postgresql
+      conversation: postgresql
 ```
 
 ## Mandatory (breaking) changes

@@ -5,6 +5,17 @@ Reference based on these [`build.json` charts](https://raw.githubusercontent.com
 Artifact:
 [`wire-server-deploy-static-f88a2db81e763f7376fc0f7ecc40166a3bc37ee8.tgz`](https://s3-eu-west-1.amazonaws.com/public.wire.com/artifacts/wire-server-deploy-static-f88a2db81e763f7376fc0f7ecc40166a3bc37ee8.tgz)
 
+## Heads up
+
+`5.24` is one of the heavier upgrades in this series. Two big things going on:
+
+* `databases-ephemeral` is replaced by `redis-ephemeral`. The hostname `gundeck` uses for Redis changes.
+* Conversation data moves from Cassandra to PostgreSQL. **The original docs called this optional. It must be treated as mandatory.** Skipping it here and then upgrading to `5.25` causes conversations to silently disappear from reads, because of a bad chart default at `5.25`. See the post-upgrade migrations section below.
+
+This page assumes the source version is `5.23.x`.
+
+One more thing: every value change documented on this page must be followed by an actual `d helm upgrade --install wire-server ...` run for the change to apply. The chart doesn't watch the `values.yaml`. Phrasing like "this change should restart all the `galley` pods" means "after the helm upgrade is re-run, the pods will restart". It doesn't happen by itself.
+
 ## Known bugs
 
 There is a bug with our `brig` charts failing to deploy in a non-federated environment. If you are running a non-federated environment, to work around this, set the following configuration in your `brig`:

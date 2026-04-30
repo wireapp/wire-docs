@@ -78,9 +78,9 @@ d helm upgrade --install wire-server ./charts/wire-server --timeout=15m0s \
 
 ## Optional changes
 
-### `nginx-ingress-services`
+### `nginx-ingress-services` private key rotation policy
 
-Support for `cert-manager` certificate private key rotation policy has been added in this release. This allows preserving private keys across certificate renewals for client key pinning scenarios in both federator and ingress certificates. The following shown are defaults as they come in charts from referenced `build.json`.
+`cert-manager` certificate private key rotation policy is now configurable, both for the ingress and the federator. Useful when client key pinning is in use and keys need to survive renewals.
 
 ```yaml
 nginx-ingress-services:
@@ -93,14 +93,14 @@ nginx-ingress-services:
       rotationPolicy: Always
 ```
 
-Options are:
+* `Always` (default): regenerate the key on each renewal.
+* `Never`: keep the same key across renewals (for key pinning).
 
-* Always (default) - regenerates key on each renewal
-* Never - preserves key across renewals (for key pinning)
+Edit `values/nginx-ingress-services/values.yaml` during the nginx ingress upgrade step. Only relevant for `cert-manager`-based deploys with a key pinning requirement.
 
-### `background-worker`
+### `background-worker` migration tunables
 
-Configuring page size and parallelism for conversation migration to PostgreSQL is now possible. This can be configured like this:
+When the conversation migration is being run at `5.25` rather than at `5.24` (please don't, but if it has to happen), page size and parralelism can now be tuned:
 
 ```yaml
 background-worker:
@@ -109,4 +109,26 @@ background-worker:
       pageSize: 10000
       parallelism: 2
 ```
-  
+
+### New migration failure metrics
+
+Two metrics for tracking migration failures:
+
+* `wire_local_convs_migration_failed`
+* `wire_user_remote_convs_migration_failed`
+
+If either of these hits `1`, the migration has failed. The actual error will be in the `background-worker` logs. To retry, restart the `background-worker` pods.
+
+These go alongside the already-existing `wire_local_convs_migration_finished` and `wire_user_remote_convs_migration_finished` ones.
+
+## Disk space note
+
+Each upgrade in this series re-runs `setup-offline-sources`, which copies the new release's binaries, container images, and debs into `/opt/assets` on the assethost. After a few versions, the assethost runs out of space and the playbook fails with `no space left on device`.
+
+When that happens, SSH into the **assethost** (not the adminhost) and clear it:
+
+```bash
+sudo rm -rvf /opt/assets
+```
+
+Then re-run `setup-offline-sources` from the adminhost.

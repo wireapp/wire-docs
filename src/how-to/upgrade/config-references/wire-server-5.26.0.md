@@ -54,6 +54,8 @@ d helm upgrade --install wire-server ./charts/wire-server --timeout=15m0s \
 
 ## Post-upgrade: migrate conversation codes to PostgreSQL (optional)
 
+> **Back up before starting.** Take a backup of the Cassandra `galley` keyspace and of the target PostgreSQL database before running any of the steps below. The migration writes to PostgreSQL from step 1 onwards, and rolling back without a backup is not straightforward.
+
 Same shape as the conversation data migration from `5.24`. Only makes sense when conversation data has already been migrated, otherwise leave it.
 
 Step 1, in `values/wire-server/values.yaml`:

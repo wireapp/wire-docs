@@ -154,9 +154,9 @@ d kubectl get events
 
 ## Post-upgrade: migrate conversation data to PostgreSQL
 
-It can only be done **after** the `5.24` `wire-server` helm upgrade has succeeded. Some required services don't exist yet on `5.23`, so trying to migrate before the upgrade just fails.
+> **Back up before starting.** Take a backup of the Cassandra `galley` keyspace and of the target PostgreSQL database before running any of the steps below. The migration is destructive in the sense that data starts being written to PostgreSQL from step 1 onwards, and rolling back without a backup is not straightforward.
 
-A Cassandra backup of `galley` should be taken before starting.
+It can only be done **after** the `5.24` `wire-server` helm upgrade has succeeded. Some required services don't exist yet on `5.23`, so trying to migrate before the upgrade just fails.
 
 The migration runs in three steps. Each step is a values change followed by a `helm upgrade --install wire-server ...`.
 

@@ -21,6 +21,8 @@ No mandatory changes at this release. No known bugs.
 
 ## Post-upgrade: migrate team features to PostgreSQL (optional)
 
+> **Back up before starting.** Take a backup of the Cassandra `galley` keyspace and of the target PostgreSQL database before running any of the steps below. The migration writes to PostgreSQL from step 1 onwards, and rolling back without a backup is not straightforward.
+
 Same shape as the conversation data and conversation codes migrations. Only do this when conversation data and conversation codes have already been migrated, otherwise skip it.
 
 Step 1, in `values/wire-server/values.yaml`:

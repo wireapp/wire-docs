@@ -44,7 +44,7 @@ d helm upgrade --install wire-server ./charts/wire-server --timeout=15m0s \
 
 ### Upgrade Cassandra to `4.1.x` when convenient
 
-From this release on, wire-server is only tested against Cassandra `4.1.x`. The codebase still works on `3.11`, `4.0`, and `4.1`, but only `4.1` and newer get testing going forward. So a Cassandra upgrade should be planned at some point, no rush.
+From this release on, wire-server is only tested against Cassandra `4.1.x`. The codebase still works on `3.11`, `4.0`, and `4.1`, but only `4.1` and newer get testing going forward. A Cassandra upgrade should be planned at some point.
 
 ## Disk space note
 

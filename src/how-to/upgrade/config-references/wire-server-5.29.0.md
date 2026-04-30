@@ -119,7 +119,7 @@ proxy:
 
 ### Rate-limit status code is configurable
 
-The status code returned by `nginz` and `cannon` for rate-limit responses can now be configured in helm values. Default is still `420`, so unless an actaul change is wanted, nothing to do.
+The status code returned by `nginz` and `cannon` for rate-limit responses can now be configured in helm values. The default remains `420`, so no action is required unless a different code is desired.
 
 ## Disk space note
 

@@ -100,7 +100,7 @@ Edit `values/nginx-ingress-services/values.yaml` during the nginx ingress upgrad
 
 ### `background-worker` migration tunables
 
-When the conversation migration is being run at `5.25` rather than at `5.24` (please don't, but if it has to happen), page size and parralelism can now be tuned:
+When the conversation migration is being run at `5.25` rather than at `5.24`, page size and parallelism can now be tuned:
 
 ```yaml
 background-worker:

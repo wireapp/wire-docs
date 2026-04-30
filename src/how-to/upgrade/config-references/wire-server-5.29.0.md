@@ -1,8 +1,19 @@
-# Wire-Server 5.29.0 release
+# Wire-Server `5.29.0` release
 
-The following reference was written based on the following [`build.json` charts](https://raw.githubusercontent.com/wireapp/wire-builds/eaaec058bd49e392ab8727a02c568782f709c81a/build.json).
+> **This release is broken. Skip it. Upgrade from `5.28` directly to `5.30`.**
+>
+> The `5.29` charts have known issues that prevent reliable deployment. The wire-server release notes themselves recommend skipping this version. The changes documented below are still in effect at `5.30` (some of them tweaked further), and this page exists for reference. Real upgrade instructions are on the `5.30` page.
 
-For additional details, you can also read our [release changelog](https://github.com/wireapp/wire-server/releases/tag/v5.29.0).
+Reference based on these [`build.json` charts](https://raw.githubusercontent.com/wireapp/wire-builds/eaaec058bd49e392ab8727a02c568782f709c81a/build.json), and the [release changelog](https://github.com/wireapp/wire-server/releases/tag/v5.29.0).
+
+Artifact:
+[`wire-server-deploy-static-d5295d63b08c43a4983c27e33e5fff75acdb6663.tgz`](https://s3-eu-west-1.amazonaws.com/public.wire.com/artifacts/wire-server-deploy-static-d5295d63b08c43a4983c27e33e5fff75acdb6663.tgz)
+
+## Heads up
+
+Skip this version. The content below is reference material for what shipped in `5.29`. The changes are mostly carried into `5.30`, see the `5.30` page for the actual upgrade.
+
+For reference purposes, the prior version is treated as `5.28.0`.
 
 ## Known bugs
 

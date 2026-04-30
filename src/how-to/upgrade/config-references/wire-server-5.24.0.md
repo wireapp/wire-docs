@@ -14,8 +14,6 @@ Artifact:
 
 This page assumes the source version is `5.23.x`.
 
-One more thing: every value change documented on this page must be followed by an actual `d helm upgrade --install wire-server ...` run for the change to apply. The chart doesn't watch the `values.yaml`. Phrasing like "this change should restart all the `galley` pods" means "after the helm upgrade is re-run, the pods will restart". It doesn't happen by itself.
-
 ## Known bugs
 
 ### `brig` won't deploy in non-federated environments
@@ -180,7 +178,15 @@ background-worker:
       conversation: migration-to-postgresql
 ```
 
-Run the helm upgrade. Once it's set to `migration-to-postgresql`, do not switch back to `cassandra`. New conversations from this point on are written to PostgreSQL, reads still come from Cassandra.
+Then run:
+
+```bash
+d helm upgrade --install wire-server ./charts/wire-server --timeout=15m0s \
+  --values ./values/wire-server/values.yaml \
+  --values ./values/wire-server/secrets.yaml
+```
+
+Once it's set to `migration-to-postgresql`, do not switch back to `cassandra`. New conversations from this point on are written to PostgreSQL, reads still come from Cassandra.
 
 ### Step 2: run the actual migration
 
@@ -194,7 +200,15 @@ background-worker:
       conversation: migration-to-postgresql
 ```
 
-Run the helm upgrade. The `background-worker` pods restart and start moving data. This can take a long time on a database with a lot of conversations.
+Then run:
+
+```bash
+d helm upgrade --install wire-server ./charts/wire-server --timeout=15m0s \
+  --values ./values/wire-server/values.yaml \
+  --values ./values/wire-server/secrets.yaml
+```
+
+The `background-worker` pods restart and start moving data. This can take a long time on a database with a lot of conversations.
 
 Watch the logs (look for `finished migration`):
 
@@ -223,7 +237,15 @@ background-worker:
       conversation: postgresql
 ```
 
-Run the helm upgrade. From now on reads and writes both go to PostgreSQL. This configuration must be kept on every subsequent upgrade.
+Then run:
+
+```bash
+d helm upgrade --install wire-server ./charts/wire-server --timeout=15m0s \
+  --values ./values/wire-server/values.yaml \
+  --values ./values/wire-server/secrets.yaml
+```
+
+From now on reads and writes both go to PostgreSQL. This configuration must be kept on every subsequent upgrade.
 
 ## Optional changes
 

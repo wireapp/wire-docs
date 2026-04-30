@@ -1,8 +1,13 @@
-# Wire-Server 5.25.0 release
+# Wire-Server `5.25.0` release
 
-The following reference was written based on the following [`build.json` charts](https://raw.githubusercontent.com/wireapp/wire-builds/5a74084feeb1138925dcb671b333da0c76f88f08/build.json).
+Reference based on these [`build.json` charts](https://raw.githubusercontent.com/wireapp/wire-builds/5a74084feeb1138925dcb671b333da0c76f88f08/build.json), and the [release changelog](https://github.com/wireapp/wire-server/releases/tag/v2026-01-13).
 
-For additional details, you can also read our [release changelog](https://github.com/wireapp/wire-server/releases/tag/v2026-01-13).
+Artifact:
+[`wire-server-deploy-static-1ca0f1beecb9022e9c7cde2d3ab02fc7e90695e0.tgz`](https://s3-eu-west-1.amazonaws.com/public.wire.com/artifacts/wire-server-deploy-static-1ca0f1beecb9022e9c7cde2d3ab02fc7e90695e0.tgz)
+
+## Heads up
+
+Coming from `5.24.0`. If the deploy is still at `5.24` and the conversation data migration to PostgreSQL described on the `5.24` page hasn't been done yet, do that first. There's a chart-default bug at `5.25` that silently breaks anything that hasn't migrated, so it really matters.
 
 ## Known bugs
 

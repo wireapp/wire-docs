@@ -243,25 +243,22 @@ Run the helm upgrade. From now on reads and writes both go to PostgreSQL. This c
 
 ## Optional changes
 
-### `background-worker`
+### `background-worker` tunables
 
-New settings, change only if required. The following are defaults as they come in charts
+These are chart defaults, only set them when an actual change is needed:
 
 ```yaml
 background-worker:
   postgresql:
-    host: postgresql # This one is already referenced in the mandatory category
+    host: postgresql # already referenced as mandatory above
     port: "5432"
     user: wire-server
     dbname: wire-server
-  # Background jobs consumer configuration
+  # Background jobs consumer
   backgroundJobs:
-    # Maximum number of in-flight jobs per process
-    concurrency: 8
-    # Per-attempt timeout in seconds
-    jobTimeout: 60s
-    # Total attempts, including the first try
-    maxAttempts: 3
+    concurrency: 8       # max in-flight jobs per process
+    jobTimeout: 60s      # per-attempt timeout
+    maxAttempts: 3       # total attempts including the first try
   postgresqlPool:
     size: 5
     acquisitionTimeout: 10s
@@ -269,17 +266,86 @@ background-worker:
     idlenessTimeout: 10m
 ```
 
-### `gundeck`
+### `gundeck` Redis tunables
 
-New settings, change only if required. The following are defaults as they come in charts
+Also chart defaults, don't touch unless necessary:
 
 ```yaml
 gundeck:
   config:
     redis:
-      host: redis-ephemeral # This one is already referenced in the mandatory catefory
+      host: redis-ephemeral # already referenced as mandatory above
       port: 6379
       connectionMode: "master" # master | cluster
       enableTls: false
       insecureSkipVerifyTls: false
-```    
+```
+
+## Verification
+
+After the helm upgrade is done.
+
+`brig` should connect to RabbitMQ. The log lines look something like this:
+
+```bash
+d kubectl logs deployment/brig --tail=300 | grep -iE 'rabbit|amqp'
+```
+
+```
+{"level":"Info","msgs":["Trying to connect to RabbitMQ"]}
+{"level":"Info","msgs":["Retrieved connection..."]}
+{"level":"Info","msgs":["Opening channel with RabbitMQ"]}
+{"level":"Info","msgs":["RabbitMQ channel opened"]}
+```
+
+`background-worker` does the same and also opens a Cassandra control connection:
+
+```bash
+d kubectl logs deployment/background-worker --tail=300 | grep -iE 'rabbit|cassandra'
+```
+
+`gundeck` pods should all be `Running`:
+
+```bash
+d kubectl get pods | grep gundeck
+```
+
+If the conversation migration is already done, the row count in PostgreSQL should be non-zero. SSH into one of the postgres nodes:
+
+```bash
+ssh <postgres-node> "sudo -u postgres psql -d wire-server -c 'SELECT COUNT(*) FROM conversation;'"
+```
+
+And before calling it done, log in on the webapp and on a mobile client, send a message in an existing conversation, confirm conversations are still there. The whole point of the migration is to keep that data, so it must be verified for real.
+
+## Cleanup
+
+Once `redis-ephemeral` looks healthy, the old `databases-ephemeral` chart can go. Nothing uninstalls it automatically.
+
+First confirm nothing still references it:
+
+```bash
+d helm list -A | grep databases-ephemeral
+d kubectl get svc | grep databases-ephemeral
+grep -r "databases-ephemeral" values/wire-server/values.yaml
+```
+
+The grep on `values/wire-server/values.yaml` should come back empty. If it doesn't, fix the override first, then come back.
+
+Then:
+
+```bash
+d helm uninstall databases-ephemeral
+```
+
+## Disk space note
+
+Each upgrade in this series re-runs `setup-offline-sources`, which copies the new release's binaries, container images, and debs into `/opt/assets` on the assethost. After a few versions, the assethost runs out of space and the playbook fails with `no space left on device`.
+
+When that happens, SSH into the **assethost** (not the adminhost) and clear it:
+
+```bash
+sudo rm -rvf /opt/assets
+```
+
+Then re-run `setup-offline-sources` from the adminhost.

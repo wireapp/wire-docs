@@ -104,7 +104,7 @@ d kubectl get secret postgresql-external -o jsonpath='{.data.password}' | base64
 
 Why: `background-worker` now runs jobs that need PostgreSQL access and that talk directly to the Cassandra keyspaces of `brig` and `galley`. The federation domain is needed for federation-related background tasks.
 
-> **Warning about the `postgresMigration.conversation` default.** At this release the `background-worker` chart defaults `postgresMigration.conversation` to `postgresql`. That default must **not** be left in place when conversations haven't been migrated yet. The data is still in Cassandra, so a `postgresql` setting points the worker at an empty table. See the migration section below. This is the bug that may have caused conversations to disappear at `5.25` for installs that didn't migrate.
+> **Warning about the `postgresMigration.conversation` default.** At this release the `background-worker` chart defaults `postgresMigration.conversation` to `postgresql`. That default must **not** be left in place when conversations haven't been migrated yet. If they have not yet been migrated, the data will still be in Cassandra, so a `postgresql` setting points the worker at an empty table. See the migration section below. This is the bug that may have caused conversations to disappear at `5.25` for installs that didn't migrate.
 
 ### 4. Update `gundeck.config.redis.host`
 

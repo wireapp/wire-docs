@@ -19,9 +19,33 @@ brig:
     enableFederation: false
 ```
 
-## Mandatory (breaking) changes
+## What must change
 
-No mandatory changes in comparison to the last release.
+### 1. Set `background-worker.config.postgresMigration.conversation` explicitly
+
+The `5.25` `background-worker` chart ships with `postgresMigration.conversation` defaulting to `postgresql`. That's wrong for any deploy that hasn't migrated conversations to PostgreSQL yet, the data is still in Cassandra and the worker would be reading from an empty postgres table. This is the bug that caused conversations to disappear in real upgrades.
+
+It has to be set explicitly. Either of these, depending on the actual state of the deploy:
+
+If conversation data hasn't been migrated to PostgreSQL yet (most installs coming from `5.23`):
+
+```yaml
+background-worker:
+  config:
+    postgresMigration:
+      conversation: cassandra
+```
+
+If the migration was already done (per the `5.24` page):
+
+```yaml
+background-worker:
+  config:
+    postgresMigration:
+      conversation: postgresql
+```
+
+Set this before running the wire-server helm upgrade. The default is corrected back to `cassandra` at `5.26`.
 
 ## Optional changes
 

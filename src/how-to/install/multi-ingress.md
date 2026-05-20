@@ -346,13 +346,14 @@ helm upgrade --install nginx-ingress-services-blue charts/nginx-ingress-services
 
 ### Patch the CSP (Content security policy) for each multi-ingress domain
 
-The below patch is only required when the Webapp is used for calling via multi-ingress. The below commands can patch an existing ingress in a k8s cluster and are trying to insert the SFT_DOMAIN, if the domain already exists then these won't be effective. The same need to be repeated for each multi-ingress domain.
+When the Webapp is used with multi-ingress calling, the ingress CSP configuration must explicitly allow the corresponding Calling endpoint (SFT_DOMAIN).
+This update ensures that the browser accepts resources and connections required for calling functionality. The same need to be repeated for each multi-ingress domain. To find out which `SFT_DOMAIN` can be used, continue reading the [Calling](#calling) section.
 
 ```bash
 d bash
 kubectl get ingress nginx-ingress-red -o yaml > nginx-ingress-red.yaml
 MULTI_DOMAIN="red.example.com"
-SFT_DOMAIN="sft.calling-prod-v01.wire.com"
+SFT_DOMAIN="sft.example-calling.com"
 sed -i "s|} https://\\*\\.${MULTI_DOMAIN};|} https://*.${MULTI_DOMAIN} https://${SFT_DOMAIN};|" nginx-ingress-red.yaml
 # debug command to verify
 kubectl diff -f nginx-ingress-red.yaml

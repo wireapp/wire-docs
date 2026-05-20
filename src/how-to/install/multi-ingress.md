@@ -93,11 +93,12 @@ Wire-server backend values can be found at: [https://github.com/wireapp/wire-ser
 galley:
   config:
       settings:
-          conversationCodeURI: https://accounts.green.example.org/conversation-join/
+          conversationCodeURI: https://account.green.example.org/conversation-join/
       multiIngress:
-        red.example.com: https://accounts.red.example.com/conversation-join/
-        blue.example.net: https://accounts.blue.example.net/conversation-join/
+        red.example.com: https://account.red.example.com/conversation-join/
+        blue.example.net: https://account.blue.example.net/conversation-join/
 ```
+Note: `settings.multiIngress` and `settings.conversationCodeURI` are mutually exclusive.
 
 ### Cargohold
 
@@ -177,7 +178,7 @@ Webapp values can be found at: [https://github.com/wireapp/wire-server-deploy/bl
 Override the whole file with following:
 
 ```yaml
-replicaCount: 1
+replicaCount: 3
 config:
   externalUrls:
     backendRest: "nginz-https.[[hostname]]"
@@ -245,6 +246,7 @@ For each additional domain (e.g., `red.example.com`, `blue.example.net`), you mu
 
 - **Unique release names** (e.g., `nginx-ingress-services-red`, `nginx-ingress-services-blue`)
 - **Domain-specific values files** with distinct configurations
+- **Separate TLS certificates**  (e.g., `values/nginx-ingress-services/red-key.pem`, `values/nginx-ingress-services/red-cert.pem`)
 
 ### Prepare values for red domain
 
@@ -259,23 +261,13 @@ accountPages:
   enabled: true
 tls:
   enabled: true
-  # NOTE: enable to automate certificate issuing with jetstack/cert-manager instead of
-  #       providing your own certs in secrets.yaml. Cert-manager is not installed automatically,
-  #       it needs to be installed beforehand (see ./../../charts/certificate-manager/README.md)
   useCertManager: false
   issuer:
     kind: ClusterIssuer
-certManager:
-  inTestMode: false
-  # CHANGEME-PROD: required, if certificate manager is used; set to receive cert expiration
-  #                notice and other Letsencrypt related notification
-  certmasterEmail: email@red.example.com
-
-# CHANGEME-PROD: These values are suggested for deployments on bare metal and
-#                should be adjusted on a per installation basis
 
 config:
   dns:
+    base: red.example.com
     https: nginz-https.red.example.com
     ssl: nginz-ssl.red.example.com
     webapp: webapp.red.example.com
@@ -300,7 +292,7 @@ service:
 Deploy this chart as following:
 
 ```bash
-helm upgrade --install nginx-ingress-services-red charts/nginx-ingress-services -f values/nginx-ingress-services/red-values.yaml
+helm upgrade --install nginx-ingress-services-red charts/nginx-ingress-services -f values/nginx-ingress-services/red-values.yaml --set-file secrets.tlsWildcardCert=values/nginx-ingress-services/red-cert.pem --set-file secrets.tlsWildcardKey=values/nginx-ingress-services/red-key.pem
 ```
 
 ### Prepare values for blue domain
@@ -318,23 +310,13 @@ accountPages:
   enabled: true
 tls:
   enabled: true
-  # NOTE: enable to automate certificate issuing with jetstack/cert-manager instead of
-  #       providing your own certs in secrets.yaml. Cert-manager is not installed automatically,
-  #       it needs to be installed beforehand (see ./../../charts/certificate-manager/README.md)
   useCertManager: false
   issuer:
     kind: ClusterIssuer
-certManager:
-  inTestMode: false
-  # CHANGEME-PROD: required, if certificate manager is used; set to receive cert expiration
-  #                notice and other Letsencrypt related notification
-  certmasterEmail: email@blue.example.net
-
-# CHANGEME-PROD: These values are suggested for deployments on bare metal and
-#                should be adjusted on a per installation basis
 
 config:
   dns:
+    base: blue.example.net
     https: nginz-https.blue.example.net
     ssl: nginz-ssl.blue.example.net
     webapp: webapp.blue.example.net
@@ -359,7 +341,22 @@ service:
 It will be deployed as:
 
 ```bash
-helm upgrade --install nginx-ingress-services-blue charts/nginx-ingress-services -f values/nginx-ingress-services/blue-values.yaml
+helm upgrade --install nginx-ingress-services-blue charts/nginx-ingress-services -f values/nginx-ingress-services/blue-values.yaml --set-file secrets.tlsWildcardCert=values/nginx-ingress-services/red-cert.pem --set-file secrets.tlsWildcardKey=values/nginx-ingress-services/red-key.pem
+```
+
+### Patch the CSP (Content security policy) for each multi-ingress domain
+
+The below patch is only required when the Webapp is used for calling via multi-ingress. The below commands can patch an existing ingress in a k8s cluster and are trying to insert the SFT_DOMAIN, if the domain already exists then these won't be effective. The same need to be repeated for each multi-ingress domain.
+
+```bash
+d bash
+kubectl get ingress nginx-ingress-red -o yaml > nginx-ingress-red.yaml
+MULTI_DOMAIN="red.example.com"
+SFT_DOMAIN="sft.calling-prod-v01.wire.com"
+sed -i "s|} https://\\*\\.${MULTI_DOMAIN};|} https://*.${MULTI_DOMAIN} https://${SFT_DOMAIN};|" nginx-ingress-red.yaml
+# debug command to verify
+kubectl diff -f nginx-ingress-red.yaml
+kubectl apply -f nginx-ingress-red.yaml
 ```
 
 ### Verify the deployment

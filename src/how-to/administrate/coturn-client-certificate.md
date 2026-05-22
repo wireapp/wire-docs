@@ -76,7 +76,7 @@ openssl req -new \
   -key coturn-key.pem \
   -out coturn.csr \
   -subj "/C=US/ST=State/L=City/O=Your Organization/CN=coturn.example.com" \
-  -addext "subjectAltName=DNS:coturn.example.com,DNS:coturn-0.coturn.default.svc.cluster.local,DNS:coturn-1.coturn.default.svc.cluster.local" \
+  -addext "subjectAltName=DNS:coturn.example.com,DNS:coturn-0.example.com,DNS:coturn-1.example.com,DNS:coturn-2.example.com" \
   -addext "extendedKeyUsage=serverAuth,clientAuth" \
   -addext "keyUsage=digitalSignature"
 ```
@@ -99,7 +99,7 @@ openssl x509 -req -days 365 \
   -CAkey my-ca-key.pem \
   -CAcreateserial \
   -out coturn-cert.pem \
-  -extfile <(printf "subjectAltName=DNS:coturn.example.com,DNS:coturn-0.coturn.default.svc.cluster.local,DNS:coturn-1.coturn.default.svc.cluster.local\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth,clientAuth")
+  -extfile <(printf "subjectAltName=DNS:coturn.example.com,DNS:coturn-0.example.com,DNS:coturn-1.example.com,DNS:coturn-2.example.com\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth,clientAuth")
 ```
 
 Verify the signed certificate:
@@ -158,14 +158,6 @@ Update your coturn Helm values file (`values/coturn/values.yaml`) with the PEM c
 
 ```yaml
 # Existing coturn configuration
-nodeSelector:
-  wire.com/role: coturn
-
-replicaCount: 3
-coturnTurnListenIP: "__COTURN_POD_IP__"
-coturnTurnExternalIP: "__COTURN_EXT_IP__"
-coturnTurnRelayIP: "__COTURN_POD_IP__"
-
 # DTLS Federation certificate configuration
 federate:
   dtls:
@@ -179,64 +171,10 @@ federate:
         <paste PEM certificate content here>
         -----END CERTIFICATE-----
 
-# Existing secrets configuration
-secrets:
-  zrestSecrets:
-    - "<your-turn-secret>"
-
-# Rate limiting allowlist for federation.
-# Add all IPs that coturn must accept connections from without rate limiting:
-#
-#   1. Internal node IPs — the Kubernetes node IPs where coturn pods are scheduled.
-#      Add one entry per node.
-#
-#   2. Cluster gateway / NAT IP — if your cluster routes outgoing traffic through
-#      a single gateway or NAT IP, add that IP too (coturn sees it as the source).
-#
-#   3. Public (external) IPs of each coturn replica — the IPs advertised externally
-#      for each StatefulSet pod (coturn-0, coturn-1, coturn-2, ...).
-#
-#   4. Federation partner IPs — IP addresses or CIDR ranges of Wire Cloud or other
-#      federation partners that connect to coturn on port 9191.
-#
-# Example:
-config:
-  verboseLogging: false
-  ratelimit:
-    allowlist:
-      - "192.168.1.10"    # node-1 internal IP
-      - "192.168.1.11"    # node-2 internal IP
-      - "192.168.1.12"    # node-3 internal IP
-      - "192.168.1.1"     # cluster gateway / NAT IP (if applicable)
-      - "203.0.113.10"    # coturn-0 external/public IP
-      - "203.0.113.11"    # coturn-1 external/public IP
-      - "203.0.113.12"    # coturn-2 external/public IP
-      - "198.51.100.0/24" # federation partner IP range
-```
-
-### Example YAML Values
-
-```yaml
-federate:
-  dtls:
-    tls:
-      key: |
-        -----BEGIN PRIVATE KEY-----
-        MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC7W8z1K2...
-        -----END PRIVATE KEY-----
-      crt: |
-        -----BEGIN CERTIFICATE-----
-        MIIDazCCAlOgAwIBAgIUfQ2Z7x8zV0Q8JvZ0Q0Q0Q0Q0Q0AwDQYJKoZIhvcNAQEL...
-        -----END CERTIFICATE-----
-```
 
 ## Step 7: Deploy Coturn with Updated Configuration
 
-**Prerequisite**: The coturn chart must be at version `0.0.44` or later. Support for manually providing a self-signed certificate via `federate.dtls.tls.key`/`crt` was added in this version — earlier versions only support cert-manager-managed certificates. Verify your chart version:
-
-```bash
-helm show chart ./charts/coturn | grep '^version:'
-```
+**Prerequisite**: Requires coturn chart version `4.6.2-federation-wireapp.44` or later — earlier versions only support cert-manager-managed certificates and will reject `federate.dtls.tls.key`/`crt` values.
 
 Apply the updated Helm values:
 
@@ -252,11 +190,6 @@ helm upgrade --install coturn ./charts/coturn \
   --timeout 5m
 ```
 
-Or if using helmfile:
-
-```bash
-helmfile sync
-```
 
 Monitor the rollout:
 
@@ -332,23 +265,18 @@ helm get values coturn -n default | grep -A 10 "federate"
 
 **Solution**:
 
-1. Verify the values file has the correct PEM certificate:
-   ```bash
-   grep -A 5 "federate:" values/coturn/values.yaml
-   ```
-
-2. Check if Helm Secret was created:
+1. Check if Helm Secret was created:
    ```bash
    kubectl get secret coturn-dtls-certificate -n default -o yaml
    ```
 
-3. Verify pod is using the new certificate:
+2. Verify pod is using the new certificate:
    ```bash
    COTURN_POD=$(kubectl get pods -l app=coturn -n default -o jsonpath='{.items[0].metadata.name}')
    kubectl exec $COTURN_POD -- openssl x509 -in /coturn-dtls-certificate/tls.crt -noout -dates
    ```
 
-4. If pod still has old certificate, restart it:
+3. If pod still has old certificate, restart it:
    ```bash
    kubectl delete pod $COTURN_POD -n default
    kubectl wait --for=condition=ready pod -l app=coturn -n default --timeout=300s
@@ -376,28 +304,19 @@ helm get values coturn -n default | grep -A 10 "federate"
 
 **Solution**:
 
-1. Check pod events:
+1. Check pod events and logs:
    ```bash
    COTURN_POD=$(kubectl get pods -l app=coturn -n default -o jsonpath='{.items[0].metadata.name}')
    kubectl describe pod $COTURN_POD -n default
-   ```
-
-2. Check pod logs:
-   ```bash
    kubectl logs $COTURN_POD -n default --previous
    ```
 
-3. Verify the Secret data is valid:
-   ```bash
-   kubectl get secret coturn-dtls-certificate -n default -o jsonpath='{.data.tls\.crt}' | base64 -d | openssl x509 -text -noout | head -5
-   ```
-
-4. Check for YAML syntax errors in values file:
+2. Check for YAML syntax errors in values file:
    ```bash
    helm lint ./charts/coturn -f values/coturn/values.yaml
    ```
 
-5. If issues persist, rollback to previous Helm revision:
+3. If issues persist, rollback to previous Helm revision:
    ```bash
    helm rollback coturn -n default
    kubectl rollout status statefulset/coturn -n default
@@ -419,34 +338,18 @@ helm get values coturn -n default | grep -A 10 "federate"
    helm upgrade coturn ./charts/coturn -f values/coturn/values.yaml -n default --wait --timeout 10m
    ```
 
-3. Check StatefulSet rollout status:
-   ```bash
-   kubectl rollout status statefulset/coturn -n default
-   ```
-
 ### Certificate Signed by Wrong CA
 
 **Symptom**: Certificate looks valid locally but federation partners can't authenticate.
 
 **Solution**:
 
-1. Verify certificate issuer matches your CA:
-   ```bash
-   openssl x509 -in coturn-cert.pem -noout -issuer
-   ```
-
-2. Verify the CA that signed the certificate:
+1. Verify certificate issuer:
    ```bash
    openssl x509 -in coturn-cert.pem -noout -text | grep -A 2 "Issuer:"
    ```
 
-3. If wrong CA was used, regenerate the certificate using the correct CA:
-   ```bash
-   # Follow Step 2 to create a new CSR
-   # Follow Step 3 to sign it with the CORRECT CA
-   # Verify in Step 4 that issuer matches your trusted CA
-   # Continue with Steps 5-7 to deploy
-   ```
+2. If the wrong CA was used, regenerate the certificate following Steps 2–3 with the correct CA, then redeploy via Steps 5–7.
 
 ## Complete Example
 
@@ -624,13 +527,13 @@ When your coturn certificate approaches expiration (typically 365 days), you nee
    ```bash
    # Create a new private key
    openssl genrsa -out coturn-key-new.pem 2048
-   
+
    # Create a new certificate signing request
    openssl req -new \
      -key coturn-key-new.pem \
      -out coturn-new.csr \
      -subj "/C=US/ST=State/L=City/O=Your Organization/CN=coturn.example.com" \
-     -addext "subjectAltName=DNS:coturn.example.com,DNS:coturn-0.coturn.default.svc.cluster.local,DNS:coturn-1.coturn.default.svc.cluster.local" \
+     -addext "subjectAltName=DNS:coturn.example.com,DNS:coturn-0.example.com,DNS:coturn-1.example.com,DNS:coturn-2.example.com" \
      -addext "extendedKeyUsage=serverAuth,clientAuth" \
      -addext "keyUsage=digitalSignature"
    ```
@@ -643,7 +546,7 @@ When your coturn certificate approaches expiration (typically 365 days), you nee
      -CAkey my-ca-key.pem \
      -CAcreateserial \
      -out coturn-cert-new.pem \
-     -extfile <(printf "subjectAltName=DNS:coturn.example.com,DNS:coturn-0.coturn.default.svc.cluster.local,DNS:coturn-1.coturn.default.svc.cluster.local\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth,clientAuth")
+     -extfile <(printf "subjectAltName=DNS:coturn.example.com,DNS:coturn-0.example.com,DNS:coturn-1.example.com,DNS:coturn-2.example.com\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth,clientAuth")
    ```
 
 3. **Verify the new certificate** (follow Step 4):
@@ -695,10 +598,10 @@ When your coturn certificate approaches expiration (typically 365 days), you nee
 9. **Verify deployment** (follow Step 8):
    ```bash
    COTURN_POD=$(kubectl get pods -l app=coturn -n default -o jsonpath='{.items[0].metadata.name}')
-   
+
    # Check new certificate is deployed
    kubectl exec $COTURN_POD -- openssl x509 -in /coturn-dtls-certificate/tls.crt -noout -dates
-   
+
    # Verify Extended Key Usage
    kubectl exec $COTURN_POD -- openssl x509 -in /coturn-dtls-certificate/tls.crt -text -noout | grep -A 3 "Extended Key Usage"
    ```

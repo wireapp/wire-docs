@@ -15,23 +15,23 @@ Coturn federation DTLS connections (port 9191) require mutual TLS authentication
 - `openssl` command-line tool installed locally
 - `kubectl` access to your cluster
 - FQDN for your coturn deployment (e.g., `coturn.example.com`)
-- **CA certificate** and **CA private key** — create one in Step 1 if you don't have one yet; once Wire Cloud trusts your CA you can reuse it for all future renewals
+- **CA certificate** and **CA private key** — create one in Step 1 if you don't have one yet; once your federation partner (e.g. Wire Cloud) trusts your CA you can reuse it for all future renewals
 
 ### Deployment Model
 
 The typical workflow for a self-managed coturn deployment:
 
-1. **Create a self-signed CA** (long validity, e.g. 10 years): `my-ca.pem`
+1. **Select issuing CA** (create self-signed or use existing private CA)
 2. **Send your CA** to Wire Cloud to add to their federation trust store
 3. **Generate a coturn certificate** signed by that CA with serverAuth+clientAuth EKU
 4. **Deploy coturn** with the certificate in Helm values
-5. **Renew annually** by signing a new certificate with the same CA — no need to contact Wire Cloud again
+5. **Renew annually** by signing a new certificate with the same CA — no need to contact your federation partner again
 
 ## Step 1: Create a Self-Signed CA (skip if you already have one)
 
-If your organization already has a CA and Wire Cloud already trusts it, skip to Step 2.
+If your organization already has a CA and your federation partners already trusts it, skip to Step 2.
 
-Otherwise, create a self-signed CA. You do this **once** — the CA is long-lived (10 years) and is reused for all future coturn certificate renewals without needing to contact Wire Cloud again.
+Otherwise, create a self-signed CA. You do this **once** — the CA is long-lived (10 years) and is reused for all future coturn certificate renewals without needing to contact your federation partners again.
 
 ```bash
 # Generate CA private key (2048-bit RSA)
@@ -57,7 +57,7 @@ openssl x509 -req \
 - `my-ca-key.pem` — CA private key; keep this secure, it is needed for all future renewals
 - `my-ca.csr` — can be deleted
 
-**Important**: Wait until Wire Cloud confirms your CA is in their trust store before proceeding.
+**Important**: Wait until your federation partner confirms your CA is in their trust store before proceeding.
 
 ## Step 2: Create a Certificate Signing Request (CSR)
 

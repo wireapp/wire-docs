@@ -68,46 +68,62 @@
 ## 9. Restund (TURN)
 
 - [Restund (TURN)](restund.md)
-  - [Wire-Server Configuration](restund.md#wire-server-configuration)
-  - [How to see how many people are currently connected to the restund server](restund.md#how-to-see-how-many-people-are-currently-connected-to-the-restund-server)
-  - [How to restart restund (with downtime)](restund.md#how-to-restart-restund-with-downtime)
-  - [Rebooting a Restund node](restund.md#rebooting-a-restund-node)
-  - [How to restart restund without having downtime](restund.md#how-to-restart-restund-without-having-downtime)
-  - [How to renew a certificate for restund](restund.md#how-to-renew-a-certificate-for-restund)
-  - [How to check which restund/TURN servers will be used by clients](restund.md#how-to-check-which-restund-turn-servers-will-be-used-by-clients)
+   - [Wire-Server Configuration](restund.md#wire-server-configuration)
+   - [How to see how many people are currently connected to the restund server](restund.md#how-to-see-how-many-people-are-currently-connected-to-the-restund-server)
+   - [How to restart restund (with downtime)](restund.md#how-to-restart-restund-with-downtime)
+   - [Rebooting a Restund node](restund.md#rebooting-a-restund-node)
+   - [How to restart restund without having downtime](restund.md#how-to-restart-restund-without-having-downtime)
+   - [How to renew a certificate for restund](restund.md#how-to-renew-a-certificate-for-restund)
+   - [How to check which restund/TURN servers will be used by clients](restund.md#how-to-check-which-restund-turn-servers-will-be-used-by-clients)
 
-## 10. Investigative Tasks
+## 10. Coturn Client Certificate with Extended Key Usage (EKU)
+
+- [Coturn Client Certificate with Extended Key Usage (EKU)](coturn-client-certificate.md)
+   - [Overview](coturn-client-certificate.md#overview)
+   - [Prerequisites](coturn-client-certificate.md#prerequisites)
+   - [Step 1: Create a Certificate Signing Request (CSR)](coturn-client-certificate.md#step-1-create-a-certificate-signing-request-csr)
+   - [Step 2: Sign the Certificate with Your CA](coturn-client-certificate.md#step-2-sign-the-certificate-with-your-ca)
+   - [Step 3: Verify Certificate Has Correct EKU](coturn-client-certificate.md#step-3-verify-certificate-has-correct-eku)
+   - [Step 4: Encode Certificate and Key as Base64](coturn-client-certificate.md#step-4-encode-certificate-and-key-as-base64)
+   - [Step 5: Update Coturn Helm Values](coturn-client-certificate.md#step-5-update-coturn-helm-values)
+   - [Step 6: Deploy Coturn with Updated Configuration](coturn-client-certificate.md#step-6-deploy-coturn-with-updated-configuration)
+   - [Step 7: Verify Certificate is Deployed](coturn-client-certificate.md#step-7-verify-certificate-is-deployed)
+   - [Step 8: Test Federation DTLS Connection](coturn-client-certificate.md#step-8-test-federation-dtls-connection)
+   - [Troubleshooting](coturn-client-certificate.md#troubleshooting)
+   - [Certificate Renewal](coturn-client-certificate.md#certificate-renewal)
+
+## 11. Investigative Tasks
 
 - [Investigative tasks (e.g. searching for users as server admin)](users.md)
-  - [Manually searching for users in Cassandra](users.md#manually-searching-for-users-in-cassandra)
-  - [Deleting a user which is not a team user](users.md#deleting-a-user-which-is-not-a-team-user)
-  - [Searching and deleting users with no team](users.md#searching-and-deleting-users-with-no-team)
-  - [Manual search on Elasticsearch (via brig, recommended)](users.md#manual-search-on-elasticsearch-via-brig-recommended)
-  - [How to manually search for a user on Elasticsearch directly (not recommended)](users.md#how-to-manually-search-for-a-user-on-elasticsearch-directly-not-recommended)
-  - [How to manually delete a user from Elasticsearch only](users.md#how-to-manually-delete-a-user-from-elasticsearch-only)
-  - [Mass-invite users to a team](users.md#mass-invite-users-to-a-team)
-  - [How to obtain logs from an Android client to investigate issues](users.md#how-to-obtain-logs-from-an-android-client-to-investigate-issues)
-  - [How to obtain logs from an iOS client to investigate issues](users.md#how-to-obtain-logs-from-an-ios-client-to-investigate-issues)
-  - [How to retrieve metric values manually](users.md#how-to-retrieve-metric-values-manually)
-  - [Reset session cookies](users.md#reset-session-cookies)
-  - [Identify all users using SSO](users.md#identify-sso-users)
-  - [Create a team using the SCIM API](users.md#create-a-team-using-the-scim-api)
+   - [Manually searching for users in Cassandra](users.md#manually-searching-for-users-in-cassandra)
+   - [Deleting a user which is not a team user](users.md#deleting-a-user-which-is-not-a-team-user)
+   - [Searching and deleting users with no team](users.md#searching-and-deleting-users-with-no-team)
+   - [Manual search on Elasticsearch (via brig, recommended)](users.md#manual-search-on-elasticsearch-via-brig-recommended)
+   - [How to manually search for a user on Elasticsearch directly (not recommended)](users.md#how-to-manually-search-for-a-user-on-elasticsearch-directly-not-recommended)
+   - [How to manually delete a user from Elasticsearch only](users.md#how-to-manually-delete-a-user-from-elasticsearch-only)
+   - [Mass-invite users to a team](users.md#mass-invite-users-to-a-team)
+   - [How to obtain logs from an Android client to investigate issues](users.md#how-to-obtain-logs-from-an-android-client-to-investigate-issues)
+   - [How to obtain logs from an iOS client to investigate issues](users.md#how-to-obtain-logs-from-an-ios-client-to-investigate-issues)
+   - [How to retrieve metric values manually](users.md#how-to-retrieve-metric-values-manually)
+   - [Reset session cookies](users.md#reset-session-cookies)
+   - [Identify all users using SSO](users.md#identify-sso-users)
+   - [Create a team using the SCIM API](users.md#create-a-team-using-the-scim-api)
 
-## 11. Manuals
+## 12. Manuals
 
 - [Test an ingress is working from inside the cluster](manuals.md#test-an-ingress-is-working-from-inside-the-cluster)
 - [Load an image into containerd in an offline/airgapped environment](manuals.md#load-an-image-into-containerd-in-an-offlineairgapped-environment)
 
-## 12. Migration
+## 13. Migration
 
 - [Migrate team features](migrate-team-features.md)
 - [Migrate to postgresql](migrate-to-postgresql.md)
 
-## 13. Wire-utility
+## 14. Wire-utility
 
 - [Wire utility tool](wire-utility-tool.md)
 
-## 14. PostgreSQL
+## 15. PostgreSQL
 
 - [PostgreSQL](postgresql.md)
   - [PostgreSQL Connection Budget](postgresql.md#postgresql-connection-budget)

@@ -8,17 +8,14 @@ This guide explains how to create and deploy a coturn client certificate with Ex
 
 Coturn federation DTLS connections (port 9191) require mutual TLS authentication. Your coturn certificate must be signed by a Certificate Authority (CA) that Wire Cloud trusts. The certificate must include both serverAuth and clientAuth Extended Key Usage (EKU) extensions.
 
-**Before you start**: If you don't have a CA certificate yet, create a self-signed CA, send it to Wire Cloud to add to their federation trust store, and then use that CA to sign your coturn certificates. Once Wire Cloud trusts your CA, you can issue multiple coturn certificates from it.
-
 ### Prerequisites
 
 - Coturn deployment via Helm in Kubernetes
 - Access to the coturn Helm values configuration
 - `openssl` command-line tool installed locally
 - `kubectl` access to your cluster
-- **CA certificate** and **CA private key** (either create new or from your organization)
-- Wire Cloud has added your CA certificate to their federation trust store
 - FQDN for your coturn deployment (e.g., `coturn.example.com`)
+- **CA certificate** and **CA private key** — create one in Step 1 if you don't have one yet; once Wire Cloud trusts your CA you can reuse it for all future renewals
 
 ### Deployment Model
 
@@ -30,7 +27,39 @@ The typical workflow for a self-managed coturn deployment:
 4. **Deploy coturn** with the certificate in Helm values
 5. **Renew annually** by signing a new certificate with the same CA — no need to contact Wire Cloud again
 
-## Step 1: Create a Certificate Signing Request (CSR)
+## Step 1: Create a Self-Signed CA (skip if you already have one)
+
+If your organization already has a CA and Wire Cloud already trusts it, skip to Step 2.
+
+Otherwise, create a self-signed CA. You do this **once** — the CA is long-lived (10 years) and is reused for all future coturn certificate renewals without needing to contact Wire Cloud again.
+
+```bash
+# Generate CA private key (2048-bit RSA)
+openssl genrsa -out my-ca-key.pem 2048
+
+# Create CA certificate signing request
+openssl req -new \
+  -key my-ca-key.pem \
+  -out my-ca.csr \
+  -subj "/C=XX/O=Your Organization/CN=Your Organization CA"
+
+# Self-sign the CA certificate (valid 10 years = 3650 days)
+openssl x509 -req \
+  -in my-ca.csr \
+  -signkey my-ca-key.pem \
+  -out my-ca.pem \
+  -days 3650 \
+  -extfile <(printf "basicConstraints=critical,CA:TRUE\nkeyUsage=critical,keyCertSign,cRLSign\nsubjectKeyIdentifier=hash\nauthorityKeyIdentifier=keyid:always,issuer:always")
+```
+
+**Result**:
+- `my-ca.pem` — CA certificate; send this to Wire Cloud to add to their federation trust store
+- `my-ca-key.pem` — CA private key; keep this secure, it is needed for all future renewals
+- `my-ca.csr` — can be deleted
+
+**Important**: Wait until Wire Cloud confirms your CA is in their trust store before proceeding.
+
+## Step 2: Create a Certificate Signing Request (CSR)
 
 First, generate a private key and create a signing request for your coturn certificate.
 
@@ -58,7 +87,7 @@ Verify the CSR:
 openssl req -in coturn.csr -text -noout
 ```
 
-## Step 2: Sign the Certificate with Your CA
+## Step 3: Sign the Certificate with Your CA
 
 Using your CA certificate and private key, sign the coturn certificate. This certificate will be valid for 365 days.
 
@@ -66,8 +95,8 @@ Using your CA certificate and private key, sign the coturn certificate. This cer
 # Sign the CSR with your CA certificate and key
 openssl x509 -req -days 365 \
   -in coturn.csr \
-  -CA ca-cert.pem \
-  -CAkey ca-key.pem \
+  -CA my-ca.pem \
+  -CAkey my-ca-key.pem \
   -CAcreateserial \
   -out coturn-cert.pem \
   -extfile <(printf "subjectAltName=DNS:coturn.example.com,DNS:coturn-0.coturn.default.svc.cluster.local,DNS:coturn-1.coturn.default.svc.cluster.local\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth,clientAuth")
@@ -76,10 +105,10 @@ openssl x509 -req -days 365 \
 Verify the signed certificate:
 
 ```bash
-openssl x509 -in coturn-cert.pem -text -noout | head -40
+openssl x509 -in coturn-cert.pem -text -noout
 ```
 
-## Step 3: Verify Certificate Has Correct EKU
+## Step 4: Verify Certificate Has Correct EKU
 
 Before deploying, verify that your certificate includes both serverAuth and clientAuth extensions, and is signed by your CA:
 
@@ -99,7 +128,7 @@ Verify the certificate issuer:
 
 ```bash
 openssl x509 -in coturn-cert.pem -noout -issuer
-# Output should show: issuer=CN=Wire Federation CA (or your organization's CA name)
+# Output should show your CA's CN, e.g.: issuer=C=XX, O=Your Organization, CN=Your Organization CA
 ```
 
 Verify the validity dates:
@@ -109,27 +138,23 @@ openssl x509 -in coturn-cert.pem -noout -dates
 # Output should show: notBefore=... and notAfter=... (365 days from now)
 ```
 
-## Step 4: Encode Certificate and Key as Base64
+## Step 5: Prepare Certificate Files
 
-Encode your certificate and private key as single-line base64 strings for embedding in Helm values.
+Display the PEM content of your certificate and private key, ready to copy into the Helm values file. The Helm chart encodes them automatically — paste the raw PEM including the `-----BEGIN`/`-----END` headers.
 
 ```bash
-# Encode coturn certificate (single line, no wrapping — works on Linux and macOS)
-echo "=== Coturn Certificate (base64) ==="
-base64 < coturn-cert.pem | tr -d '\n'
+echo "=== Coturn Certificate ==="
+cat coturn-cert.pem
 echo ""
-
-# Encode coturn private key
-echo "=== Coturn Private Key (base64) ==="
-base64 < coturn-key.pem | tr -d '\n'
-echo ""
+echo "=== Coturn Private Key ==="
+cat coturn-key.pem
 ```
 
-Copy both base64 strings for the next step.
+Copy both PEM strings for the next step.
 
-## Step 5: Update Coturn Helm Values
+## Step 6: Update Coturn Helm Values
 
-Update your coturn Helm values file (`values/coturn/values.yaml`) with the base64-encoded certificate and key:
+Update your coturn Helm values file (`values/coturn/values.yaml`) with the PEM certificate and key. Use YAML block scalars (`|`) to preserve the multi-line PEM format:
 
 ```yaml
 # Existing coturn configuration
@@ -145,8 +170,14 @@ coturnTurnRelayIP: "__COTURN_POD_IP__"
 federate:
   dtls:
     tls:
-      key: <INSERT BASE64-ENCODED PRIVATE KEY HERE>
-      crt: <INSERT BASE64-ENCODED CERTIFICATE HERE>
+      key: |
+        -----BEGIN PRIVATE KEY-----
+        <paste PEM private key content here>
+        -----END PRIVATE KEY-----
+      crt: |
+        -----BEGIN CERTIFICATE-----
+        <paste PEM certificate content here>
+        -----END CERTIFICATE-----
 
 # Existing secrets configuration
 secrets:
@@ -185,19 +216,23 @@ config:
 
 ### Example YAML Values
 
-The values are single-line base64 strings (no PEM headers):
-
 ```yaml
 federate:
   dtls:
     tls:
-      key: MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC7W8z1K2...
-      crt: MIIDazCCAlOgAwIBAgIUfQ2Z7x8zV0Q8JvZ0Q0Q0Q0Q0Q0AwDQYJKoZIhvcNAQEL...
+      key: |
+        -----BEGIN PRIVATE KEY-----
+        MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC7W8z1K2...
+        -----END PRIVATE KEY-----
+      crt: |
+        -----BEGIN CERTIFICATE-----
+        MIIDazCCAlOgAwIBAgIUfQ2Z7x8zV0Q8JvZ0Q0Q0Q0Q0Q0AwDQYJKoZIhvcNAQEL...
+        -----END CERTIFICATE-----
 ```
 
-## Step 6: Deploy Coturn with Updated Configuration
+## Step 7: Deploy Coturn with Updated Configuration
 
-**Prerequisite**: The coturn chart must be at version `4.6.2-federation-wireapp.44` or later. Earlier versions do not support the `federate.dtls.tls.key`/`crt` values fields. Verify your chart version:
+**Prerequisite**: The coturn chart must be at version `0.0.44` or later. Support for manually providing a self-signed certificate via `federate.dtls.tls.key`/`crt` was added in this version — earlier versions only support cert-manager-managed certificates. Verify your chart version:
 
 ```bash
 helm show chart ./charts/coturn | grep '^version:'
@@ -235,7 +270,7 @@ The Helm chart will automatically:
 3. Restart all coturn pods to pick up the new certificate
 4. Update Helm release history for tracking and potential rollbacks
 
-## Step 7: Verify Certificate is Deployed
+## Step 8: Verify Certificate is Deployed
 
 After the Helm upgrade completes, verify that the certificate is properly mounted in the coturn pods:
 
@@ -260,7 +295,7 @@ X509v3 Extended Key Usage:
     TLS Web Server Authentication, TLS Web Client Authentication
 ```
 
-## Step 8: Test Federation DTLS Connection
+## Step 9: Test Federation DTLS Connection
 
 To verify that coturn can now authenticate with federation partners, check the coturn logs:
 
@@ -297,7 +332,7 @@ helm get values coturn -n default | grep -A 10 "federate"
 
 **Solution**:
 
-1. Verify the values file has the correct base64-encoded certificate:
+1. Verify the values file has the correct PEM certificate:
    ```bash
    grep -A 5 "federate:" values/coturn/values.yaml
    ```
@@ -331,9 +366,9 @@ helm get values coturn -n default | grep -A 10 "federate"
    ```
 
 2. If output doesn't show both `TLS Web Server Authentication` and `TLS Web Client Authentication`, regenerate the certificate:
-   - Follow Step 1 to create a new CSR with proper EKU flags
-   - Follow Step 2 to sign it with your CA
-   - Continue with Steps 4-6 to deploy
+   - Follow Step 2 to create a new CSR with proper EKU flags
+   - Follow Step 3 to sign it with your CA
+   - Continue with Steps 5-7 to deploy
 
 ### Coturn Pod Fails to Start
 
@@ -407,10 +442,10 @@ helm get values coturn -n default | grep -A 10 "federate"
 
 3. If wrong CA was used, regenerate the certificate using the correct CA:
    ```bash
-   # Follow Step 1 to create a new CSR
-   # Follow Step 2 to sign it with the CORRECT CA
-   # Verify in Step 3 that issuer matches your trusted CA
-   # Continue with Steps 4-6 to deploy
+   # Follow Step 2 to create a new CSR
+   # Follow Step 3 to sign it with the CORRECT CA
+   # Verify in Step 4 that issuer matches your trusted CA
+   # Continue with Steps 5-7 to deploy
    ```
 
 ## Complete Example
@@ -437,7 +472,7 @@ openssl x509 -req \
   -signkey my-ca-key.pem \
   -out my-ca.pem \
   -days 3650 \
-  -extfile <(printf "basicConstraints=critical,CA:TRUE\nkeyUsage=critical,keyCertSign,cRLSign")
+  -extfile <(printf "basicConstraints=critical,CA:TRUE\nkeyUsage=critical,keyCertSign,cRLSign\nsubjectKeyIdentifier=hash\nauthorityKeyIdentifier=keyid:always,issuer:always")
 ```
 
 **Result**: Three files
@@ -494,26 +529,22 @@ openssl x509 -in coturn-federation-cert.pem -noout -dates
 # Output: notBefore=... notAfter=... (1 year from now)
 ```
 
-### Step 4: Encode and Deploy
+### Step 4: Deploy
 
-```bash
-# Encode as single-line base64 (works on Linux and macOS)
-echo "=== Certificate (base64) ==="
-base64 < coturn-federation-cert.pem | tr -d '\n'
-echo ""
-echo "=== Private Key (base64) ==="
-base64 < coturn-federation-key.pem | tr -d '\n'
-echo ""
-```
-
-Update `values/coturn/values.yaml`:
+Update `values/coturn/values.yaml` with the PEM content:
 
 ```yaml
 federate:
   dtls:
     tls:
-      key: <paste single-line base64-encoded private key>
-      crt: <paste single-line base64-encoded certificate>
+      key: |
+        -----BEGIN PRIVATE KEY-----
+        <paste coturn-federation-key.pem content here>
+        -----END PRIVATE KEY-----
+      crt: |
+        -----BEGIN CERTIFICATE-----
+        <paste coturn-federation-cert.pem content here>
+        -----END CERTIFICATE-----
 ```
 
 Deploy:
@@ -560,15 +591,19 @@ openssl x509 -req -days 365 \
   -sha256 \
   -extfile <(printf "subjectAltName=DNS:coturn.example.com,DNS:coturn-0.example.com,DNS:coturn-1.example.com,DNS:coturn-2.example.com\nextendedKeyUsage=serverAuth,clientAuth")
 
-# Encode new certificate and key
-echo "=== New Certificate (base64) ==="
-base64 < coturn-federation-cert.pem | tr -d '\n'
-echo ""
-echo "=== New Private Key (base64) ==="
-base64 < coturn-federation-key.pem | tr -d '\n'
-echo ""
+# Update values/coturn/values.yaml — replace the key/crt block scalars with the new PEM content:
+#   federate:
+#     dtls:
+#       tls:
+#         key: |
+#           -----BEGIN PRIVATE KEY-----
+#           <new coturn-federation-key.pem content>
+#           -----END PRIVATE KEY-----
+#         crt: |
+#           -----BEGIN CERTIFICATE-----
+#           <new coturn-federation-cert.pem content>
+#           -----END CERTIFICATE-----
 
-# Update values/coturn/values.yaml with the new base64 strings, then redeploy
 helm upgrade coturn ./charts/coturn \
   -n default \
   -f values/coturn/values.yaml \
@@ -585,7 +620,7 @@ When your coturn certificate approaches expiration (typically 365 days), you nee
 
 ### Renewal Process
 
-1. **Generate a new CSR** (follow Step 1):
+1. **Generate a new CSR** (follow Step 2):
    ```bash
    # Create a new private key
    openssl genrsa -out coturn-key-new.pem 2048
@@ -600,31 +635,27 @@ When your coturn certificate approaches expiration (typically 365 days), you nee
      -addext "keyUsage=digitalSignature"
    ```
 
-2. **Sign the new certificate with your CA** (follow Step 2):
+2. **Sign the new certificate with your CA** (follow Step 3):
    ```bash
    openssl x509 -req -days 365 \
      -in coturn-new.csr \
-     -CA ca-cert.pem \
-     -CAkey ca-key.pem \
+     -CA my-ca.pem \
+     -CAkey my-ca-key.pem \
      -CAcreateserial \
      -out coturn-cert-new.pem \
      -extfile <(printf "subjectAltName=DNS:coturn.example.com,DNS:coturn-0.coturn.default.svc.cluster.local,DNS:coturn-1.coturn.default.svc.cluster.local\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth,clientAuth")
    ```
 
-3. **Verify the new certificate** (follow Step 3):
+3. **Verify the new certificate** (follow Step 4):
    ```bash
    openssl x509 -in coturn-cert-new.pem -text -noout | grep -A 3 "Extended Key Usage"
    openssl x509 -in coturn-cert-new.pem -noout -dates
    ```
 
-4. **Encode the new certificate and key as base64** (follow Step 4):
+4. **Prepare the new certificate and key** (follow Step 5):
    ```bash
-   echo "=== New Certificate (base64) ==="
-   base64 < coturn-cert-new.pem | tr -d '\n'
-   echo ""
-   echo "=== New Private Key (base64) ==="
-   base64 < coturn-key-new.pem | tr -d '\n'
-   echo ""
+   cat coturn-cert-new.pem
+   cat coturn-key-new.pem
    ```
 
 5. **Backup current values file**:
@@ -632,13 +663,19 @@ When your coturn certificate approaches expiration (typically 365 days), you nee
    cp values/coturn/values.yaml values/coturn/values.yaml.backup.$(date +%Y%m%d-%H%M%S)
    ```
 
-6. **Update values file** with the new base64-encoded certificate and key:
+6. **Update values file** with the new PEM certificate and key:
    ```yaml
    federate:
      dtls:
        tls:
-         key: <INSERT NEW BASE64-ENCODED PRIVATE KEY HERE>
-         crt: <INSERT NEW BASE64-ENCODED CERTIFICATE HERE>
+         key: |
+           -----BEGIN PRIVATE KEY-----
+           <paste new PEM private key content here>
+           -----END PRIVATE KEY-----
+         crt: |
+           -----BEGIN CERTIFICATE-----
+           <paste new PEM certificate content here>
+           -----END CERTIFICATE-----
    ```
 
 7. **Verify YAML syntax**:
@@ -646,7 +683,7 @@ When your coturn certificate approaches expiration (typically 365 days), you nee
    helm lint ./charts/coturn -f values/coturn/values.yaml
    ```
 
-8. **Redeploy coturn** with the new certificate (follow Step 6):
+8. **Redeploy coturn** with the new certificate (follow Step 7):
    ```bash
    helm upgrade coturn ./charts/coturn \
      -n default \
@@ -655,7 +692,7 @@ When your coturn certificate approaches expiration (typically 365 days), you nee
      --timeout 5m
    ```
 
-9. **Verify deployment** (follow Step 7):
+9. **Verify deployment** (follow Step 8):
    ```bash
    COTURN_POD=$(kubectl get pods -l app=coturn -n default -o jsonpath='{.items[0].metadata.name}')
    
@@ -679,8 +716,8 @@ When your coturn certificate approaches expiration (typically 365 days), you nee
 - [ ] Sign with your CA certificate
 - [ ] Verify new certificate has correct EKU and issuer
 - [ ] Backup current values file
-- [ ] Encode new certificate and key as base64
-- [ ] Update values file with new base64 strings
+- [ ] Prepare new PEM certificate and key files
+- [ ] Update values file with new PEM content
 - [ ] Run `helm lint` to verify YAML syntax
 - [ ] Run `helm upgrade` with `--wait` flag
 - [ ] Verify pod restart completed successfully

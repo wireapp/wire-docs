@@ -178,9 +178,6 @@ federate:
 Apply the updated Helm values:
 
 ```bash
-# Navigate to wire-server-deploy directory
-cd /path/to/wire-server-deploy
-
 # Deploy or upgrade the coturn Helm chart with the updated values
 helm upgrade --install coturn ./charts/coturn \
   -n default \
@@ -208,16 +205,16 @@ After the Helm upgrade completes, verify that the certificate is properly mounte
 
 ```bash
 # Get the coturn pod name
-COTURN_POD=$(kubectl get pods -l app=coturn -n default -o jsonpath='{.items[0].metadata.name}')
+COTURN_POD=$(kubectl get pods -l app=coturn -n <namesapce> -o jsonpath='{.items[0].metadata.name}')
 
 # Verify the Kubernetes Secret was created
-kubectl get secret coturn-dtls-certificate -n default -o yaml
+kubectl get secret coturn-dtls-certificate -n <namespace> -o yaml
 
 # Check if certificate files exist in the pod
-kubectl exec -it $COTURN_POD -n default -- ls -la /coturn-dtls-certificate/
+kubectl exec -it $COTURN_POD -n <namespace> -- ls -la /coturn-dtls-certificate/
 
 # Verify the certificate content and EKU from the pod
-kubectl exec -it $COTURN_POD -n default -- openssl x509 -in /coturn-dtls-certificate/tls.crt -text -noout | grep -A 3 "Extended Key Usage"
+kubectl exec -it $COTURN_POD -n <namespace> -- openssl x509 -in /coturn-dtls-certificate/tls.crt -text -noout | grep -A 3 "Extended Key Usage"
 ```
 
 Expected output showing both serverAuth and clientAuth:
@@ -233,13 +230,13 @@ To verify that coturn can now authenticate with federation partners, check the c
 
 ```bash
 # Get the coturn pod name (if not already set)
-COTURN_POD=$(kubectl get pods -l app=coturn -n default -o jsonpath='{.items[0].metadata.name}')
+COTURN_POD=$(kubectl get pods -l app=coturn -n <namespace> -o jsonpath='{.items[0].metadata.name}')
 
 # Stream coturn logs to watch for DTLS connections
-kubectl logs -f $COTURN_POD -n default
+kubectl logs -f $COTURN_POD -n <namespace>
 
 # Or retrieve recent logs and filter for DTLS-related messages
-kubectl logs $COTURN_POD -n default --tail=100 | grep -iE 'dtls|tls|certificate|federation'
+kubectl logs $COTURN_POD -n <namespace> --tail=100 | grep -iE 'dtls|tls|certificate|federation'
 ```
 
 Look for successful DTLS connection messages or client authentication confirmations in the logs.
@@ -258,127 +255,90 @@ helm get values coturn -n default | grep -A 10 "federate"
 
 ## Troubleshooting
 
+### Common Diagnostics
+
+Commands referenced by multiple sections below:
+
+```bash
+# Get coturn pod name
+COTURN_POD=$(kubectl get pods -l app=coturn -n <namespace> -o jsonpath='{.items[0].metadata.name}')
+
+# Check pod events and logs
+kubectl describe pod $COTURN_POD -n <namespace>
+kubectl logs $COTURN_POD -n <namespace> --previous
+
+# Check Helm secret
+kubectl get secret coturn-dtls-certificate -n <namespace> -o yaml
+
+# Check rollout status
+kubectl rollout status statefulset/coturn -n <namespace>
+```
+
 ### Certificate Not Loaded in Pod
 
-**Symptom**: Coturn pod starts but certificate files are missing or old certificate is still in use.
+**Symptom**: Pod starts but certificate is missing or stale.
 
-**Solution**:
-
-1. Verify the values file has the correct PEM certificate:
+1. Check the Helm secret exists and has data (see Common Diagnostics).
+2. Inspect the certificate in the pod:
    ```bash
-   grep -A 5 "federate:" values/coturn/values.yaml
-   ```
-
-2. Check if Helm Secret was created:
-   ```bash
-   kubectl get secret coturn-dtls-certificate -n default -o yaml
-   ```
-
-3. Verify pod is using the new certificate:
-   ```bash
-   COTURN_POD=$(kubectl get pods -l app=coturn -n default -o jsonpath='{.items[0].metadata.name}')
    kubectl exec $COTURN_POD -- openssl x509 -in /coturn-dtls-certificate/tls.crt -noout -dates
    ```
-
-4. If pod still has old certificate, restart it:
+3. If the pod still has the old certificate, restart it:
    ```bash
-   kubectl delete pod $COTURN_POD -n default
-   kubectl wait --for=condition=ready pod -l app=coturn -n default --timeout=300s
+   kubectl delete pod $COTURN_POD -n <namespace>
+   kubectl wait --for=condition=ready pod -l app=coturn -n <namespace> --timeout=300s
    ```
 
 ### Certificate Missing Client EKU
 
-**Symptom**: Coturn connects to federation partners but DTLS authentication fails.
+**Symptom**: DTLS authentication fails with federation partners.
 
-**Solution**:
+Verify both EKU values are present:
 
-1. Verify the certificate has both serverAuth and clientAuth:
-   ```bash
-   openssl x509 -in coturn-cert.pem -text -noout | grep -A 3 "Extended Key Usage"
-   ```
+```bash
+openssl x509 -in coturn-cert.pem -text -noout | grep -A 3 "Extended Key Usage"
+```
 
-2. If output doesn't show both `TLS Web Server Authentication` and `TLS Web Client Authentication`, regenerate the certificate:
-   - Follow Step 2 to create a new CSR with proper EKU flags
-   - Follow Step 3 to sign it with your CA
-   - Continue with Steps 5-7 to deploy
+Output must show `TLS Web Server Authentication` and `TLS Web Client Authentication`. If not, regenerate following Steps 2–3 and redeploy via Steps 5–7.
 
-### Coturn Pod Fails to Start
+### Pod Fails to Start (CrashLoopBackOff)
 
 **Symptom**: Pod enters `CrashLoopBackOff` after Helm upgrade.
 
-**Solution**:
-
-1. Check pod events:
-   ```bash
-   COTURN_POD=$(kubectl get pods -l app=coturn -n default -o jsonpath='{.items[0].metadata.name}')
-   kubectl describe pod $COTURN_POD -n default
-   ```
-
-2. Check pod logs:
-   ```bash
-   kubectl logs $COTURN_POD -n default --previous
-   ```
-
-3. Verify the Secret data is valid:
-   ```bash
-   kubectl get secret coturn-dtls-certificate -n default -o jsonpath='{.data.tls\.crt}' | base64 -d | openssl x509 -text -noout | head -5
-   ```
-
-4. Check for YAML syntax errors in values file:
+1. Check pod events and logs (see Common Diagnostics).
+2. Check for YAML syntax errors:
    ```bash
    helm lint ./charts/coturn -f values/coturn/values.yaml
    ```
-
-5. If issues persist, rollback to previous Helm revision:
+3. If issues persist, rollback:
    ```bash
-   helm rollback coturn -n default
-   kubectl rollout status statefulset/coturn -n default
+   helm rollback coturn -n <namespace>
    ```
 
 ### Helm Upgrade Stuck or Slow
 
-**Symptom**: `helm upgrade` command takes a long time or appears hung.
+**Symptom**: `helm upgrade` hangs.
 
-**Solution**:
-
-1. Check pod restart status:
+1. Check pod status:
    ```bash
-   kubectl get pods -n default | grep coturn
+   kubectl get pods -n <namespace> | grep coturn
    ```
-
-2. Increase timeout if needed:
+2. Re-run with a longer timeout:
    ```bash
-   helm upgrade coturn ./charts/coturn -f values/coturn/values.yaml -n default --wait --timeout 10m
-   ```
-
-3. Check StatefulSet rollout status:
-   ```bash
-   kubectl rollout status statefulset/coturn -n default
+   helm upgrade coturn ./charts/coturn -f values/coturn/values.yaml -n <namespace> --wait --timeout 10m
    ```
 
 ### Certificate Signed by Wrong CA
 
 **Symptom**: Certificate looks valid locally but federation partners can't authenticate.
 
-**Solution**:
+Check the issuer:
 
-1. Verify certificate issuer matches your CA:
-   ```bash
-   openssl x509 -in coturn-cert.pem -noout -issuer
-   ```
+```bash
+openssl x509 -in coturn-cert.pem -noout -issuer
+```
 
-2. Verify the CA that signed the certificate:
-   ```bash
-   openssl x509 -in coturn-cert.pem -noout -text | grep -A 2 "Issuer:"
-   ```
-
-3. If wrong CA was used, regenerate the certificate using the correct CA:
-   ```bash
-   # Follow Step 2 to create a new CSR
-   # Follow Step 3 to sign it with the CORRECT CA
-   # Verify in Step 4 that issuer matches your trusted CA
-   # Continue with Steps 5-7 to deploy
-   ```
+If it doesn't match your CA, regenerate following Steps 2–3 with the correct CA and redeploy via Steps 5–7.
 
 ## Certificate Renewal
 

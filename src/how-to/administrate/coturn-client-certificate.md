@@ -363,5 +363,5 @@ kubectl rollout status statefulset/coturn -n default
 ## Related Documentation
 
 - [Coturn Installation](../install/) - General coturn setup in wire-server-deploy
-- [Wire-Server TLS Configuration](tls.md) - TLS certificate management
-- [Federation Configuration](../../understand/federation.md) - Understanding federation in Wire
+- [Wire-Server TLS Configuration](../install/tls.md) - TLS certificate management
+- [Federation Configuration](../../understand/federation/README.md) - Understanding federation in Wire

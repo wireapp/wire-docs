@@ -2,8 +2,13 @@
 
 ## 1. Planning an Installation
 - [How to plan an installation](planning.md)
-  - [Demo installation (trying functionality out)](planning.md#demo-installation-trying-functionality-out)
+  - [Deployment options at a glance](planning.md#deployment-options-at-a-glance)
+  - [WIAB Dev (single-VM Wire-in-a-Box)](planning.md#wiab-dev-single-vm-wire-in-a-box)
+  - [WIAB Staging (multi-VM KVM-based test cluster)](planning.md#wiab-staging-multi-vm-kvm-based-test-cluster)
   - [Production installation (persistent data, high-availability)](planning.md#production-installation-persistent-data-high-availability)
+    - [Capacity and scalability](planning.md#capacity-and-scalability)
+    - [Artifact bundle and offline deployment](planning.md#artifact-bundle-and-offline-deployment)
+    - [Next steps for high-available production installation](planning.md#next-steps-for-high-available-production-installation)
 
 ## 2. Version Requirements
 - [Version requirements](version-requirements.md)

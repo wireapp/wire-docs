@@ -18,7 +18,7 @@ kubectl port-forward -n wire svc/spar 9999:8080
 ```
 
 This is what you will use to talk to your Wire service. This makes the `spar` component directly accessible from your workstation.
-Make sure you close said terminal when you are done talking to `spar`.
+Make sure you close said terminal (`Ctrl + C`) when you are done talking to `spar`.
 
 ## Create a group using the SCIM API
 

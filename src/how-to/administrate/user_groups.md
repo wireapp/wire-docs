@@ -53,7 +53,7 @@ Where:
 * `$GROUP_NAME` is the name of the group to create
 * `$USER_ID_1` and `$USER_ID_2` are the UUIDs of users to include in the group
 
-What does this do?:
+What does this do?
 * This creates your user group, then provides you with the UUID of your newly created user group.
 
 Notes:

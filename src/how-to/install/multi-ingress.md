@@ -341,7 +341,7 @@ service:
 It will be deployed as:
 
 ```bash
-helm upgrade --install nginx-ingress-services-blue charts/nginx-ingress-services -f values/nginx-ingress-services/blue-values.yaml --set-file secrets.tlsWildcardCert=values/nginx-ingress-services/red-cert.pem --set-file secrets.tlsWildcardKey=values/nginx-ingress-services/red-key.pem
+helm upgrade --install nginx-ingress-services-blue charts/nginx-ingress-services -f values/nginx-ingress-services/blue-values.yaml --set-file secrets.tlsWildcardCert=values/nginx-ingress-services/blue-cert.pem --set-file secrets.tlsWildcardKey=values/nginx-ingress-services/blue-key.pem
 ```
 
 ### Patch the CSP (Content security policy) for each multi-ingress domain

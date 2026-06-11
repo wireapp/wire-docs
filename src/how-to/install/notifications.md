@@ -54,9 +54,9 @@ Google's and Apple's infrastructure.
 
 ## Architecture: How Mobile Notifications Flow
 
-Wire's backend push notification routing is handled by the [Gundeck](../../understand/overview.html?h=gundeck#gundeck) service.
+Wire's backend push notification routing is handled by the [Gundeck](../../understand/overview.md?h=gundeck#gundeck) service.
 Gundeck is the notification hub for Wire: it manages both WebSocket delivery (via
-the [Cannon](../../understand/overview.html?h=cannon#cannon) service) and mobile push notification delivery (via AWS SNS/SQS).
+the [Cannon](../../understand/overview.md?h=cannon#cannon) service) and mobile push notification delivery (via AWS SNS/SQS).
 
 For mobile push notifications, the delivery path is as follows:
 ```
@@ -76,7 +76,7 @@ endpoints.
 > still depends on an SQS-compatible API for internal event processing. In that
 > case, the `fake-aws-sqs` service (part of the `fake-aws` Helm chart) provides a
 > local mock SQS endpoint inside the Kubernetes cluster. See
-> [How to install wire-server using Helm](helm-prod.html) for details.
+> [How to install wire-server using Helm](helm-prod.md) for details.
 
 ## Architecture: How Message Content is Downloaded
 
@@ -156,7 +156,7 @@ the connectivity checks described in the next section.
   - AWS Access Key ID (`awsKeyId`)
   - AWS Secret Access Key (`awsSecretKey`)
 
-See [Enable push notifications using the public App Store / Play Store mobile Wire clients](infrastructure-configuration.html#enable-push-notifications-using-the-public-appstore-playstore-mobile-wire-clients)
+See [Enable push notifications using the public App Store / Play Store mobile Wire clients](infrastructure-configuration.md#enable-push-notifications-using-the-public-appstore-playstore-mobile-wire-clients)
 for the full configuration procedure once you have received these credentials.
 
 ### Option B: Customer-Managed SNS/SQS Relay (Optional, Not Recommended)
@@ -211,7 +211,7 @@ for the full configuration procedure once you have received these credentials.
 - Android users must manually enable **"Keep connection to WebSocket on"** in the
   Wire Android app under **Settings → Network Settings**.
 
-See [How to install wire-server using Helm](helm-prod.html) for
+See [How to install wire-server using Helm](helm-prod.md) for
 the `fake-aws` configuration required for WebSocket-only mode.
 
 ## Connectivity Checks

@@ -13,16 +13,16 @@ keeping the battery from running out. This means that apps on phones have to go
 through some special hoops in order to notify users, without always running,
 and draining the battery. 
 
-In order to notify users that a message or call has occured, Wire's mobile clients 
+In order to notify users that a message or call has occurred, Wire's mobile clients
 (iOS and Android) must be notified of incoming messages and calls even when the
 application is not in the foreground. Wire supports multiple notification delivery
 mechanisms:
 
-| Mechanism | Platform | Requires external connectivity |
-|---|---|---|
-| Apple Push Notification service (APNs) | iOS only | Yes – mandatory |
-| Firebase Cloud Messaging (FCM) | Android | Yes – recommended |
-| WebSocket (persistent TCP connection) | Android only | No |
+| Mechanism | Platform | Requires external connectivity | Battery Drain |
+|---|---|---|---|
+| Apple Push Notification service (APNs) | iOS only | Yes – mandatory | Low |
+| Firebase Cloud Messaging (FCM) | Android | Yes – recommended | Low |
+| WebSocket (persistent TCP connection) | Android only | No | High |
 
 > **Note:** iOS does **not** support WebSocket-only notification delivery. APNs is the
 > only mechanism by which a backgrounded or closed iOS application can be woken up to
@@ -52,11 +52,11 @@ This is in contrast to most commercial messaging platforms, which embed message 
 sender names, and other metadata directly in the push notification payload sent to
 Google's and Apple's infrastructure.
 
-## Architecture: How Notifications Flow
+## Architecture: How Mobile Notifications Flow
 
-Wire's backend push notification routing is handled by the **Gundeck** service.
+Wire's backend push notification routing is handled by the [Gundeck](../../understand/overview.html?h=gundeck#gundeck) service.
 Gundeck is the notification hub for Wire: it manages both WebSocket delivery (via
-the Cannon service) and mobile push notification delivery (via AWS SNS/SQS).
+the [Cannon](../../understand/overview.html?h=cannon#cannon) service) and mobile push notification delivery (via AWS SNS/SQS).
 
 For mobile push notifications, the delivery path is as follows:
 ```
@@ -77,6 +77,24 @@ endpoints.
 > case, the `fake-aws-sqs` service (part of the `fake-aws` Helm chart) provides a
 > local mock SQS endpoint inside the Kubernetes cluster. See
 > [How to install wire-server using Helm](helm-prod.html) for details.
+
+## Architecture: How Message Content is Downloaded
+
+As stated earlier, Wire does not transmit any message content through the mobile
+notificaions. Instead, the mobile notifications are used to tell mobile applications
+to connect to Wire's web socket interface, and download content.
+
+For web sockets, the delivery path is as follows:
+```
+Wire backend (Cannon)
+    └─► Web Sockets
+            ├─► Android Wire clients
+            ├─► Web Wire clients
+            └─► iOS Wire clients
+```
+
+All client applications use the web socket interface to download (encrypted) message
+content.
 
 ## WebSocket Mode (Android Only)
 
@@ -141,7 +159,7 @@ the connectivity checks described in the next section.
 See [Enable push notifications using the public App Store / Play Store mobile Wire clients](infrastructure-configuration.html#enable-push-notifications-using-the-public-appstore-playstore-mobile-wire-clients)
 for the full configuration procedure once you have received these credentials.
 
-### Option B: Customer-Managed SNS/SQS Relay (Not Recommended)
+### Option B: Customer-Managed SNS/SQS Relay (Optional, Not Recommended)
 
 **Assumptions:**
 
@@ -206,7 +224,7 @@ your Wire backend's network (e.g. a Kubernetes node or a pod with a shell).
 
 Replace `<region>` with your target AWS region (e.g. `eu-central-1`):
 ```bash
-curl -v --max-time 10 https://sns..amazonaws.com
+curl -v --max-time 10 https://sns.<region>.amazonaws.com
 ```
 
 Expected: an HTTP response (even a 4xx status is acceptable — it confirms TCP and
@@ -215,7 +233,7 @@ endpoint is not reachable from your network.
 
 ### 2. Test connectivity to AWS SQS (required for Options A and B)
 ```bash
-curl -v --max-time 10 https://sqs..amazonaws.com
+curl -v --max-time 10 https://sqs.<region>.amazonaws.com
 ```
 
 Expected: an HTTP response. Same interpretation as above.
@@ -289,3 +307,5 @@ Can your Wire backend servers reach AWS SNS/SQS?
             └── NO  ──► Option C (WebSocket-only) may be sufficient for
                         Android-only deployments. Note the battery drain trade-off.
 ```
+
+If you are unsure, assume option A, and contact Wire support.

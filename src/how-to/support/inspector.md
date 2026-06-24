@@ -73,7 +73,7 @@ From one of the affected webapp users' machine:
     * Attempt to download a file by clicking on the three dots next to the file, and selecting ‘Download’. You should see traffic in the 'Network' tab of the inspector. The results of your attempt do not matter.
 * In the inspector, Click on the 'File' or 'Name' column header once. This should sort the requests that were sent.
     * If there is not a 'Method' column shown, please right click on 'Name' or 'File', and select 'Method' to make it visible.
-* Look for a file who’s name starts with “3-4”
+* Look for a file whose name starts with “3-4”
     * There will be at least two shown. In the 'method' column, the files will have a method of 'GET + Preflight', or 'OPTIONS'.
     * after the two "3-4" files shown, there will be a 'GET' request for the same filename, minus the '3-4-' on the beginning. It will be a GET request.
 * Screenshot the three files. Ensure that the 'Name' or 'File' is readable, the 'Url' is fully visible, the 'Method' is visible, and the 'Status' is visible.
@@ -195,7 +195,7 @@ From one of the affected webapp users' machine:
     * Make a note of the full URL. It should point to `nginz-ssl.<domain>` — this is Wire's WebSocket endpoint. If it is pointing elsewhere, note that down.
 * In the detail pane, look for a **Messages** tab (Chrome/Edge) or **Response** tab (Firefox). Select it.
     * You should see a stream of messages being exchanged between the client and the server. At this point the list may be empty or contain only the initial handshake — that is fine.
-* **Wait Patiently.** The backend sends a ping to the client every 30 seconds, and the client responds with a pong. You are waiting to observe this exchange. Allow at least 60 seconds — long enough to be confident you would have seen at least one ping/pong cycle if the connection were healthy.
+* **Wait Patiently.** The client sends a ping to the backend every 20 seconds, and the backend responds with a pong. You are waiting to observe this exchange. Allow at least 40 seconds — long enough to be confident you would have seen at least one ping/pong cycle if the connection were healthy.
     * In Chrome and Edge, ping frames are shown with an upward arrow and a payload of the ping data; pong frames are shown with a downward arrow. They may also be labelled explicitly as 'ping' and 'pong' depending on browser version.
     * In Firefox, the frames are listed in the Response tab with their type and direction noted in the Type column.
     > NOTE: A healthy connection will show a ping from the server followed shortly by a pong from the client, repeating approximately every 20 seconds.

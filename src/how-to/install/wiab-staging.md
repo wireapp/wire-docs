@@ -130,6 +130,7 @@ The ansible playbook will perform the following operations for you:
 
 If you want Ansible to create and configure the 7 VMs for you on a single physical host, use the WIAB Staging playbook.
 > Note: the SSH user for ansible `ansible_user` should have password-less `sudo` access. The physical host should be running Ubuntu 22.04.
+
 1. Prepare an inventory for the physical host, based on [ansible/inventory/demo/wiab-staging.yml](https://github.com/wireapp/wire-server-deploy/blob/master/ansible/inventory/demo/wiab-staging.yml).
 2. Adjust values such as:
    - Physical host address of adminhost eg. `example.com` and SSH user eg.`demo`

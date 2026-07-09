@@ -520,7 +520,7 @@ Response:
     "accountsURL": "https://account.red.example.com",
     "backendURL": "https://nginz-https.red.example.com",
     "backendWSURL": "https://nginz-ssl.red.example.com",
-    "blackListURL": "https://clientblacklist.red.example.com/prod",
+    "blackListURL": "https://clientblacklist.wire.com/prod",
     "teamsURL": "https://teams.red.example.com",
     "websiteURL": "https://red.example.com"
   },

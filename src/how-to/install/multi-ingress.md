@@ -137,7 +137,7 @@ nginz:
       endpoints:
         backendURL: "https://nginz-https.green.example.org"
         backendWSURL: "https://nginz-ssl.green.example.org"
-        blackListURL: "https://clientblacklist.green.example.org/prod"
+        blackListURL: "https://clientblacklist.wire.com/prod"
         teamsURL: "https://teams.green.example.org"
         accountsURL: "https://account.green.example.org"
         websiteURL: "https://green.example.org"
@@ -147,7 +147,7 @@ nginz:
         endpoints:
           backendURL: "https://nginz-https.red.example.com"
           backendWSURL: "https://nginz-ssl.red.example.com"
-          blackListURL: "https://clientblacklist.red.example.com/prod"
+          blackListURL: "https://clientblacklist.wire.com/prod"
           teamsURL: "https://teams.red.example.com"
           accountsURL: "https://account.red.example.com"
           websiteURL: "https://red.example.com"
@@ -156,7 +156,7 @@ nginz:
         endpoints:
           backendURL: "https://nginz-https.blue.example.net"
           backendWSURL: "https://nginz-ssl.blue.example.net"
-          blackListURL: "https://clientblacklist.blue.example.net/prod"
+          blackListURL: "https://clientblacklist.wire.com/prod"
           teamsURL: "https://teams.blue.example.net"
           accountsURL: "https://account.blue.example.net"
           websiteURL: "https://blue.example.net"

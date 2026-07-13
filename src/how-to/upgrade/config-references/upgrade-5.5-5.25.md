@@ -44,32 +44,41 @@ Commands that should generally run through `d` or inside `d bash`:
 - `helm`
 - `yq`
 - [dyff](https://github.com/homeport/dyff)
-- [multi_ingress_verify.sh](https://github.com/wireapp/wire-scripts/blob/multi-ingress-verification/multi-ingress/multi_ingress_verify.sh)
-- [rebalance-drained-node-pods.sh](https://github.com/wireapp/wire-scripts/blob/k8s-scripts/k8s-scripts/rebalance-drained-node-pods.sh)
-- [extract_images.sh](https://github.com/wireapp/wire-scripts/blob/k8s-scripts/k8s-scripts/extract_images.sh)
+- [multi_ingress_verify.sh](https://raw.githubusercontent.com/wireapp/wire-scripts/refs/heads/multi-ingress-verification/multi-ingress/multi_ingress_verify.sh)
+- [rebalance-drained-node-pods.sh](https://raw.githubusercontent.com/wireapp/wire-scripts/refs/heads/k8s-scripts/k8s-scripts/rebalance-drained-node-pods.sh)
+- [extract_images.sh](https://raw.githubusercontent.com/wireapp/wire-scripts/refs/heads/k8s-scripts/k8s-scripts/extract_images.sh)
 
 Commands that should run after SSHing into a specific node:
 
 - `apt`
 - `nodetool`
-- [cassandra_backup.sh](https://github.com/wireapp/wire-scripts/blob/cassandra-ops/cassandra-scripts/cassandra_backup.sh)
+- [cassandra_backup.sh](https://raw.githubusercontent.com/wireapp/wire-scripts/refs/heads/cassandra-ops/cassandra-scripts/cassandra_backup.sh)
 - `crictl`
 
 Commands or scripts that should run from a [wire-utility](https://docs.wire.com/latest/how-to/administrate/wire-utility-tool.html) context `d kubectl exec -ti wire-utility-0 -- bash`:
 
 - `cqlsh`
-- [create_team.sh](https://github.com/wireapp/wire-scripts/blob/user-ops/user-ops/create_team.sh)
-- [create_users.sh](https://github.com/wireapp/wire-scripts/blob/user-ops/user-ops/create_users.sh)
-- [analyze_clients.py](https://github.com/wireapp/wire-scripts/blob/cassandra-ops/cqlsh-scripts/analyze_clients.py)
-- [collect_user_cql_data.sh](https://github.com/wireapp/wire-scripts/blob/cassandra-ops/cqlsh-scripts/collect_user_cql_data.sh)
+- [create_team.sh](https://raw.githubusercontent.com/wireapp/wire-scripts/refs/heads/user-ops/user-ops/create_team.sh)
+- [create_users.sh](https://raw.githubusercontent.com/wireapp/wire-scripts/refs/heads/user-ops/user-ops/create_users.sh)
+- [analyze_clients.py](https://raw.githubusercontent.com/wireapp/wire-scripts/refs/heads/cassandra-ops/cqlsh-scripts/analyze_clients.py)
+- [collect_user_cql_data.sh](https://raw.githubusercontent.com/wireapp/wire-scripts/refs/heads/cassandra-ops/cqlsh-scripts/collect_user_cql_data.sh)
 
 Note: files written inside `wire-utility` are not persistent. If the `wire-utility` pod restarts, any files copied or created inside the pod will be lost.
 
 These helper scripts may not be present in the deployment bundle or on the admin host. Download them from the linked source, or add them manually to the system before use. Review each script and run it in dry-run or read-only mode first when available.
 
+Example for fetching a script from the raw link:
+
+```bash
+wget -O analyze_clients.py https://raw.githubusercontent.com/wireapp/wire-scripts/refs/heads/cassandra-ops/cqlsh-scripts/analyze_clients.py
+chmod +x analyze_clients.py
+```
+
 The phase numbers below describe the task order. They are not strict calendar days; split or combine them according to the maintenance window, customer readiness, and operational risk.
 
 ## Phase 1: Readiness and Baseline Validation
+
+Before starting this phase, confirm that asciinema recording is active.
 
 ### Client Validation Checklist
 
@@ -90,7 +99,7 @@ Example mapping:
 - Android through deep link -> User 002
 - iOS through deep link -> User 003
 
-### [Multi-Ingress](https://docs.wire.com/latest/how-to/install/multi-ingress.html) Validation
+### [Multi-Ingress](https://docs.wire.com/latest/how-to/install/multi-ingress.html) Validation (in a Multi-Ingress env)
 
 Use this section if the deployment has multiple ingress domains. Consider having at least 3 more users to test those domains.
 
@@ -117,6 +126,11 @@ Check Helm diffs for the current version. This should confirm that the deployed 
 
 ```bash
 d bash
+```
+
+Run the rest of this block inside the `d bash` shell.
+
+```bash
 for chart in webapp team-settings wire-server account-pages databases-ephemeral elasticsearch-external fake-aws ingress-nginx-controller minio-external nginx-ingress-services rabbitmq-external reaper; do
   cmd=(helm diff "$chart" "charts/$chart")
 
@@ -175,8 +189,9 @@ The package repository should point to the internal or approved external mirror 
 
 If node updates are required, update nodes manually in a rolling manner.
 
+Run the rest of this block inside the `d bash` shell.
+
 ```bash
-d bash
 export DRAIN_TIME="$(date -u  +%Y-%m-%dT%H:%M:%SZ)"
 export DRAIN_NODE="kubenode3"
 kubectl cordon kubenode3
@@ -298,6 +313,8 @@ d ansible cassandra -i ansible/inventory/offline/inventory.yml -m shell -a "df -
 
 ## Phase 2: Workspace, Backups, and Infrastructure Preparation
 
+Before starting this phase, confirm that asciinema recording is active.
+
 ### Prepare the New Deployment Workspace
 
 Rename the old deployment package.
@@ -351,7 +368,7 @@ cp ../wire-server-deploy-old/ansible/inventory/offline/artifacts/admin.conf ansi
 Verify Kubernetes access from the new workspace.
 
 ```bash
-d kubectl get pods
+d kubectl get nodes
 ```
 
 ### Take Cassandra Backups
@@ -374,7 +391,7 @@ d kubectl exec -t wire-utility-0 -- /usr/local/bin/cqlsh -e "DESCRIBE SCHEMA" > 
 
 Take backups on all Cassandra nodes individually.
 
-Reference: https://github.com/wireapp/wire-scripts/blob/cassandra-ops/cassandra-scripts/cassandra_backup.sh
+Reference: https://raw.githubusercontent.com/wireapp/wire-scripts/refs/heads/cassandra-ops/cassandra-scripts/cassandra_backup.sh
 
 ```bash
 bash cassandra_backup.sh
@@ -473,6 +490,7 @@ Install or upgrade the chart.
 
 ```bash
 d helm upgrade --install postgresql-external charts/postgresql-external --values values/postgresql-external/values.yaml
+d kubectl get pods
 d kubectl logs -f postgres-endpoint-manager-PODID
 ```
 
@@ -481,6 +499,12 @@ Replace `postgres-endpoint-manager-PODID` with the actual pod name.
 ### Prepare Helm Chart Values for 5.25
 
 Keep the existing 5.5 values as the reference while preparing the 5.25 values. To understand what each of values further means - find the detailed values.yaml file [here](https://github.com/wireapp/wire-server/tree/v2026-01-13/charts). For reference, how older helm chart values looked like can be found with [5.5 version helm charts](https://github.com/wireapp/wire-server/tree/v2024-07-09/charts). These charts also present in each artifact at `charts` directory for local reference.
+
+
+Copy the old values from `wire-server-deploy-old/values` to `old-values`
+```bash
+cp -r ../wire-server-deploy-old/values old-values/
+```
 
 Generate Wire Server secrets.
 
@@ -496,8 +520,9 @@ grep main bin/helm-operations.sh
 
 Prepare Wire Server values - it will create a working copy for values.yaml and secrets.yaml. These should help us to get started with prepared helm chart values for 5.25 with our domain.
 
+Run the rest of this block inside the `d bash` shell.
+
 ```bash
-d bash
 export TARGET_SYSTEM="example.com" CERT_MASTER_EMAIL="certmaster@example.com" DEPLOY_CERT_MANAGER=FALSE DEPLOY_CALLING_SERVICES=FALSE
 source bin/helm-operations.sh
 process_values "prod" "values"
@@ -534,7 +559,6 @@ Compare Helm chart values and secrets for `wire-server`, `webapp`, `team-setting
 Use the `wire-server-deploy-admin` image or the dyff container, then compare old and new values.
 
 ```bash
-docker image ls
 d dyff between old-values/wire-server/values.yaml values/wire-server/values.yaml
 d dyff between old-values/wire-server/secrets.yaml values/wire-server/secrets.yaml
 ```
@@ -550,36 +574,39 @@ When comparing secrets, copy old secret values into the new secrets file where r
 
 Confirm the final expected secret differences for this deployment.
 
-### Verify Multi-Ingress Values
+### Verify Multi-Ingress Values (in a Multi-Ingress env)
 
 Set up multi-ingress values for all domains in the `wire-server` Helm chart.
 
 Reference script:
-https://github.com/wireapp/wire-scripts/blob/multi-ingress-verification/multi-ingress/multi_ingress_verify.sh
+https://raw.githubusercontent.com/wireapp/wire-scripts/refs/heads/multi-ingress-verification/multi-ingress/multi_ingress_verify.sh
 
 ```bash
-d bash bin/multi_ingress_verify.sh -f values/wire-server/values.yaml -m wiab-stag-test.example.com -d red-wst.example.com
+# main domain=green.example.com
+# multi ingress domain = red.example.com
+d bash bin/multi_ingress_verify.sh -f values/wire-server/values.yaml -m green.example.com -d red.example.com
 ```
 
 Set up `nginx-ingress-services` values.
 
 ```bash
-cp ../wire-server-deploy-old/values/nginx-ingress-services/values.yaml values/nginx-ingress-services/values.yaml
+cp old-values/nginx-ingress-services/values.yaml values/nginx-ingress-services/values.yaml
 ```
 
 For all multi-ingress domains, ideally no change is required. Copy the files from the old directory and repeat per domain.
 
 ```bash
-cp ../wire-server-deploy-old/values/nginx-ingress-services/values.yaml values/nginx-ingress-services/values.yaml
-cp ../wire-server-deploy-old/values/nginx-ingress-services/red-values.yaml values/nginx-ingress-services/red-values.yaml
-cp ../wire-server-deploy-old/values/nginx-ingress-services/red-cert.pem values/nginx-ingress-services/red-cert.pem
-cp ../wire-server-deploy-old/values/nginx-ingress-services/red-key.pem values/nginx-ingress-services/red-key.pem
+# main domain=green.example.com
+# multi ingress domain = red.example.com
+cp old-values/nginx-ingress-services/red-values.yaml values/nginx-ingress-services/red-values.yaml
+cp old-values/nginx-ingress-services/red-cert.pem values/nginx-ingress-services/red-cert.pem
+cp old-values/nginx-ingress-services/red-key.pem values/nginx-ingress-services/red-key.pem
 ```
 
 Generate or validate nginx values for a domain.
 
 ```bash
-d bash bin/multi_ingress_verify.sh --check-nginx -m wiab-stag-test.example.com --nginx-domain red-wst.example.com --nginx-values values/nginx-ingress-services/red-values.yaml --create-nginx-values
+d bash bin/multi_ingress_verify.sh --check-nginx -m green.example.com -d red.example.com --nginx-values values/nginx-ingress-services/red-values.yaml --create-nginx-values
 ```
 
 Compare old and new domain-specific nginx values.
@@ -590,12 +617,17 @@ d dyff between old-values/nginx-ingress-services/red-values.yaml values/nginx-in
 
 Update differences caused by name changes if any.
 
+If `values/wire-server/values.yaml` has been updated, then verify the difference agin:
+```bash
+d dyff between old-values/wire-server/values.yaml values/wire-server/values.yaml
+```
+
 ### Check Webapp, Team Settings, and Account Pages Values
 
 Copy and compare Webapp values.
 
 ```bash
-cp ../wire-server-deploy-old/values/webapp/values.yaml values/webapp/values.yaml
+cp old-values/webapp/values.yaml values/webapp/values.yaml
 d dyff between values/webapp/prod-values.example.yaml values/webapp/values.yaml
 ```
 
@@ -635,12 +667,18 @@ d ansible kube-node -i ansible/inventory/offline/inventory.yml -m shell -a "df -
 
 ## Phase 3: Helm Diff and Pre-Upgrade Chart Work
 
+Before starting this phase, confirm that asciinema recording is active.
+
+When reviewing Helm diffs, understand both the explicit value changes and the implicit chart-default changes. Most configuration comes from the upstream chart defaults unless it is overridden in `values/CHART/values.yaml`. Look for resource or deployment changes in the backend, image tag changes, service type changes, jobs or hooks, migration-related settings, and default values or features that become enabled by the new chart. Also identify any manual additions or live patches applied directly to Kubernetes objects outside Helm, because those changes may not be represented in chart values and can be overwritten or behave differently after a Helm upgrade.
+
+Upstream Helm chart values for the target release can be reviewed in the 5.25 charts at https://github.com/wireapp/wire-server/tree/v2026-01-13/charts. Older 5.5 chart values are available at https://github.com/wireapp/wire-server/tree/v2024-07-09/charts. The same chart defaults are also available locally in the extracted artifact under `charts/CHART/values.yaml`.
+
 ### Check External Service Chart Diffs
 
 Verify external service chart values before upgrading them.
+Run the rest of this block inside the `d bash` shell.
 
 ```bash
-d bash
 for chart in elasticsearch-external minio-external rabbitmq-external cassandra-external postgresql-external; do
   cmd=(helm diff "$chart" "charts/$chart")
 
@@ -662,6 +700,21 @@ done
 
 ### Upgrade Other Charts
 
+To check all the existing helm charts run:
+```bash
+d helm list
+```
+
+After each Helm install, upgrade, or uninstall, check Kubernetes state before moving on.
+
+```bash
+d kubectl get pods
+```
+
+Also review the relevant Wire Server Grafana dashboard after major backend chart changes. A Helm upgrade may not always restart pods if the rendered pod template does not change; it can still update Helm release state, chart metadata, or values. Confirm the intended resources actually changed before relying on a Helm success message.
+
+During the maintenance window, keep a test group conversation available. Send a message every 5 minutes, and after every main Helm chart upgrade, to record the user-visible state of messaging. During intentional service scale-down, message delivery may fail; record the time and the expected reason.
+
 Resolve Helm chart differences by upgrading external and supporting charts.
 
 Example for MinIO:
@@ -675,6 +728,7 @@ Test new values with `wire-utility`. The `wire-utility` chart confirms whether a
 
 ```bash
 d helm upgrade --install wire-utility charts/wire-utility --values values/wire-server/values.yaml --values values/wire-server/secrets.yaml
+# wait for the new wire-utility-0 pod to come up
 d kubectl exec -ti wire-utility-0 -- status
 ```
 
@@ -691,6 +745,7 @@ d helm upgrade --install fake-aws charts/fake-aws --values values/fake-aws/value
 d helm diff reaper charts/reaper --values values/reaper/values.yaml
 d helm upgrade --install reaper charts/reaper --values values/reaper/values.yaml
 ```
+Verify the pods post upgrading the helm charts.
 
 Warning: check the diff of the `ingress-nginx-controller` chart carefully because it directly affects how traffic reaches the cluster. If the ingress `Service` type, node ports, load balancer settings, or external traffic policy changes, prepare the firewall and routing changes before upgrading.
 
@@ -699,13 +754,15 @@ d helm diff ingress-nginx-controller charts/ingress-nginx-controller --values va
 # Verify the above output before running the below command
 d helm upgrade --install ingress-nginx-controller charts/ingress-nginx-controller --values values/ingress-nginx-controller/values.yaml
 ```
+Verify the pods post upgrading the helm charts.
 
 Install `smtp` and `databases-ephemeral` after scaling down Wire services.
 
 Before starting the Wire Server upgrade, run a quick diff check for the core user-facing charts. Make sure you understand the changes proposed for each chart and it aligns with your environment.
 
+Run the rest of this block inside the `d bash` shell.
+
 ```bash
-d bash
 for chart in wire-server webapp team-settings account-pages; do
   cmd=(helm diff "$chart" "charts/$chart")
 
@@ -726,6 +783,8 @@ done
 ```
 
 ## Phase 4: Wire Server Backend Upgrade
+
+Before starting this phase, confirm that asciinema recording is active.
 
 ### Backup Again Before Migration
 
@@ -801,6 +860,7 @@ Uninstall the old `databases-ephemeral` release and install the new one.
 # to update the service name for redis
 d helm upgrade --install databases-ephemeral charts/databases-ephemeral --values values/databases-ephemeral/values.yaml
 ```
+Verify the pods post upgrading the helm charts.
 
 ### Upgrade Wire Server and Run Cassandra Migrations
 
@@ -815,6 +875,7 @@ While the upgrade is running, watch for pod failures in parallel.
 ```bash
 d kubectl get pods
 ```
+Also check the Wire Server Grafana dashboard while the backend pods restart. Watch for error spikes, failing migrations, unhealthy pods, and datasource connectivity issues.
 
 Verify Cassandra schema versions after migration.
 
@@ -829,11 +890,9 @@ Expected target versions:
 - `galley`: 101
 - `spar`: 21
 
-At the end, all pods should be up and running.
+At the end, confirm that all pods should be up and running.
 
-```bash
-d kubectl get pods
-```
+Send a message in the test group conversation and record the result before proceeding to the next main chart upgrade.
 
 ### Run the One-Time Team Features Migration
 
@@ -844,11 +903,9 @@ d helm install migrate-features charts/migrate-features
 d kubectl get pods
 d kubectl logs -f job/migrate-features
 d kubectl wait --for=condition=complete job/migrate-features --timeout=1800s
-# Expect output only in case of features which got migrated.
+# Expect output only in case of features which got migrated
 d kubectl exec -it wire-utility-0 -- cqlsh -e "SELECT team, migration_state FROM galley.team_features LIMIT 5;"
 ```
-
-Confirm whether `migrate-features` needs values or secrets for this environment, for example `--values values/migrate-features/values.yaml`. ?
 
 ### Bring Back Reaper
 
@@ -867,13 +924,17 @@ d helm upgrade --install webapp charts/webapp --values values/webapp/values.yaml
 d helm upgrade --install team-settings charts/team-settings --values values/team-settings/values.yaml --values values/team-settings/secrets.yaml
 d helm upgrade --install account-pages charts/account-pages --values values/account-pages/values.yaml
 ```
+Verify the pods post upgrading the helm charts.
+
+After these chart upgrades, send another message in the test group conversation and check the Wire Server Grafana dashboard for user-visible errors.
 
 ### Check Final Core Chart Diff
 
 Run the final Helm diff for core charts.
 
+Run the rest of this block inside the `d bash` shell.
+
 ```bash
-d bash
 for chart in wire-server webapp team-settings account-pages; do
   cmd=(helm diff "$chart" "charts/$chart")
 
@@ -895,39 +956,52 @@ done
 
 ## Phase 5: Nginx Ingress Services and Multi-Ingress
 
+Before starting this phase, confirm that asciinema recording is active.
+
 ### Update Main Nginx Ingress Services Chart
 
 Check the main domain.
 
 ```bash
-d helm diff nginx-ingress-services charts/nginx-ingress-services --values values/nginx-ingress-services/values.yaml
-d helm upgrade --install nginx-ingress-services charts/nginx-ingress-services --values values/nginx-ingress-services/values.yaml
+# list all helm charts
+d helm list
+# check the difference
+d helm diff nginx-ingress-services charts/nginx-ingress-services --values values/nginx-ingress-services/values.yaml --set-file secrets.tlsWildcardCert=values/nginx-ingress-services/cert.pem --set-file secrets.tlsWildcardKey=values/nginx-ingress-services/key.pem
+# once changes are confirmed - apply the changes
+d helm upgrade --install nginx-ingress-services charts/nginx-ingress-services --values values/nginx-ingress-services/values.yaml --set-file secrets.tlsWildcardCert=values/nginx-ingress-services/cert.pem --set-file secrets.tlsWildcardKey=values/nginx-ingress-services/key.pem
 ```
 
-### Update Multi-Ingress Domains
+### Update Multi-Ingress Domains (in a Multi-Ingress env)
 
 Repeat this section for every multi-ingress domain.
 
 ```bash
-cp ../wire-server-deploy-old/values/nginx-ingress-services/red-key.pem values/nginx-ingress-services/.
-cp ../wire-server-deploy-old/values/nginx-ingress-services/red-cert.pem values/nginx-ingress-services/.
+# to find out the name of the ingress
+d helm list
 d helm diff nginx-ingress-services-red charts/nginx-ingress-services --values values/nginx-ingress-services/red-values.yaml --set-file secrets.tlsWildcardCert=values/nginx-ingress-services/red-cert.pem --set-file secrets.tlsWildcardKey=values/nginx-ingress-services/red-key.pem
 d helm upgrade --install nginx-ingress-services-red charts/nginx-ingress-services --values values/nginx-ingress-services/red-values.yaml --set-file secrets.tlsWildcardCert=values/nginx-ingress-services/red-cert.pem --set-file secrets.tlsWildcardKey=values/nginx-ingress-services/red-key.pem
 ```
-
 After upgrading, patch the CSP for each multi-ingress domain's ingress.
+
+Verify the pods post upgrading the helm charts.
 
 Reference:
 https://github.com/wireapp/wire-docs/blob/WPB-25750-multi-ingress-fix/src/how-to/install/multi-ingress.md#patch-the-csp-content-security-policy-for-each-multi-ingress-domain
 
-### Expected Deeplink Changes
+### Expected Deeplink Changes (in a Multi-Ingress env)
 
 After `nginx-ingress-services` is upgraded, the deeplink structure changes:
 
 - You no longer need to host your own deeplink service.
 - Deeplinks should be available from `nginz`.
 
+```bash
+curl https://nginz-https.MainDomain/deeplink.json -H "Host: nginz-https.MultiIngressDomain"
+```
+
 ## Phase 6: Post-Upgrade Validation
+
+Before starting this phase, confirm that asciinema recording is active.
 
 ### Cluster and Service Checks
 
@@ -989,6 +1063,7 @@ Upgrade the Webapp image tag and redeploy.
 
 ```bash
 d helm upgrade --install webapp charts/webapp --values values/webapp/values.yaml
+d kubectl get pods
 ```
 
 Observe the change for some time with users.
@@ -1001,8 +1076,6 @@ Reference:
 https://docs.wire.com/latest/how-to/administrate/migrate-to-postgresql.html
 
 Run PostgreSQL migrations for conversations using the documented 3-stage process.
-
-Confirm the exact timing and commands for this environment before running. ?
 
 ## Rollback and Stop Conditions
 

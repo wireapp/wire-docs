@@ -114,7 +114,16 @@ Example mapping:
 -  Domain 2 → Android via deep link (User 005)
 -  Domain 3 → iOS via deep link (User 006)
 
-### Verify Current Cluster, Helm Charts, and VMs
+### Verify Current Cluster, Certs, Helm Charts, and VMs
+
+Check the cert validity for all main domains and multi-ingress domains (if applicable). If cert expire date is near (1 week or less), it is recommended to update the certs before continuing further.
+
+```bash
+# cert expiry date for main domain
+curl -vI https://nginz-ssl.example.com 2>&1 | grep -i 'expire date'
+# cert expiry date for multi-ingress domain
+curl -vI https://nginz-ssl.red.example.com 2>&1 | grep -i 'expire date'
+```
 
 Check the current Kubernetes state before changing anything.
 
@@ -582,9 +591,9 @@ Reference script:
 https://raw.githubusercontent.com/wireapp/wire-scripts/refs/heads/multi-ingress-verification/multi-ingress/multi_ingress_verify.sh
 
 ```bash
-# main domain=green.example.com
+# main domain=example.com
 # multi ingress domain = red.example.com
-d bash bin/multi_ingress_verify.sh -f values/wire-server/values.yaml -m green.example.com -d red.example.com
+d bash bin/multi_ingress_verify.sh -f values/wire-server/values.yaml -m example.com -d red.example.com
 ```
 
 Set up `nginx-ingress-services` values.
@@ -596,8 +605,6 @@ cp old-values/nginx-ingress-services/values.yaml values/nginx-ingress-services/v
 For all multi-ingress domains, ideally no change is required. Copy the files from the old directory and repeat per domain.
 
 ```bash
-# main domain=green.example.com
-# multi ingress domain = red.example.com
 cp old-values/nginx-ingress-services/red-values.yaml values/nginx-ingress-services/red-values.yaml
 cp old-values/nginx-ingress-services/red-cert.pem values/nginx-ingress-services/red-cert.pem
 cp old-values/nginx-ingress-services/red-key.pem values/nginx-ingress-services/red-key.pem
@@ -606,7 +613,7 @@ cp old-values/nginx-ingress-services/red-key.pem values/nginx-ingress-services/r
 Generate or validate nginx values for a domain.
 
 ```bash
-d bash bin/multi_ingress_verify.sh --check-nginx -m green.example.com -d red.example.com --nginx-values values/nginx-ingress-services/red-values.yaml --create-nginx-values
+d bash bin/multi_ingress_verify.sh --check-nginx -m example.com -d red.example.com --nginx-values values/nginx-ingress-services/red-values.yaml --create-nginx-values
 ```
 
 Compare old and new domain-specific nginx values.
@@ -996,7 +1003,10 @@ After `nginx-ingress-services` is upgraded, the deeplink structure changes:
 - Deeplinks should be available from `nginz`.
 
 ```bash
-curl https://nginz-https.MainDomain/deeplink.json -H "Host: nginz-https.MultiIngressDomain"
+# It will respond with the deeplink for red.example.com
+curl https://nginz-https.red.example.com/deeplink.json
+# It will respond with the deeplink for example.com
+curl https://nginz-https.example.com/deeplink.json
 ```
 
 ## Phase 6: Post-Upgrade Validation

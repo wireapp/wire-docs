@@ -1059,17 +1059,21 @@ Webapps may log users out. Log back in and confirm that conversations are presen
 
 ## Follow-Up: Upgrade Webapp to 2026-06-08-production.0
 
-After the main upgrade has stabilized, upgrade Webapp to `2026-06-08-production.0`.
+Before continuing, make sure that the following docker image is present on all the k8s nodes:
+- `quay.io/wire/webapp:2026-06-08-production.0`
 
-Update `values/webapp/values.yaml`.
+After the main upgrade has stabilized, upgrade Webapp to `2026-06-08-production.0` by updating `.image.tag = 2026-06-08-production.0` `values/webapp/values.yaml`.
 
-- Comment out the Max API version.
-- Enable or use the core-crypto flag.
-- Review these keys:
-  - `FEATURE_USE_CORE_CRYPTO`
-  - `MAX_API_VERSION`
-
-Upgrade the Webapp image tag and redeploy.
+- Comment/remove the the `MAX_API_VERSION` and `FEATURE_USE_CORE_CRYPTO` from envVars.
+```bash
+d yq eval '{"image": .image.tag, "MAX_API_VERSION": .envVars.MAX_API_VERSION, "FEATURE_USE_CORE_CRYPTO": .envVars.FEATURE_USE_CORE_CRYPTO }' values/webapp/values.yaml
+# image: 2026-06-08-production.0
+# MAX_API_VERSION: null
+# FEATURE_USE_CORE_CRYPTO: null
+# Verify the helm diff
+d helm diff  webapp charts/webapp --values values/webapp/values.yaml
+```
+After verifying the above output - run the following command to upgrade the helm chart.
 
 ```bash
 d helm upgrade --install webapp charts/webapp --values values/webapp/values.yaml
@@ -1080,12 +1084,7 @@ Observe the change for some time with users.
 
 ## Follow-Up: Cassandra to PostgreSQL
 
-Post-upgrade, plan the Cassandra to PostgreSQL migration separately.
-
-Reference:
-https://docs.wire.com/latest/how-to/administrate/migrate-to-postgresql.html
-
-Run PostgreSQL migrations for conversations using the documented 3-stage process.
+Make sure to backup Cassandra before starting the migration to Postgresql. Post-upgrade, plan the Cassandra to PostgreSQL migration separately as explained at https://docs.wire.com/latest/how-to/administrate/migrate-to-postgresql.html. 
 
 ## Rollback and Stop Conditions
 

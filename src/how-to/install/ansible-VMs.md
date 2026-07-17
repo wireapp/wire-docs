@@ -15,7 +15,7 @@ Create a fresh workspace to download the artifacts:
 ```bash
 $ cd ...  # you pick a good location!
 ```
-Obtain the latest airgap artifact for wire-server-deploy. Please contact us to get it.
+Obtain the latest airgap artifact for wire-server-deploy. Please [contact us](https://support.wire.com/hc/en-us) to get it.
 
 Extract the above listed artifacts into your workspace:
 
@@ -36,7 +36,6 @@ Copy [ansible/inventory/offline/99-static](https://github.com/wireapp/wire-serve
 
 ```bash
 cp ansible/inventory/offline/99-static ansible/inventory/offline/hosts.ini
-mv ansible/inventory/offline/99-static ansible/inventory/offline/orig.99-static
 ```
 
 Edit `ansible/inventory/offline/hosts.ini`. Here, you will describe the topology of your offline deploy as explained in the next section.
@@ -126,14 +125,20 @@ Repeat this for all of the instances.
 ### Setting up Database network interfaces and service specific variables:
 - Make sure that `cassandra_network_interface` is set to the name of the network interface on which the kubenodes should talk to cassandra and on which the cassandra nodes should communicate among each other. Run `ip addr` on one of the cassandra nodes to determine the network interface names, and which networks they correspond to. In Ubuntu 22.04 for example, interface names are predictable and individualized, eg. `enp41s0`.
 - Similarly `elasticsearch_network_interface`, `rabbitmq_network_interface`, `postgresql_network_interface` and `minio_network_interface` should be set to the network interface names to the service specific groups to ensure communicatation with kubernetes and among each other.
-- RabbitMQ requires the variable `rabbitmq_cluster_master` to configure one of the `rmq-cluster` nodes as master.
-- PostgreSQL requires following variables to define the database topology and database to create:
+- RabbitMQ requires the variable `rabbitmq_cluster_master` to configure one of the `rmq-cluster` nodes as master, the value should be the `hostname` for master node.
+- PostgreSQL requires following variables to define the database topology and database to create. These has been pre-filled with default values - modify them as per your environment.
 ```ini
 wire_dbname= wire-server
 repmgr_node_config = {"postgresql1": {"node_id": 1, "priority": 150, "role": "primary"}, "postgresql2": {"node_id": 2, "priority": 100, "role": "standby"}, "postgresql3": {"node_id": 3, "priority": 50, "role": "standby"}}
 ```
 - In an INI inventory, the `repmgr_node_config` keys must match the PostgreSQL inventory hostnames.
-- To read more about specific PostgreSQL configuration, reat at [PostgreSQL High Availability Cluster - Quick Setup](../administrate/postgresql-cluster.md).
+- To read more about configurations related to each data service read at:
+    - [PostgreSQL](../administrate/postgresql-cluster.md)
+    - [Cassandra](../administrate/cassandra.md)
+    - [Elasticsearch](../administrate/elasticsearch.md)
+    - [Minio](../administrate/minio.md)
+    - [RabbitMQ](https://github.com/wireapp/wire-server-deploy/blob/master/offline/rabbitmq_setup.md)
+    - [Kubernetes](../administrate/kubernetes/README.md)
 
 ### Example hosts.ini
 
@@ -233,9 +238,10 @@ Minio and coturn services have shared secrets with the `wire-server` helm chart.
 ```
 
 This should generate 3 secret files as:
-- `./ansible/inventory/group_vars/all/secrets.yaml` - This file will be used by ansible playbooks to configure service secrets.
-- `values/wire-server/secrets.yaml` - This contains the secrets for Wire services and share some secrets from coturn and database services.
-- `values/coturn/secrets.yaml` - This contains a secret for the coturn service.
+- `ansible/inventory/group_vars/all/secrets.yaml` - This file will be used by ansible minio playbooks to configure the service secrets.
+- `values/wire-server/prod-secrets.example.yaml` - This contains the secrets for Wire services and share some secrets from coturn and database services.
+- `values/coturn/prod-secrets.example.yaml` - This contains a secret for the coturn service.
+- `values/kube-prometheus-stack/prod-secrets.example.yaml` - This contains secret for Prometheus in kube-prometheus-stack. Only applicable when deploying the `kube-prometheus-stack` helm chart with `auth` enabled for prometheus.
 
 Read more secrets management at [Secrets Overview for Wire Deployments](secrets-overview.md).
 
@@ -277,7 +283,7 @@ They should all report ready.
 ### Troubleshooting external services
 Cassandra, Minio, PostgresSQL, RabbitMQ and Elasticsearch are running outside Kubernets cluster, make sure those machines have necessary ports open -
 
-On each of the machines running Cassandra, Minio, PostgresSQL, RabbitMQ and Elasticsearch, run the following commands to open the necessary ports, if necessary:
+On each of the machines running Cassandra, Minio, PostgresSQL, RabbitMQ and Elasticsearch, run the following commands to open the necessary ports, if necessary (Verify if ports are open by default):
 ```bash
 sudo bash -c '
 set -eo pipefail;
@@ -315,7 +321,7 @@ Now we are done with configuring primary k8s cluster and databases. Now, we woul
 
 ### Marking kubenodes for calling servers (SFT/Coturn)
 
-The SFT & Coturn Calling server should be running on a kubernetes nodes that are connected to the public internet. If not all kubernetes nodes match these criteria, you should specifically label the nodes that do match these criteria, so that you're sure SFT is deployed correctly.
+The SFT & Coturn Calling server should be running on a kubernetes nodes that are connected to the network where they are reachable to your clients. If client network is undefined and clients connect from all over public Internet, then these nodes should be connected to public network. If not all kubernetes nodes match the network criteria, you should specifically labels on nodes that match these criteria and similary nodeSelector criteria for SFT helm chart, so that you're sure SFT is deployed correctly.
 
 By using a `node_label` you can make sure SFT & Coturn are only deployed on certain nodes like `call_kubenode1` & `call_kubenode2`:
 
@@ -330,7 +336,7 @@ assethost ansible_host=10.1.1.1
 
 [kube-node]
 call_kubenode1  ansible_host=10.1.1.33 etcd_member_name=call_kubenode1 ip=10.1.1.33 node_labels="{'wire.com/role': 'sftd'}" node_annotations="{'wire.com/external-ip': 'a.b.c.d'}"
-call_kubenode2 ansible_host=10.1.1.34 etcd_member_name=call_kubenode2 ip=10.1.1.34 node_labels="{'wire.com/role': 'coturn'}""
+call_kubenode2 ansible_host=10.1.1.34 etcd_member_name=call_kubenode2 ip=10.1.1.34 node_labels="{'wire.com/role': 'coturn'}"
 call_kubenode3 ansible_host=10.1.1.36 etcd_member_name=call_kubenode3 ip=10.1.1.36
 
 [kube-master:children]
@@ -342,10 +348,6 @@ kube-master
 [k8s-cluster:children]
 kube-master
 kube-node
-
-[k8s-cluster:vars]
-calico_mtu=1450
-calico_veth_mtu=1430
 ```
 
 If the node is not bound to the public IP the users will see(e.g. becuase it's behind NAT) then you should also set the `wire.com/external-ip` annotation to the public IP of the node.

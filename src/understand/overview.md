@@ -204,7 +204,7 @@ Henry has a different thing happening. For Henry, the call is on the SFT server 
 
 The following diagram shows a usual setup with multiple VMs (Virtual Machines):
 
-![image](../how-to/install/img/architecture-server-ha.png)
+![image](../how-to/install/img/architecture-prod-ha.png)
 
 
 All the server components on one physical machine can connect to all the databases (also those on a different physical machine). The databases each connect to each-other, e.g. cassandra on machine 1 will connect to the cassandra VMs on machines 2 and 3.

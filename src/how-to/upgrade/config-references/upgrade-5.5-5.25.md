@@ -1065,11 +1065,13 @@ Before continuing, make sure that the following docker image is present on all t
 After the main upgrade has stabilized, upgrade Webapp to `2026-06-08-production.0` by updating `.image.tag = 2026-06-08-production.0` `values/webapp/values.yaml`.
 
 - Comment/remove the the `MAX_API_VERSION` and `FEATURE_USE_CORE_CRYPTO` from envVars.
+- Add `BRAND_NAME: "Wire"` as envVars.
 ```bash
-d yq eval '{"image": .image.tag, "MAX_API_VERSION": .envVars.MAX_API_VERSION, "FEATURE_USE_CORE_CRYPTO": .envVars.FEATURE_USE_CORE_CRYPTO }' values/webapp/values.yaml
+d yq eval '{"image": .image.tag, "MAX_API_VERSION": .envVars.MAX_API_VERSION, "FEATURE_USE_CORE_CRYPTO": .envVars.FEATURE_USE_CORE_CRYPTO, "BRAND_NAME": .envVars.BRAND_NAME }' values/webapp/values.yaml
 # image: 2026-06-08-production.0
 # MAX_API_VERSION: null
 # FEATURE_USE_CORE_CRYPTO: null
+# BRAND_NAME: Wire
 # Verify the helm diff
 d helm diff  webapp charts/webapp --values values/webapp/values.yaml
 ```

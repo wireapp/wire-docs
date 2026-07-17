@@ -55,7 +55,7 @@ ansible_become_pass=<PASSWORD>
 ### Updating Database Group Memberships
 It's recommended to update the lists of what nodes belong to which group, so ansible knows what to install on these nodes.
 
-These sections can be divided into individual host groups, reflecting the architecture of the target infrastructure. Examples with individual nodes for Elastic, MinIO, PostgreSQL, RabbitMQ and Cassandra are commented out below.
+These sections are divided into individual host groups, reflecting the architecture of the target infrastructure. Examples with individual nodes for Elastic, MinIO, PostgreSQL, RabbitMQ and Cassandra are commented out below.
 ```ini
 [elasticsearch]
 elasticsearch1
@@ -224,7 +224,7 @@ rabbitmq_cluster_master=rabbitmq3
 rabbitmq_network_interface=enp7s0
 ```
 
-## Generating random secrets for the services
+## Generating secrets for the services
 
 Minio and coturn services have shared secrets with the `wire-server` helm chart. Run the folllowing script that generates a fresh set of secrets for these components:
 
@@ -277,7 +277,7 @@ They should all report ready.
 ### Troubleshooting external services
 Cassandra, Minio, PostgresSQL, RabbitMQ and Elasticsearch are running outside Kubernets cluster, make sure those machines have necessary ports open -
 
-On each of the machines running Cassandra, Minio, PostgresSQL, RabbitMQ and Elasticsearch, run the following commands to open the necessary ports, if needed:
+On each of the machines running Cassandra, Minio, PostgresSQL, RabbitMQ and Elasticsearch, run the following commands to open the necessary ports, if necessary:
 ```bash
 sudo bash -c '
 set -eo pipefail;
@@ -348,7 +348,7 @@ calico_mtu=1450
 calico_veth_mtu=1430
 ```
 
-If the node does not know its onw public IP (e.g. becuase it's behind NAT) then you should also set the `wire.com/external-ip` annotation to the public IP of the node.
+If the node is not bound to the public IP the users will see(e.g. becuase it's behind NAT) then you should also set the `wire.com/external-ip` annotation to the public IP of the node.
 
 ## Post Installation checks
 

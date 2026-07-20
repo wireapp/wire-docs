@@ -51,6 +51,15 @@ ansible_become_pass=<PASSWORD>
 
 > Note: Make sure that `assethost` is present in the inventory file with the correct `ansible_host` (and `ip` values if required)
 
+**SSH authentication options:**
+
+- If the VMs are reachable with a private key, set `ansible_ssh_private_key_file` in the inventory and run Ansible normally.
+- If you rely on an SSH agent, keep `ansible_ssh_private_key_file` commented out and ensure the agent on the `adminhost` can reach all VMs.
+- If you do not use a private key entry in the inventory and password authentication is enabled on the VMs, add `--ask-pass` when running ansible-playbooks manually and `--ask-become-pass` for sudo access.
+- Our installation scripts are non-interactive, define `ansible_password` and `ansible_become_pass` in the inventory instead of relying on interactive password prompts.
+
+Before running the offline deployment scripts, verify that the inventory resolves to the expected machines. The commands below assume you are running them from `/home/ansible_user/wire-server-deploy` on the `adminhost`.
+
 ### Updating Database Group Memberships
 It's recommended to update the lists of what nodes belong to which group, so ansible knows what to install on these nodes.
 
@@ -228,6 +237,40 @@ rabbitmq3 ansible_host=10.1.1.14
 rabbitmq_cluster_master=rabbitmq3
 rabbitmq_network_interface=enp7s0
 ```
+
+### More checks on Inventory
+
+> **Note:** If your environment uses a non-standard MTU (e.g. cloud providers, VPNs, or overlay networks), you must [configure the MTU](https://github.com/kubernetes-sigs/kubespray/blob/master/docs/CNI/calico.md#configuring-interface-mtu) for Calico in `k8s-cluster.vars`. Ensure all VMs have the same MTU on their primary interface:
+> ```bash
+>   ip link show
+> ```
+> Then set:
+> ```ini
+> [k8s-cluster:vars]
+> calico_mtu=<value>
+> calico_veth_mtu=<value>
+> ```
+> As a rule of thumb:  
+> - `calico_mtu = underlying network MTU - encapsulation overhead`  
+> - `calico_veth_mtu` ≤ `calico_mtu`
+
+Using following commands we can verify if our inventory is functional:
+
+```bash
+# confirm the inventory hostnames match the actual VM hostnames
+d ansible all -i ansible/inventory/offline/inventory.yml -m shell -a 'hostname'
+
+# verify the default IPv4 interface and address reported by Ansible
+d ansible all -i ansible/inventory/offline/inventory.yml -m setup -a 'filter=ansible_default_ipv4'
+
+# verify time and timezone consistency across the machines
+d ansible all -i ansible/inventory/offline/inventory.yml -m shell -a 'date'
+
+# verify if the MTU is consistent across all the VMs
+d ansible all -i ansible/inventory/offline/inventory.yml -m shell -a "ip link show | grep mtu"
+```
+
+If any hostname, IP address, SSH setting, or interface name is wrong at this stage, correct `ansible/inventory/offline/inventory.yml` before continuing. The next deployment steps assume this inventory is accurate.
 
 ## Generating secrets for the services
 

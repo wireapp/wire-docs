@@ -57,15 +57,12 @@ For more detailed instructions on each task, please refer to the [Deployment Flo
     - **ansible_host**: aka **deploy_node** i.e. IP address or hostname of VM where Wire will be deployed (Required)
     - **ansible_user**: username to access the deploy_node with sudo access (Required)
     - **ansible_ssh_private_key_file**: SSH key file path for ansible_user@deploy_node (Required)
-    - **target_domain**: The domain you want to use for wire installation eg. example.com (Required). Check [DNS Requirements for Wire Deployments](dns-requirements.md#dns-requirements-for-wire-deployments) for more details.
+    - **target_domain**: The domain you want to use for wire installation eg. example.com (Required). Check [How to set up DNS records](includes/helm_dns-ingress-troubleshooting.inc.md#how-to-set-up-dns-records) for more details.
     - **wire_ip**: Gateway IP address for Wire, could be same as deploy_node's IP (Optional). If not specified, the playbook will attempt to detect it (network ACLs permitting). If your deploy_node is only reachable on a private network, set this explicitly.
     - **use_cert_manager**: Controls TLS certificate management behavior (Optional, default: true)
       - **true** (default): Deploys `cert-manager` and `nginx-ingress-services` helm chart for automatic HTTPS certificate generation via Let's Encrypt. This is the recommended option for most deployments where the target domain is publicly reachable and the deploy_node has outbound internet access.
-      - **false**: Skips `cert-manager` deployment and `nginx-ingress-services` chart. When disabled, you must manually provide TLS certificates for your domain and configure `nginx-ingress-services` helm chart manually. See [TLS and Certificates](tls-certificates.md) for instructions.
+      - **false**: Skips `cert-manager` deployment and `nginx-ingress-services` chart. When disabled, you must manually provide TLS certificates for your domain and configure `nginx-ingress-services` helm chart manually.
     - **artifact_hash**: A default hash is already configured to enable the testing with the latest stable version. Check with Wire support about this value, if a different version is required. Read about more about artifact at [Artifact bundle and offline deployment](planning.md#artifact-bundle-and-offline-deployment) and [Offline bundle and alternative chart-only deployment](#offline-bundle-and-alternative-chart-only-deployment) for an alertnative approach.
-
-For a full list of DNS records you should create, see [DNS Requirements for Wire Deployments](dns-requirements.md).
-For required inbound ports and connectivity, see [Network Ports and Connectivity](network-ports.md).
 
 > **Internet connectivity requirement:** While the Wire services and other related components can be installed without continuous internet access (Thanks to the Artifact), this WIAB Dev playbook assumes that the deploy_node has outbound internet connectivity during installation to provision a k8s cluster. It downloads tooling such as Minikube, Docker, kubectl, Python packages, and system packages from public repositories, and (if `use_cert_manager=true`) contacts Let’s Encrypt via cert-manager to obtain certificates. If you must operate in a fully offline environment, consider using WIAB Staging or Production with offline artifacts instead.
 
@@ -90,7 +87,7 @@ cd wire-server-deploy
 
 **Step 2: Configure your deployment**
 
-Edit the file `ansible/inventory/demo/host.yml` as explained in [Requirements](#requirements) to set up your deployment variables.
+Edit the file `ansible/inventory/demo/host.yml` as explained in [Requirements](#deployment-requirements) to set up your deployment variables.
 
 **Step 3: Run the deployment**
 
@@ -117,7 +114,7 @@ The deployment process follows these steps as defined in the main playbook:
 The playbook starts by verifying DNS records to ensure proper name resolution:
 - Imports [verify_dns.yml](https://github.com/wireapp/wire-server-deploy/blob/master/ansible/wiab-demo/verify_dns.yml)
 - Can be skipped using `--skip-tags verify_dns`
-- Checks for basic DNS record requirements as explained in [DNS Requirements for Wire Deployments](dns-requirements.md)
+- Checks [How to set up DNS records](includes/helm_dns-ingress-troubleshooting.inc.md#how-to-set-up-dns-records) for more details.
 
 ### 3. Package Installation
 
@@ -348,7 +345,7 @@ Can you access the webapp? Open https://webapp.<your-domain> in your browser (Fi
 
 - Check the error message and review the [Requirements](#deployment-requirements) section to confirm that all requirements are met.
 - See [Ansible Notes](#ansible-notes) to re-run only the failing tasks.
-- If `ansible-playbook` fails at the last step of [Helm Chart Installation](#14-helm-chart-installation), proceed to [Are Wire services running fine?](#are-wire-services-running-fine).
+- If `ansible-playbook` fails at the last step of [Helm Chart Installation](#13-helm-chart-installation), proceed to [Are Wire services running fine?](#are-wire-services-running-fine).
 
 
 #### What to do if ansible-playbook finished successfully but still unable to access Wire?
@@ -356,11 +353,11 @@ SSH into the `deploy_node` with user `ansible_user` and continue with the follow
 
 ##### Which version am I on?
 
-There are multiple components that together form a running Wire-server deployment. The definitions for these can be found in the file `/home/ansible_user/wire-server-deploy/versions/containers_helm_images.json` after [downloading](#8-wire-artifact-download) the archive.
+There are multiple components that together form a running Wire-server deployment. The definitions for these can be found in the file `/home/ansible_user/wire-server-deploy/versions/containers_helm_images.json` after [downloading](#7-wire-artifact-download) the archive.
 
 ##### Is networking working fine?
 
-- Verify that the [Network Access Requirements](#requirements) are met for the deploy_node. Check the verbose (-vvvv) output from the `ansible-playbook` command for the [Wire IP Access Verification](#1-wire-ip-access-verification-always-runs).
+- Verify that the [Network Access Requirements](#deployment-requirements) are met for the deploy_node. Check the verbose (-vvvv) output from the `ansible-playbook` command for the [Wire IP Access Verification](#1-wire-ip-access-verification-always-runs).
 - Ensure that [DNS Requirements](#deployment-requirements) has been followed. Check the verbose (-vvvv) output from the `ansible-playbook` command for the [DNS verification step](#2-dns-verification).
 - Check if iptables rules from Wire installation are in place using the following command:
 ```bash

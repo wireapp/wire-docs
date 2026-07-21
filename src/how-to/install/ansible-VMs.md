@@ -26,7 +26,7 @@ $ tar xvzf wire-server-deploy-static-<HASH>.tgz
 Where `<HASH>` above is the hash of your deployment artifact, given to you by Wire, or acquired by looking at the above build job.
 Extract this tarball.
 
-Make sure that the admin host can `ssh` into all the machines that you want to provision. Our [docker container](dependencies.md#making-tooling-available-in-your-environment) will use the `.ssh` folder and the `ssh-agent` of the user running the scripts.
+Make sure that the admin host can `ssh` into all the machines that you want to provision. Our [Making tooling available in your environment](https://github.com/wireapp/wire-server-deploy/blob/master/offline/docs_ubuntu_22.04.md#making-tooling-available-in-your-environment) will use the `.ssh` folder and the `ssh-agent` of the user running the scripts.
 
 There's also a docker image containing the tooling inside this repo.
 
@@ -286,8 +286,6 @@ This should generate 3 secret files as:
 - `values/coturn/prod-secrets.example.yaml` - This contains a secret for the coturn service.
 - `values/kube-prometheus-stack/prod-secrets.example.yaml` - This contains secret for Prometheus in kube-prometheus-stack. Only applicable when deploying the `kube-prometheus-stack` helm chart with `auth` enabled for prometheus.
 
-Read more secrets management at [Secrets Overview for Wire Deployments](secrets-overview.md).
-
 ## Deploying Kubernetes and stateful services
 
 In order to deploy all mentioned services, run:
@@ -308,7 +306,7 @@ This wrapper runs the following Ansible playbooks in order:
 9. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/postgresql-deploy.yml`: deploys the PostgreSQL cluster.
 10. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/roles/rabbitmq-cluster/tasks/configure_dns.yml`: prepares DNS entries required by the RabbitMQ cluster.
 11. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/rabbitmq.yml`: deploys RabbitMQ.
-12. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/helm_external.yml`: writes the external service IPs into the Helm values files so the charts can target those services. This step is a [pre-requiste](#installing-helm-charts---prerequisites) before continuing with helm operations.
+12. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/helm_external.yml`: writes the external service IPs into the Helm values files so the charts can target those services. This step is a [pre-requiste](#before-installing-helm-charts) before continuing with helm operations.
 
 The order matters: offline package sources and container runtime must be ready before image seeding, time sync should happen before the cluster stabilizes, Kubernetes must exist before the rest of the platform is wired around it, and `helm_external.yml` comes last because it depends on the database and messaging nodes already being deployed.
 
@@ -402,7 +400,7 @@ If the node is not bound to the public IP the users will see(e.g. becuase it's b
 ansible-playbook -i hosts.ini cassandra-verify-ntp.yml -vv
 ```
 
-### Installing helm charts - prerequisites
+### Before installing helm charts
 
 The `helm_external.yml` playbook is used to write or update the IPs of the databases servers in the `values/<database>-external/values.yaml` files, and thus make them available for helm and the `<database>-external` charts (e.g. `cassandra-external`, `elasticsearch-external`, `minio-external`, `postgresql-external` etc).
 
@@ -424,4 +422,4 @@ You can now can continue with the installation of helm charts.
 
 ## Next steps for high-available production installation
 
-Your next step will be [Installing wire-server (production) components using Helm](helm-prod.md#helm-prod)
+Your next step will be [Installing wire-server (production) components using Helm](helm-prod.md)

@@ -14,8 +14,8 @@ Logging support is in active development as of September 2019, some logs may not
 
 You need to have wire-server installed, see either of
 
-- [How to install Wire in a box (Demo)](demo-wiab.md)
-- [Installing wire-server (production) components using Helm](helm-prod.md#helm-prod).
+- [How to install WIAB Dev (Wire-in-a-Box development)](wiab-dev.md)
+- [Installing wire-server (production) components using Helm](helm-prod.md).
 
 ## Installing required helm charts
 

@@ -37,7 +37,7 @@ There are three types of installation targets for Wire: **WIAB Dev (formerly WIA
 
 For full demo architecture, requirements, deployment steps, and cleanup instructions, see:
 
-- **Guide:** [`WIAB Dev (Demo Wire-in-a-Box) Deployment`](wiab-dev.md#wiab-dev-demo-wire-in-a-box-deployment-guide)
+- **Guide:** [`WIAB Dev (Demo Wire-in-a-Box) Deployment`](wiab-dev.md)
 
 > **Internet requirement for WIAB Dev:** The WIAB Dev playbook assumes that the deploy_node has outbound internet connectivity during installation. Tooling such as Minikube, Docker, kubectl, Python packages, and system packages are downloaded from public repositories and are **not shipped inside the artifact bundle**. After installation, you can lock down outbound access more aggressively, but Let’s Encrypt certificate renewal (if used) will still require periodic internet access.
 
@@ -129,7 +129,7 @@ In a typical production network layout:
   - Public reachability on UDP 3478 and the configured media port range.
   - Controlled, internal connectivity back to the messaging cluster for signalling.
 
-See [Network Ports and Connectivity](network-ports.md#production-network-architecture-messaging-vs-calling) for more details on how messaging and calling traffic are separated in production.
+See [Backend Routing](../../understand/overview.md#backend-routing) for more details on how messaging and calling traffic are separated in production.
 
 For detailed production cluster installation steps, see:
 

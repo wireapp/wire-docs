@@ -8,7 +8,7 @@
   - [Production installation (persistent data, high-availability)](planning.md#production-installation-persistent-data-high-availability)
     - [Capacity and scalability](planning.md#capacity-and-scalability)
     - [Artifact bundle and offline deployment](planning.md#artifact-bundle-and-offline-deployment)
-    - [Next steps for high-available production installation](planning.md#next-steps-for-high-available-production-installation)
+    - [Next steps for high-available production installation](prod-intro.md#next-steps-for-high-available-production-installation)
 
 ## 2. Version Requirements
 - [Version requirements](version-requirements.md)
@@ -28,7 +28,6 @@
   - [Getting Started](wiab-dev.md#getting-started)
   - [Deployment Flow](wiab-dev.md#deployment-flow)
   - [Ansible notes](wiab-dev.md#ansible-notes)
-  - [Trying Things Out](wiab-dev.md#trying-things-out)
   - [Troubleshooting](wiab-dev.md#troubleshooting)
   - [Cleaning/Uninstalling Wire-in-a-Box](wiab-dev.md#cleaninguninstalling-wire-in-a-box)
 
@@ -40,11 +39,11 @@
   - [Requirements](wiab-staging.md#requirements)
   - [VM Provisioning](wiab-staging.md#vm-provisioning)
   - [Getting the Ansible playbooks](wiab-staging.md#getting-the-ansible-playbooks)
-  - [Secondary inventory for the VMs](wiab-staging.md#secondary-inventory-for-the-vms)
-  - [Kubernetes & Data Services Deployment](wiab-staging.md#kubernetes--data-services-deployment)
+  - [When VMs are ready](wiab-staging.md#when-vms-are-ready)
+  - [Kubernetes & Data Services Deployment](wiab-staging.md#kubernetes-and-data-services-deployment)
   - [Helm Operations to install Wire services and supporting Helm charts](wiab-staging.md#helm-operations-to-install-wire-services-and-supporting-helm-charts)
   - [Network Traffic Configuration](wiab-staging.md#network-traffic-configuration)
-    - [cert-manager behaviour in NAT / bridge environments](wiab-staging.md#cert-manager-behaviour-in-nat--bridge-environments)
+    - [cert-manager behaviour in NAT / bridge environments](wiab-staging.md#cert-manager-behaviour-in-nat-or-bridge-environments)
   - [Next steps and troubleshooting](wiab-staging.md#next-steps-and-troubleshooting)
 
 ## 6. Introduction
@@ -56,11 +55,16 @@
   - [Next steps for high-available production installation](prod-intro.md#next-steps-for-high-available-production-installation)
 
 ## 7. Installing Kubernetes and Databases
-- [How to install kubernetes and databases](ansible-VMs.md)
+- [Installing kubernetes and databases on VMs with ansible](ansible-VMs.md)
   - [Introduction](ansible-VMs.md#introduction)
-  - [Assumptions](ansible-VMs.md#assumptions)
-  - [Preparing to run ansible](ansible-VMs.md#preparing-to-run-ansible)
-  - [Running ansible to install software on your machines](ansible-VMs.md#running-ansible-to-install-software-on-your-machines)
+  - [Downloading and extracting the artifact](ansible-VMs.md#downloading-and-extracting-the-artifact)
+  - [Editing the inventory](ansible-VMs.md#editing-the-inventory)
+  - [Generating secrets for the services](ansible-VMs.md#generating-secrets-for-the-services)
+  - [Deploying Kubernetes and stateful services](ansible-VMs.md#deploying-kubernetes-and-stateful-services)
+  - [Deploying secondary k8s cluster for calling services](ansible-VMs.md#deploying-secondary-k8s-cluster-for-calling-services)
+  - [Post Installation checks](ansible-VMs.md#post-installation-checks)
+  - [Next steps for high-available production installation](ansible-VMs.md#next-steps-for-high-available-production-installation)
+
 
 ## 8. Configuring AWS Services
 - [How to configure AWS services](aws-prod.md)
@@ -77,7 +81,7 @@
   - [Watching changes as they happen](helm-prod.md#watching-changes-as-they-happen)
   - [General installation notes](helm-prod.md#general-installation-notes)
   - [How to install charts that provide access to external databases](helm-prod.md#how-to-install-charts-that-provide-access-to-external-databases)
-  - [Fake AWS (SNS/SQS) for websocket-only notifications (no FCM/APNS)](helm-prod.md##fake-aws-snssqs-for-websocket-only-notifications-no-fcmapns)
+  - [Fake AWS (SNS/SQS) for websocket-only notifications (no FCM/APNS)](helm-prod.md#fake-aws-snssqs-for-websocket-only-notifications-no-fcmapns-on-android-devices)
   - [Preparing to install wire-server](helm-prod.md#preparing-to-install-wire-server)
   - [How to install RabbitMQ](helm-prod.md#how-to-install-rabbitmq)
   - [How to configure real SMTP (email) services](helm-prod.md#how-to-configure-real-smtp-email-services)
@@ -191,6 +195,3 @@
 - [Verifying your installation](post-install.md)
   - [NTP Checks](post-install.md#ntp-checks)
   - [Logs and Data Protection checks](post-install.md#logs-and-data-protection-checks)
-  - [Demo installation (trying functionality out)](planning.md#demo-installation-trying-functionality-out)
-  - [Production installation (persistent data, high-availability)](planning.md#production-installation-persistent-data-high-availability)
-

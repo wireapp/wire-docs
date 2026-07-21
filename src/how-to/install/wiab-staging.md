@@ -38,7 +38,7 @@ If you need a fully supported, highly-available, secure, multi-datacenter deploy
   - 7 VMs with [Ubuntu 22](https://releases.ubuntu.com/jammy/) as per (#VM-Provisioning)
 - **DNS Records**: 
     - A method to create DNS records for your domain name (e.g. wire.example.com) 
-    - See [DNS Requirements for Wire Deployments](../install/includes/helm_dns-ingress-troubleshooting.inc.md#how-to-set-up-dns-records) for the full list of required hostnames and examples.
+    - See [DNS Requirements for Wire Deployments](includes/helm_dns-ingress-troubleshooting.inc.md#how-to-set-up-dns-records) for the full list of required hostnames and examples.
 - **SSL/TLS certificates**:
     - A method to create SSL/TLS certificates for your domain name (to allow connecting via https://)
     - To ease out the process of managing certs, we recommend using [Let's Encrypt](https://letsencrypt.org/getting-started/) & [cert-manager](https://cert-manager.io/docs/tutorials/acme/http-validation/)
@@ -83,14 +83,14 @@ Our deployment will be into 7 VMs, shown in the below VM Archetecture and Resour
 ### Internet access for VMs:
 
 In most cases, Wire Server components do not require internet access, except in the following situations:
-- **External email services** – If your users’ email providers are hosted on the public internet (for example, `user@gmail.com`). If outbound internet access is not allowed and no internal email service is available on your local network, email-based flows such as verification codes, invitations, and some login emails will not be delivered. In that case, you must retrieve the required codes from the logs instead. Read more at [I deployed demo-smtp and I want to skip email configuration and retrieve verification codes directly](troubleshooting.html?h=smtp#i-deployed-demo-smtp-and-i-want-to-skip-email-configuration-and-retrieve-verification-codes-directly).
-- **Mobile push notifications (FCM/APNS)** – Required to enable notifications for Android and Apple mobile devices. Wire uses [AWS services](infrastructure-configuration.html#enable-push-notifications-using-the-public-appstore-playstore-mobile-wire-clients) to relay notifications to Firebase Cloud Messaging (FCM) and Apple Push Notification Service (APNS).
+- **External email services** – If your users’ email providers are hosted on the public internet (for example, `user@gmail.com`). If outbound internet access is not allowed and no internal email service is available on your local network, email-based flows such as verification codes, invitations, and some login emails will not be delivered. In that case, you must retrieve the required codes from the logs instead. Read more at [I deployed demo-smtp and I want to skip email configuration and retrieve verification codes directly](troubleshooting.md#i-deployed-demo-smtp-and-i-want-to-skip-email-configuration-and-retrieve-verification-codes-directly).
+- **Mobile push notifications (FCM/APNS)** – Required to enable notifications for Android and Apple mobile devices. Wire uses [AWS services](infrastructure-configuration.md#enable-push-notifications-using-the-public-appstore-playstore-mobile-wire-clients) to relay notifications to Firebase Cloud Messaging (FCM) and Apple Push Notification Service (APNS).
 - **Third-party content previews** – If you want clients to display previews for services such as Giphy, Google, Spotify, or SoundCloud. Wire provides a proxy service for third-party content so clients do not communicate directly with these services, preventing exposure of IP addresses, cookies, or other metadata.
 - **Federation with other Wire servers** – Required if your deployment needs to federate with another Wire server hosted on the public internet.
 
 > **Note:** Internet access is also required by the cert-manager pods (via Let's Encrypt) to issue TLS certificates when manual certificates are not used.
 >
-> This internet access is temporarily enabled as described in [cert-manager behaviour in NAT / bridge environments](#cert-manager-behaviour-in-nat--bridge-environments) to allow certificate issuance. Once the certificates are successfully issued by cert-manager, the internet access is removed from the VMs.
+> This internet access is temporarily enabled as described in [cert-manager behaviour in NAT or bridge environments](#cert-manager-behaviour-in-nat-or-bridge-environments) to allow certificate issuance. Once the certificates are successfully issued by cert-manager, the internet access is removed from the VMs.
 
 
 ## Getting the Ansible playbooks
@@ -269,7 +269,7 @@ d ansible all -i ansible/inventory/offline/inventory.yml -m shell -a "ip link sh
 
 If any hostname, IP address, SSH setting, or interface name is wrong at this stage, correct `ansible/inventory/offline/inventory.yml` before continuing. The next deployment steps assume this inventory is accurate.
 
-For a deeper explanation of offline inventories and VM roles in production-like setups, see [Installing kubernetes and databases on VMs with ansible](ansible-VMs.md#ansible-vms).
+For a deeper explanation of offline inventories and VM roles in production-like setups, see [Installing kubernetes and databases on VMs with ansible](ansible-VMs.md).
 
 ## Next steps
 
@@ -298,9 +298,9 @@ Once the secondary inventory is ready, please continue with the following steps:
     - `values/wire-server/secrets.yaml`
     - `values/coturn/prod-secrets.example.yaml`
 
-### Kubernetes & Data Services Deployment
+### Kubernetes and Data Services Deployment
 
-- **[Deploying Kubernetes and stateful services](docs_ubuntu_22.04.md#deploying-kubernetes-and-stateful-services)**
+- **Deploying Kubernetes and stateful services**
   ```bash
   d ./bin/offline-cluster.sh
   ```
@@ -311,6 +311,8 @@ To confirm if the kubernetes cluster has been setup correctly. All pods should b
 d kubectl -n kube-system get pods
 ```
 
+Check [Deploying Kubernetes and stateful services](ansible-VMs.md#deploying-kubernetes-and-stateful-services) for more details into the exact structure of `offline-cluster.sh` and sub commands.
+
 ### Helm Operations to install wire services and supporting helm charts
 
 **Helm chart deployment (automated):** The script `bin/helm-operations.sh` will deploy the charts for you. It prepares `values.yaml`/`secrets.yaml`, customizes them for your domain/IPs, then runs Helm installs/upgrades in the correct order. Prepare the values before running it.
@@ -319,7 +321,7 @@ d kubectl -n kube-system get pods
 - `TARGET_SYSTEM`: your domain (e.g., `wire.example.com` or `example.dev`) using which you have created subdomains, check more at [How to set up DNS records](https://docs.wire.com/latest/how-to/install/demo-wiab.html#dns-requirements).
 - `CERT_MASTER_EMAIL`: email used by cert-manager for ACME registration (by default=TRUE).
 - `DEPLOY_CALLING_SERVICES`: set to `TRUE` or `FALSE` to control deployment of the calling services (`sftd` and `coturn`). Default is `TRUE`.
-- `HOST_IP`: the IP address on which traffic for Wire calling services is expected to arrive. This should match your public DNS A record since we are expected to deploy Wire and calling services behind a single firewall. The calling traffic configuration described in [Network Traffic Configuration](#network-traffic-configuration) and [Configure the port redirection in Nftables](coturn.md#configure-the-port-redirection-in-nftables). It is not required if `DEPLOY_CALLING_SERVICES=FALSE`
+- `HOST_IP`: the IP address on which traffic for Wire calling services is expected to arrive. This should match your public DNS A record since we are expected to deploy Wire and calling services behind a single firewall. The calling traffic configuration described in [Network Traffic Configuration](#network-traffic-configuration) and [Configure the port redirection in Nftables](https://github.com/wireapp/wire-server-deploy/blob/master/offline/coturn.md#configure-the-port-redirection-in-nftables). It is not required if `DEPLOY_CALLING_SERVICES=FALSE`
 
 **Calling services behavior:**
 - When `DEPLOY_CALLING_SERVICES=TRUE` and `HOST_IP` is not passed, the script tries to detect the publicly visible address for this setup by running `wget -qO- https://api.ipify.org`.
@@ -328,7 +330,7 @@ d kubectl -n kube-system get pods
 **TLS / certificate behavior (cert-manager vs. Bring Your Own):**
 - By default, `bin/helm-operations.sh` has `DEPLOY_CERT_MANAGER=TRUE`, which installs cert-manager and configures a Let’s Encrypt (HTTP-01) issuer for the ingress charts.
 - If you **do not** want Let’s Encrypt / cert-manager for TLS certs for the ingress, disable this step by passing the environment variable `DEPLOY_CERT_MANAGER=FALSE` when running `bin/helm-operations.sh`.
-  - When choosing `DEPLOY_CERT_MANAGER=FALSE`, ensure your ingress is configured with your own TLS secret(s) as described at [Acquiring / Deploying SSL Certificates](docs_ubuntu_22.04.md#acquiring--deploying-ssl-certificates). The `nginx-ingress-services` should be deployed manually.
+  - When choosing `DEPLOY_CERT_MANAGER=FALSE`, ensure your ingress is configured with your own TLS secret(s) as described at [Acquiring / Deploying SSL Certificates](https://github.com/wireapp/wire-server-deploy/blob/master/offline/docs_ubuntu_22.04.md#acquiring--deploying-ssl-certificates). The `nginx-ingress-services` should be deployed manually.
   - When choosing `DEPLOY_CERT_MANAGER=TRUE`, ensure if further network configuration is required by following [cert-manager behaviour in NAT / bridge environments](#cert-manager-behaviour-in-nat--bridge-environments).
 
 **To run the automated helm chart deployment with your variables**:
@@ -475,7 +477,7 @@ To implement the nftables rules, execute the following command:
 ansible-playbook -i inventory.yml ansible/wiab-staging-nftables.yaml
 ```
 
-### cert-manager behaviour in NAT / bridge environments
+### cert-manager behaviour in NAT or bridge environments
 
 When cert-manager performs HTTP-01 self-checks inside the cluster, traffic can hairpin:
 
@@ -581,8 +583,8 @@ If you observe HTTP-01 challenge timeouts or self-check failures in a NAT/bridge
 
 ## Next steps and troubleshooting
 
-- To understand individual Helm charts and their configuration options, see [Installing wire-server (production) components using Helm](helm-prod.md#helm-prod).
-- For Kubernetes and database Ansible roles, see [Installing kubernetes and databases on VMs with ansible](ansible-VMs.md#ansible-vms).
+- To understand individual Helm charts and their configuration options, see [Installing wire-server (production) components using Helm](helm-prod.md).
+- For Kubernetes and database Ansible roles, see [Installing kubernetes and databases on VMs with ansible](ansible-VMs.md).
 
 If something goes wrong:
 

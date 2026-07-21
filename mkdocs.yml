@@ -14,7 +14,7 @@ nav:
       - Version requirements: how-to/install/version-requirements.md
       - Dependencies on operator’s machine: how-to/install/dependencies.md
       - How to install Wire in a box (Dev): how-to/install/wiab-dev.md
-      - How to install Wire in a box (Staging): how-to/install/wiab-stag.md
+      - How to install Wire in a box (Staging): how-to/install/wiab-staging.md
       - Introduction: how-to/install/prod-intro.md
       - How to install kubernetes and databases: how-to/install/ansible-VMs.md
       - How to configure AWS services: how-to/install/aws-prod.md

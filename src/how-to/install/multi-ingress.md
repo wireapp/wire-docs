@@ -51,7 +51,7 @@ flowchart LR
 ## Requirements
 
 - A Wire backend installation (> [5.14](https://github.com/wireapp/wire-server/releases/tag/v2025-04-07) to enable domain specific deeplinks)
-- DNS records for domains to be used with all the required [sub-domains](../install/demo-wiab.md#dns-requirements). In the examples below, we demonstrate with **3 domains** (`green.example.org`, `red.example.com`, `blue.example.net`), but this setup can be **extended to as many domains as needed**:
+- DNS records for domains to be used with all the required [sub-domains](includes/helm_dns-ingress-troubleshooting.inc.md#how-to-set-up-dns-records). In the examples below, we demonstrate with **3 domains** (`green.example.org`, `red.example.com`, `blue.example.net`), but this setup can be **extended to as many domains as needed**:
   - `green.example.org` (default domain)
   - `red.example.com` (additional domain)
   - `blue.example.net` (additional domain)

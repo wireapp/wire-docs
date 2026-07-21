@@ -335,8 +335,8 @@ mv wire-server-deploy wire-server-deploy-old
 Download the 5.25 deployment bundle and extract it as `wire-server-deploy`.
 
 ```bash
-wget https://s3-eu-west-1.amazonaws.com/public.wire.com/artifacts/wire-server-deploy-static-f1ae0bda603c10e789468b7da0d3316f709d3d5f.tgz
-tar xzf wire-server-deploy-static-f1ae0bda603c10e789468b7da0d3316f709d3d5f.tgz
+wget https://s3-eu-west-1.amazonaws.com/public.wire.com/artifacts/wire-server-deploy-static-0035454cd1562518958c1459cbcdcafc80512ac8.tgz
+tar xzf wire-server-deploy-static-0035454cd1562518958c1459cbcdcafc80512ac8.tgz
 ```
 
 Clean old Docker containers and images from the old environment which were used with the old 5.5 environment.

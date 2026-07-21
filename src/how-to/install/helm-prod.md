@@ -34,7 +34,7 @@ You need to have docker on the machine you are using to perform this installatio
   - FIXME
 - If you don’t have a Kubernetes cluster, you have two options:
   - You can get access to a managed Kubernetes cluster with the cloud provider of your choice.
-  - You can install one if you have ssh access to a set of sufficiently large virtual machines, see [installing kubernetes](ansible-VMs.md#installing-kubernetes).
+  - You can install one if you have ssh access to a set of sufficiently large virtual machines, see [Production installation (persistent data, high-availability)](planning.md#production-installation-persistent-data-high-availability).
 - If you don’t have `helm` yet, see [Installing helm](https://helm.sh/docs/using_helm/#installing-helm). If you followed the instructions in [Dependencies on operator’s machine](dependencies.md#dependencies)  should have helm installed already.
 
 Type `helm version`, you should, if everything is configured correctly, see a result similar this:

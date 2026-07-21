@@ -1,5 +1,3 @@
-<a id="dependencies"></a>
-
 # Dependencies on operator’s machine
 
 In order to operate a wire-server installation, you’ll need a bunch of software
@@ -46,7 +44,7 @@ bash-4.4# ansible --version
 ansible 2.9.12
 ```
 
-Once you’re in there, you can move on to [installing kubernetes](ansible-VMs.md#installing-kubernetes).
+Once you’re in there, you can move on to [Installing kubernetes and databases on VMs with ansible](ansible-VMs.md).
 
 ## (Alternative) Installing dependencies using Direnv and Nix
 

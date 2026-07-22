@@ -521,13 +521,21 @@ Generate Wire Server secrets.
 bin/offline-secrets.sh
 ```
 
-Comment out `main` from `bin/helm-operations.sh` before sourcing it.
+Comment out `main` from `bin/helm-operations.sh` before sourcing it, by manually editing it - if required.
 
 ```bash
 grep main bin/helm-operations.sh
 ```
 
+Expected output:
+```
+main() {
+#main
+```
+
 Prepare Wire Server values - it will create a working copy for values.yaml and secrets.yaml. These should help us to get started with prepared helm chart values for 5.25 with our domain.
+
+*Note*: Before running the below command - please ensure that the `main` function at the end of file is commented.
 
 Run the rest of this block inside the `d bash` shell.
 

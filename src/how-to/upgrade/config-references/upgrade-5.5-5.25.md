@@ -140,7 +140,7 @@ d bash
 Run the rest of this block inside the `d bash` shell.
 
 ```bash
-for chart in webapp team-settings wire-server account-pages databases-ephemeral elasticsearch-external fake-aws ingress-nginx-controller minio-external nginx-ingress-services rabbitmq-external reaper; do
+for chart in webapp team-settings wire-server account-pages databases-ephemeral elasticsearch-external fake-aws ingress-nginx-controller minio-external rabbitmq-external reaper; do
   cmd=(helm diff "$chart" "charts/$chart")
 
   values_file="values/$chart/values.yaml"
@@ -157,6 +157,23 @@ for chart in webapp team-settings wire-server account-pages databases-ephemeral 
   echo "Running: ${cmd[*]}"
   "${cmd[@]}"
 done
+```
+
+For `nginx-ingress-services` helm chart use the following command: 
+
+```bash
+# list all helm charts
+d helm list
+# check the difference
+d helm diff nginx-ingress-services charts/nginx-ingress-services --values values/nginx-ingress-services/values.yaml --set-file secrets.tlsWildcardCert=values/nginx-ingress-services/cert.pem --set-file secrets.tlsWildcardKey=values/nginx-ingress-services/key.pem
+```
+
+For the multi-inress domains - repeat this section for every multi-ingress domain.
+
+```bash
+# to find out the name of the ingress
+d helm list
+d helm diff nginx-ingress-services-red charts/nginx-ingress-services --values values/nginx-ingress-services/red-values.yaml --set-file secrets.tlsWildcardCert=values/nginx-ingress-services/red-cert.pem --set-file secrets.tlsWildcardKey=values/nginx-ingress-services/red-key.pem
 ```
 
 ### Check Node State With Ansible
@@ -181,7 +198,9 @@ Check the APT sources on all nodes.
 d ansible datanodes,kube-node -i ansible/inventory/offline/inventory.yml -m shell -a 'grep -hE "^(deb|deb-src)" /etc/apt/sources.list /etc/apt/sources.list.d/*.list 2>/dev/null'
 ```
 
-If package sources need to be copied from the asset host, confirm the source and destination first.
+If you manage your own APT sources and have already configured them on your Kubernetes and Data Service VMs, you can ignore the commented steps below.
+
+If not, and your current APT sources point only to the asset host, you can reset them by copying the sources.list file from the asset host to your VMs. Before proceeding, confirm both the source and destination paths.
 
 ```bash
 # d ansible assethost -i ansible/inventory/offline/inventory.yml -m fetch -a "src=/etc/apt/sources.list dest=./apt-fixes flat=yes"
@@ -380,6 +399,14 @@ Verify Kubernetes access from the new workspace.
 d kubectl get nodes
 ```
 
+Create a new inventory and compare it with the old inventory.
+
+```bash
+cp ../wire-server-deploy-old/ansible/inventory/offline/inventory.yml ansible/inventory/offline/inventory.yml.old
+```
+
+For reference, the new yaml inventory can be found at [99-static.yml](https://raw.githubusercontent.com/wireapp/wire-server-deploy/refs/heads/release-5.25-R2/ansible/inventory/offline/99-static.yml) and for new ini inventory can be found at [99-static](https://raw.githubusercontent.com/wireapp/wire-server-deploy/refs/heads/release-5.25-R2/ansible/inventory/offline/99-static)
+
 ### Take Cassandra Backups
 
 Take a Cassandra backup before touching Cassandra nodes.
@@ -414,12 +441,6 @@ d ansible -i ansible/inventory/offline/inventory.yml cassandra -b -m shell -a 'n
 
 ### Verify Inventory for PostgreSQL and RabbitMQ
 
-Create a new inventory and compare it with the old inventory.
-
-```bash
-cp ../wire-server-deploy-old/ansible/inventory/offline/inventory.yml ansible/inventory/offline/inventory.yml.old
-```
-
 Check whether RabbitMQ is already exposed as an external service.
 
 ```bash
@@ -431,7 +452,7 @@ If the external RabbitMQ service does not exist, install RabbitMQ on datanodes o
 Update the new inventory for the asset host, RabbitMQ IPs, and PostgreSQL IPs.
 
 Reference inventory:
-https://raw.githubusercontent.com/wireapp/wire-server-deploy/refs/heads/release-5.25-R2/ansible/inventory/offline/staging.yml
+https://raw.githubusercontent.com/wireapp/wire-server-deploy/refs/heads/release-5.25-R2/ansible/inventory/offline/99-static.yml
 
 Verify datanodes, including dedicated PostgreSQL and RabbitMQ nodes.
 

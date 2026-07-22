@@ -801,26 +801,6 @@ done
 
 Before starting this phase, confirm that asciinema recording is active.
 
-### Backup Again Before Migration
-
-Check Cassandra disk usage.
-
-```bash
-d ansible cassandra -i ansible/inventory/offline/inventory.yml -m shell -a "df -h"
-```
-
-SSH into the Cassandra nodes and run the backup script.
-
-```bash
-bash cassandra_backup.sh
-```
-
-Confirm that backup snapshots were created for the current date.
-
-```bash
-d ansible -i ansible/inventory/offline/inventory.yml cassandra -b -m shell -a 'nodetool listsnapshots | grep backup_$(date +%F)'
-```
-
 ### Pre-Migration Checks
 
 Check Cassandra schema versions before migration.
@@ -842,10 +822,9 @@ Maintenance window starts here. Scaling these services to 0 replicas causes Wire
 
 Before continuing, confirm:
 
-- Cassandra backups are complete and verified.
-- The rollback decision point is understood.
-- Customer communications and maintenance window are active.
+- User communications and maintenance window are active.
 - Incoming traffic is disabled or drained if the customer requires a hard traffic stop during migration.
+- Prepare to perform a Cassandra backup post all pods have been stopped.
 
 ```bash
 d kubectl scale --replicas=0 deployment brig galley gundeck cargohold spar nginz webapp reaper account-pages team-settings
@@ -855,6 +834,28 @@ d kubectl get deployments
 d kubectl get sts
 # confirm if all pods have been terminated successfully - wait for them to terminate
 d kubectl get pods
+```
+
+### Backup Again Before Migration and post traffic cut off
+
+**Note:** Start the backup once confirmed that there are no active wire-server, account-pages and team-settings pods.
+
+Check Cassandra disk usage.
+
+```bash
+d ansible cassandra -i ansible/inventory/offline/inventory.yml -m shell -a "df -h"
+```
+
+SSH into the Cassandra nodes and run the backup script.
+
+```bash
+bash cassandra_backup.sh
+```
+
+Confirm that backup snapshots were created for the current date.
+
+```bash
+d ansible -i ansible/inventory/offline/inventory.yml cassandra -b -m shell -a 'nodetool listsnapshots | grep backup_$(date +%F)'
 ```
 
 ### Upgrade Wire-Service Dependent Charts

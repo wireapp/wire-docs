@@ -369,6 +369,9 @@ docker image ls | grep -E 'wire-server-deploy|container-wire-server-deploy'
 # Remove only confirmed obsolete containers.
 docker rm <container-id>
 
+# or prune command to remove them all together
+# docker container prune
+
 # Remove only confirmed obsolete images.
 docker image rm <image-id>
 ```

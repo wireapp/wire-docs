@@ -82,11 +82,12 @@ Our deployment will be into 7 VMs, shown in the below VM Archetecture and Resour
 
 ### Internet access for VMs:
 
-In most cases, Wire Server components do not require internet access, except in the following situations:
-- **External email services** – If your users’ email providers are hosted on the public internet (for example, `user@gmail.com`). If outbound internet access is not allowed and no internal email service is available on your local network, email-based flows such as verification codes, invitations, and some login emails will not be delivered. In that case, you must retrieve the required codes from the logs instead. Read more at [I deployed demo-smtp and I want to skip email configuration and retrieve verification codes directly](troubleshooting.md#i-deployed-demo-smtp-and-i-want-to-skip-email-configuration-and-retrieve-verification-codes-directly).
-- **Mobile push notifications (FCM/APNS)** – Required to enable notifications for Android and Apple mobile devices. Wire uses [AWS services](infrastructure-configuration.md#enable-push-notifications-using-the-public-appstore-playstore-mobile-wire-clients) to relay notifications to Firebase Cloud Messaging (FCM) and Apple Push Notification Service (APNS).
-- **Third-party content previews** – If you want clients to display previews for services such as Giphy, Google, Spotify, or SoundCloud. Wire provides a proxy service for third-party content so clients do not communicate directly with these services, preventing exposure of IP addresses, cookies, or other metadata.
-- **Federation with other Wire servers** – Required if your deployment needs to federate with another Wire server hosted on the public internet.
+In most cases, Wire Server components do not require internet access, except in the following situations: 
+
+- **External email services**: If your users’ email providers are hosted on the public internet (for example, `user@gmail.com`). If outbound internet access is not allowed and no internal email service is available on your local network, email-based flows such as verification codes, invitations, and some login emails will not be delivered. In that case, you must retrieve the required codes from the logs instead. Read more at [I deployed demo-smtp and I want to skip email configuration and retrieve verification codes directly](troubleshooting.md#i-deployed-demo-smtp-and-i-want-to-skip-email-configuration-and-retrieve-verification-codes-directly).
+- **Mobile push notifications (FCM/APNS)**: Required to enable notifications for Android and Apple mobile devices. Wire uses [AWS services](infrastructure-configuration.md#enable-push-notifications-using-the-public-appstore-playstore-mobile-wire-clients) to relay notifications to Firebase Cloud Messaging (FCM) and Apple Push Notification Service (APNS).
+- **Third-party content previews**: If you want clients to display previews for services such as Giphy, Google, Spotify, or SoundCloud. Wire provides a proxy service for third-party content so clients do not communicate directly with these services, preventing exposure of IP addresses, cookies, or other metadata.
+- **Federation with other Wire servers**: Required if your deployment needs to federate with another Wire server hosted on the public internet.
 
 > **Note:** Internet access is also required by the cert-manager pods (via Let's Encrypt) to issue TLS certificates when manual certificates are not used.
 >
@@ -146,6 +147,7 @@ If you want Ansible to create and configure the 7 VMs for you on a single physic
 
 1. Prepare an inventory for the physical host, based on [ansible/inventory/demo/wiab-staging.yml](https://github.com/wireapp/wire-server-deploy/blob/master/ansible/inventory/demo/wiab-staging.yml).
 2. Adjust values such as:
+
    - Physical host address of adminhost eg. `example.com` and SSH user eg.`demo`
    - Ssh key to access the node `ansible_ssh_private_key_file='~/.ssh/id_ed25519'`
 3. Run the provisioning playbook:
@@ -179,6 +181,7 @@ cd wire-server-deploy
 **Step 2: Configure your Ansible inventory for your physical machine**
 
 A sample inventory is available at [ansible/inventory/demo/wiab-staging.yml](https://github.com/wireapp/wire-server-deploy/blob/master/ansible/inventory/demo/wiab-staging.yml).
+
 Replace example.com with your physical machine (`adminhost`) address where KVM is available and adjust other variables like `ansible_user` and `ansible_ssh_private_key_file`. The SSH user for ansible `ansible_user` should have password-less `sudo` access. The adminhost should be running Ubuntu 22.04. From here on, we would refer the physical machine as `adminhost`.
 
 The `private_deployment` variable determines whether the VMs created below will have internet access. When set to `true` (default value), no internet access is available to VMs. Check [Network Traffic Configuration](#network-traffic-configuration) to understand more about it.
@@ -318,16 +321,19 @@ Check [Deploying Kubernetes and stateful services](ansible-VMs.md#deploying-kube
 **Helm chart deployment (automated):** The script `bin/helm-operations.sh` will deploy the charts for you. It prepares `values.yaml`/`secrets.yaml`, customizes them for your domain/IPs, then runs Helm installs/upgrades in the correct order. Prepare the values before running it.
 
 **User-provided inputs (set these before running):**
+
 - `TARGET_SYSTEM`: your domain (e.g., `wire.example.com` or `example.dev`) using which you have created subdomains, check more at [How to set up DNS records](https://docs.wire.com/latest/how-to/install/demo-wiab.html#dns-requirements).
 - `CERT_MASTER_EMAIL`: email used by cert-manager for ACME registration (by default=TRUE).
 - `DEPLOY_CALLING_SERVICES`: set to `TRUE` or `FALSE` to control deployment of the calling services (`sftd` and `coturn`). Default is `TRUE`.
 - `HOST_IP`: the IP address on which traffic for Wire calling services is expected to arrive. This should match your public DNS A record since we are expected to deploy Wire and calling services behind a single firewall. The calling traffic configuration described in [Network Traffic Configuration](#network-traffic-configuration) and [Configure the port redirection in Nftables](https://github.com/wireapp/wire-server-deploy/blob/master/offline/coturn.md#configure-the-port-redirection-in-nftables). It is not required if `DEPLOY_CALLING_SERVICES=FALSE`
 
 **Calling services behavior:**
+
 - When `DEPLOY_CALLING_SERVICES=TRUE` and `HOST_IP` is not passed, the script tries to detect the publicly visible address for this setup by running `wget -qO- https://api.ipify.org`.
 - When `DEPLOY_CALLING_SERVICES=FALSE`, the script skips deployment of `sftd` and `coturn`, and it does not evaluate any `HOST_IP`-dependent logic.
 
 **TLS / certificate behavior (cert-manager vs. Bring Your Own):**
+
 - By default, `bin/helm-operations.sh` has `DEPLOY_CERT_MANAGER=TRUE`, which installs cert-manager and configures a Let’s Encrypt (HTTP-01) issuer for the ingress charts.
 - If you **do not** want Let’s Encrypt / cert-manager for TLS certs for the ingress, disable this step by passing the environment variable `DEPLOY_CERT_MANAGER=FALSE` when running `bin/helm-operations.sh`.
   - When choosing `DEPLOY_CERT_MANAGER=FALSE`, ensure your ingress is configured with your own TLS secret(s) as described at [Acquiring / Deploying SSL Certificates](https://github.com/wireapp/wire-server-deploy/blob/master/offline/docs_ubuntu_22.04.md#acquiring--deploying-ssl-certificates). The `nginx-ingress-services` should be deployed manually.
@@ -346,18 +352,21 @@ d sh -c 'TARGET_SYSTEM="example.dev" CERT_MASTER_EMAIL="certmaster@example.dev" 
 ```
 
 **Charts deployed by the script:**
+
 - External datastores and helpers: `cassandra-external`, `elasticsearch-external`, `postgresql-external`, `minio-external`, `rabbitmq-external`, `databases-ephemeral`, `reaper`, `fake-aws`, `smtp`.
 - Wire services: `wire-server`, `webapp`, `account-pages`, `team-settings`.
 - Ingress and certificates: `ingress-nginx-controller`, `cert-manager`, `nginx-ingress-services`.
 - Calling services: `sftd`, `coturn` when `DEPLOY_CALLING_SERVICES=TRUE`.
 
 **Values and secrets generation:**
+
 - Creates `values.yaml` and `secrets.yaml` from `prod-values.example.yaml` and `prod-secrets.example.yaml` for each chart under `values/`.
 - Backs up any existing `values.yaml`/`secrets.yaml` before replacing them.
 
 *Note: The `bin/helm-operations.sh` script above deploys these charts; you do not need to run the Helm commands manually unless you want to customize or debug.*
 
 **Manually removing non-required helm charts**:
+
 - If some helm charts are not required in your environment like `demo-smtp` for email relaying then use the following command to uninstall them:
 ```bash
 #d helm uninstall CHART_NAME
@@ -374,27 +383,32 @@ Our Wire services are ready to receive traffic but we must enable network access
 
 The `adminhost` must forward traffic from external clients to the Kubernetes cluster running Wire services. This involves:
 
-1. **HTTP/HTTPS Traffic (Ingress)** – Forward external web traffic to Kubernetes ingress with load balancing across nodes
-  - Port 80 (TCP, from any external source to adminhost WAN IP) → DNAT to any Kubernetes node on port 31772 → HTTP ingress
-  - Port 443 (TCP, from any external source to adminhost WAN IP) → DNAT to any Kubernetes node on port 31773 → HTTPS ingress
+1. **HTTP/HTTPS Traffic (Ingress)** - Forward external web traffic to Kubernetes ingress with load balancing across nodes
 
-2. **Calling Services Traffic (Coturn/SFT)** – Forward TURN control and media traffic to the dedicated calling node
-  - Port 3478 (TCP/UDP, from any external source to adminhost WAN IP) → DNAT to calling node → TURN control traffic
-  - Ports 32768–65535 (UDP, from any external source to adminhost WAN IP) → DNAT to calling node → WebRTC media relay
+    - Port 80 (TCP, from any external source to adminhost WAN IP) → DNAT to any Kubernetes node on port 31772 → HTTP ingress
+    - Port 443 (TCP, from any external source to adminhost WAN IP) → DNAT to any Kubernetes node on port 31773 → HTTPS ingress
 
-3. **Normal Access Rules (Host-Level Access)** – Restrict direct access to adminhost
-  - Port 22 (TCP, from allowed sources to adminhost) → allow → SSH access
-  - Traffic from loopback and VM bridge interfaces → allow → internal communication
-  - Any traffic within VM network → allowed → ensures inter-node communication
-  - All other inbound traffic to adminhost → drop → default deny policy
+2. **Calling Services Traffic (Coturn/SFT)** - Forward TURN control and media traffic to the dedicated calling node
 
-4. **Masquerading (If [Internet access for VMs](#internet-access-for-vms) is required)** – Enable outbound connectivity for VMs
-  - Any traffic from VM subnet leaving via WAN interface → SNAT/masquerade → ensures return traffic from internet.
-  - Controlled by the variable `private_deployment`
+    - Port 3478 (TCP/UDP, from any external source to adminhost WAN IP) → DNAT to calling node → TURN control traffic
+    - Ports 32768-65535 (UDP, from any external source to adminhost WAN IP) → DNAT to calling node → WebRTC media relay
 
-5. **Conditional Rules (cert-manager / HTTP-01 in NAT setups)** – Temporary adjustments for certificate validation
-  - DNAT hairpin traffic (VM → public IP → VM) → may require SNAT/masquerade on VM bridge → ensures return path during HTTP-01 self-checks
-  - Asymmetric routing scenarios → may require relaxed reverse path filtering → prevents packet drops during validation
+3. **Normal Access Rules (Host-Level Access)** - Restrict direct access to adminhost
+
+    - Port 22 (TCP, from allowed sources to adminhost) → allow → SSH access
+    - Traffic from loopback and VM bridge interfaces → allow → internal communication
+    - Any traffic within VM network → allowed → ensures inter-node communication
+    - All other inbound traffic to adminhost → drop → default deny policy
+
+4. **Masquerading (If [Internet access for VMs](#internet-access-for-vms) is required)** - Enable outbound connectivity for VMs
+
+    - Any traffic from VM subnet leaving via WAN interface → SNAT/masquerade → ensures return traffic from internet.
+    - Controlled by the variable `private_deployment`
+
+5. **Conditional Rules (cert-manager / HTTP-01 in NAT setups)** - Temporary adjustments for certificate validation
+
+    - DNAT hairpin traffic (VM → public IP → VM) → may require SNAT/masquerade on VM bridge → ensures return path during HTTP-01 self-checks
+    - Asymmetric routing scenarios → may require relaxed reverse path filtering → prevents packet drops during validation
 
 ```mermaid
 flowchart TB
@@ -592,4 +606,4 @@ If something goes wrong:
 - Inspect Helm releases: `d helm list -A`.
 - Review Ansible output for failed tasks.
 
-WIAB Staging is intended to be a safe place to experiment – you can always tear down the VMs and redeploy from scratch once you have corrected your configuration.
+WIAB Staging is intended to be a safe place to experiment - you can always tear down the VMs and redeploy from scratch once you have corrected your configuration.

@@ -15,10 +15,11 @@ nav:
       - Dependencies on operator’s machine: how-to/install/dependencies.md
       - How to install Wire in a box (Dev): how-to/install/wiab-dev.md
       - How to install Wire in a box (Staging): how-to/install/wiab-staging.md
-      - Introduction: how-to/install/prod-intro.md
+      - Getting started with Production installation: how-to/install/prod-intro.md
       - How to install kubernetes and databases: how-to/install/ansible-VMs.md
       - How to configure AWS services: how-to/install/aws-prod.md
       - How to install wire-server using Helm: how-to/install/helm-prod.md
+      - Mobile Push Notifications - FCM, APNs, and WebSocket Connectivity: how-to/install/notifications.md
       - Multi-Ingress Configuration: how-to/install/multi-ingress.md
       - Infrastructure configuration: how-to/install/infrastructure-configuration.md
       - How to monitor wire-server: how-to/install/monitoring.md

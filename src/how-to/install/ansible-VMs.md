@@ -281,6 +281,7 @@ Minio and coturn services have shared secrets with the `wire-server` helm chart.
 ```
 
 This should generate 3 secret files as:
+
 - `ansible/inventory/group_vars/all/secrets.yaml` - This file will be used by ansible minio playbooks to configure the service secrets.
 - `values/wire-server/prod-secrets.example.yaml` - This contains the secrets for Wire services and share some secrets from coturn and database services.
 - `values/coturn/prod-secrets.example.yaml` - This contains a secret for the coturn service.
@@ -295,20 +296,32 @@ d ./bin/offline-cluster.sh
 
 This wrapper runs the following Ansible playbooks in order:
 
-1. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/setup-offline-sources.yml`: prepares the `assethost`, copies offline artifacts, and configures the other hosts to fetch packages and images from it.
-2. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/kubernetes.yml --tags bastion,bootstrap-os,preinstall,container-engine`: runs the first Kubernetes bootstrap phase so the container runtime is ready.
-3. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/seed-offline-containerd.yml`: loads the offline container images onto the nodes after the runtime is available.
-4. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/sync_time.yml -v`: installs and configures time synchronization before the rest of the cluster comes up.
-5. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/kubernetes.yml --skip-tags bootstrap-os,preinstall,container-engine,multus`: finishes the remaining Kubernetes deployment after the prerequisites are in place.
-6. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/cassandra.yml`: deploys the Cassandra nodes.
-7. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/elasticsearch.yml`: deploys Elasticsearch.
-8. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/minio.yml`: deploys MinIO.
-9. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/postgresql-deploy.yml`: deploys the PostgreSQL cluster.
-10. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/roles/rabbitmq-cluster/tasks/configure_dns.yml`: prepares DNS entries required by the RabbitMQ cluster.
-11. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/rabbitmq.yml`: deploys RabbitMQ.
-12. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/helm_external.yml`: writes the external service IPs into the Helm values files so the charts can target those services. This step is a [pre-requiste](#before-installing-helm-charts) before continuing with helm operations.
+1. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/setup-offline-sources.yml`
+    - prepares the `assethost`, copies offline artifacts, and configures the other hosts to fetch packages and images from it.
+2. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/kubernetes.yml --tags bastion,bootstrap-os,preinstall,container-engine`
+    - runs the first Kubernetes bootstrap phase so the container runtime is ready. Can be used for calling kubernetes cluster.
+3. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/seed-offline-containerd.yml`
+    - loads the offline container images onto the nodes after the runtime is available. Can be used for calling kubernetes cluster for coturn and sft images.
+4. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/sync_time.yml`
+    - installs and configures time synchronization before the rest of the cluster comes up.
+5. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/kubernetes.yml --skip-tags bootstrap-os,preinstall,container-engine,multus`
+    - finishes the remaining Kubernetes deployment after the prerequisites are in place. Can be used for calling kubernetes cluster.
+6. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/cassandra.yml`
+    - deploys the Cassandra nodes.
+7. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/elasticsearch.yml`
+    - deploys Elasticsearch.
+8. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/minio.yml`
+    - deploys MinIO.
+9. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/postgresql-deploy.yml`
+    - deploys the PostgreSQL cluster.
+10. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/roles/rabbitmq-cluster/tasks/configure_dns.yml`
+    - prepares DNS entries required by the RabbitMQ cluster.
+11. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/rabbitmq.yml`
+    - deploys RabbitMQ.
+12. `d ansible-playbook -i ansible/inventory/offline/hosts.ini ansible/helm_external.yml`
+    - writes the external service IPs into the Helm values files so the charts can target those services. This step is a [pre-requiste](#before-installing-helm-charts) before continuing with helm operations.
 
-The order matters: offline package sources and container runtime must be ready before image seeding, time sync should happen before the cluster stabilizes, Kubernetes must exist before the rest of the platform is wired around it, and `helm_external.yml` comes last because it depends on the database and messaging nodes already being deployed.
+The order matters - offline package sources and container runtime must be ready before image seeding, time sync should happen before the cluster stabilizes, Kubernetes must exist before the rest of the platform is wired around it, and `helm_external.yml` comes last because it depends on the database and messaging nodes already being deployed.
 
 If one step fails and you want to run the playbooks manually, use the `d` alias shown above and execute the specific command directly in the same order.
 
@@ -393,6 +406,8 @@ kube-node
 
 If the node is not bound to the public IP the users will see(e.g. becuase it's behind NAT) then you should also set the `wire.com/external-ip` annotation to the public IP of the node.
 
+Install a calling kubernetes using the playbooks from above and then continue with installation of `coturn` and `sftd` helm charts.
+
 ## Post Installation checks
 
 > After running the above playbooks, it is important to ensure that everything is setup correctly. Please have a look at the post install checks in the section [Verifying your installation](post-install.md#checks)
@@ -407,6 +422,7 @@ The `helm_external.yml` playbook is used to write or update the IPs of the datab
 Due to limitations in the playbook, make sure that you have defined the network interfaces for each of the database services in your hosts.ini, even if they are running on the same interface that you connect to via SSH.
 
 > **Note:** If you have already ran the script [/bin/offline-cluster.sh](#deploying-kubernetes-and-stateful-services) then this playbook might have already been ran for you. You can confirm this by looking into the database specific helm values, if they have entries for each database service:
+> 
 > - `values/cassandra-external/values.yaml`
 > - `values/elasticsearch-external/values.yaml`
 > - `values/minio-external/values.yaml`

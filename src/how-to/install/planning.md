@@ -94,6 +94,7 @@ A recommended installation of Wire-server in any regular data centre, configured
 | Single Server Totals                                 |  -       | 18 CPU Cores | 38 GB Memory  | 1040 GB Disk Space |
 
 > Notes:
+> 
 > - Secondary kubernetes hosts may need more resources to support heavy conference calling. For concurrent SFT users (SFT = «Selective Forwarding Turn» server, ie. Conference calling), we recommend an extra 3% of CPU allocation, evenly distributed across the nodes (i.e. 1% more CPU per kubernetes server). So for every 100 users plan on adding one CPU core on each Kubernetes node. The SFT component runs inside of Kubernetes, and does not require a separate virtual machine for operation.  
 > - Admin Host and Asset Host can run on any one of the 3 servers, but the respective server must allocate additional resources as indicated in the table above.  
 > - Wire requires the usage of CPUs built on the AMD64 architecture, and assumes these are running at the equivalent CPU/Memory performance of a recent Intel/AMD server system clocked at at least 2.5 Ghz. For reference, please refer to https://cpubenchmark.net/high_end_cpus.html  

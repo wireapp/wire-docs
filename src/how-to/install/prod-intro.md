@@ -6,7 +6,7 @@ It is *strongly recommended* to have followed and completed the wiab staging ins
 ## NOTE
 All required dependencies for doing an installation can be found here [Dependencies on operator’s machine](dependencies.md#dependencies).
 
-## Getting started with installation
+## Getting started with Production installation
 
 ![Wire Server Architecture HA](img/architecture-prod-ha.png)
 ![Calling Architecture HA](img/architecture-calling-ha.png)

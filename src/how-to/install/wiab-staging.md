@@ -126,35 +126,48 @@ The ansible playbook will perform the following operations for you:
 
 *Note: Skip the Ansible playbook step if you are managing VMs with your own hypervisor.* 
 
-### Provisioning the VMs with the WIAB Staging playbook
+### Downloading a Wire Bundle, and Provisioning VMs with the WIAB Staging playbook
 
 If you want Ansible to create and configure the 7 VMs for you on a single physical host, use the WIAB Staging playbook.
 > Note: the SSH user for ansible `ansible_user` should have password-less `sudo` access. The physical host should be running Ubuntu 22.04.
 
-1. Prepare an inventory for the physical host, based on [ansible/inventory/demo/wiab-staging.yml](https://github.com/wireapp/wire-server-deploy/blob/master/ansible/inventory/demo/wiab-staging.yml).
-2. Adjust values such as:
-   - Physical host address of adminhost eg. `example.com` and SSH user eg.`demo`
-   - Ssh key to access the node `ansible_ssh_private_key_file='~/.ssh/id_ed25519'`
-3. Run the provisioning playbook:
+1. Copy and edit our [example configuration](https://github.com/wireapp/wire-server-deploy/blob/master/ansible/inventory/demo/wiab-staging.yml):
+    ```bash
+    cp ansible/inventory/demo/wiab-staging.yml ansible/inventory/demo/my-wiab-staging.yml
+    nano ansible/inventory/demo/my-wiab-staging.yml
+    ```
+
+    Adjust values such as:
+
+    - Physical host address of adminhost eg. `example.com` and SSH user eg.`demo`
+    - Ssh key to access the node `ansible_ssh_private_key_file='~/.ssh/id_ed25519'`
+
+2. Run the provisioning playbook:
    ```bash
-   ansible-playbook -i ansible/inventory/demo/wiab-staging.yml ansible/wiab-staging-provision.yml
+   ansible-playbook -i ansible/inventory/demo/my-wiab-staging.yml ansible/wiab-staging-provision.yml
    ```
 
 *Note: Ansible core version 2.16.3 or compatible is required for this step*
 
-## Secondary inventory for the VMs
+## Preparing a Secondary inventory for the VMs
 
-Once the 7 VMs are running, ensure you have a **second Ansible inventory** that describes them based on [staging.yaml inventory](https://github.com/wireapp/wire-server-deploy/blob/master/ansible/inventory/offline/staging.yml) for further operations. In the offline bundle layout, this is typically `ansible/inventory/offline/inventory.yml` under `/home/ansible_user/wire-server-deploy` on the asset host or admin host.
+Once you have all 7 VMs running, you will need an ansible inventory, in order to target these machines for deployment.
 
-> Note: If you have already used the [Wiab staging ansible provisioning playbook](#provisioning-the-vms-with-the-wiab-staging-playbook) to set up VMs, this file should have been prepared for you.
+If you completed the prior step, then this has been done for you already. You can find it's results in wire-server-deploy/ansible/inventory/offline/inventory/, in the home directory of the user you provided in the earlier step.
 
-In that inventory you will:
+FIXME: if you did not use the prior step.. where is your wire archive?
+
+If you provisioned and started your VMs with another method, you will need to create a **second Ansible inventory** that describes them based on [our example Staging Inventory file](https://github.com/wireapp/wire-server-deploy/blob/master/ansible/inventory/offline/staging.yml). 
+
+In that inventory you must:
 
 - Set `ansible_user` (this user should have passwordless `sudo` access) and `ansible_ssh_private_key_file` under `all` vars.
 - Assign each VM to the appropriate groups, for example:
   - `kube-master`, `kube-node`, `etcd` for Kubernetes nodes.
   - `datanodes` which will further map to `cassandra`, `cassandra_seed`, `elasticsearch`, `minio`, `rmq-cluster`, `postgresql` for data services.
   - `assethost` for assethost service
+
+Once you are done creating said inventory, please place it in wire-server-deploy/ansible/inventory/offline/inventory/, in the home directory of the user you want to use to administrate Wire.
 
 For a deeper explanation of offline inventories and VM roles in production-like setups, see [Installing kubernetes and databases on VMs with ansible](ansible-VMs.md#ansible-vms).
 
@@ -189,24 +202,25 @@ Once the secondary inventory is ready, please continue with the following steps:
 
 ### Helm Operations to install Wire services and supporting Helm charts
 
-**Helm chart deployment (automated):** The script `bin/helm-operations.sh` will deploy the charts for you. It prepares `values.yaml`/`secrets.yaml`, customizes them for your domain/IPs, then runs Helm installs in the correct order. For a detailed, production-focused reference of the same charts, see [Installing wire-server (production) components using Helm](helm-prod.md#helm-prod).
+**Helm chart deployment (automated):** The script `bin/helm-operations.sh` can be used to deploy the helm charts within kubernetes. It prepares `values.yaml`/`secrets.yaml`, customizes them for your domain/IPs, then runs Helm installs in the correct order. For a detailed, production-focused reference of the same charts, see [Installing wire-server (production) components using Helm](helm-prod.md#helm-prod).
 
-**User-provided inputs (set these before running):**
+To use the helm-operations script, you must set several variables:
+
 - `TARGET_SYSTEM`: your domain (e.g., `wire.example.com` or `example.dev`).
 - `CERT_MASTER_EMAIL`: email used by cert-manager for ACME registration.
 - `HOST_IP`: public IP that matches your DNS A record (auto-detected if empty).
-
-**TLS / certificate behavior (cert-manager vs. Bring Your Own):**
-- By default, `bin/helm-operations.sh` has `DEPLOY_CERT_MANAGER=TRUE`, which installs cert-manager and configures a Let’s Encrypt (HTTP-01) issuer for the ingress charts.
-- If you **do not** want Let’s Encrypt / cert-manager (for example, you are using **[Bring Your Own certificates](docs_ubuntu_22.04.md#acquiring--deploying-ssl-certificates)**), disable this step by passing env variable `DEPLOY_CERT_MANAGER=FALSE` when running `bin/helm-operations.sh`.
-  - When choosing `DEPLOY_CERT_MANAGER=FALSE`, ensure your ingress is configured and deployed with your own TLS secret(s) as described at [TLS and Certificates](tls-certificates.md).
-  - When choosing `DEPLOY_CERT_MANAGER=TRUE`, ensure if further network configuration is required by following [cert-manager behaviour in NAT / bridge environments](#cert-manager-behaviour-in-nat--bridge-environments).
 
 **To run the automated helm chart deployment with your variables**:
 ```bash
 # example command - verify the variables before running it
 d sh -c 'TARGET_SYSTEM="example.dev" CERT_MASTER_EMAIL="certmaster@example.dev" DEPLOY_CERT_MANAGER=TRUE ./bin/helm-operations.sh'
 ```
+
+> **TLS / certificate behavior (cert-manager vs. Bring Your Own):**
+- By default, `bin/helm-operations.sh` has `DEPLOY_CERT_MANAGER=TRUE`, which installs cert-manager and configures a Let’s Encrypt (HTTP-01) issuer for the ingress charts.
+- If you **do not** want Let’s Encrypt / cert-manager (for example, you are using **[Bring Your Own certificates](docs_ubuntu_22.04.md#acquiring--deploying-ssl-certificates)**), disable this step by passing env variable `DEPLOY_CERT_MANAGER=FALSE` when running `bin/helm-operations.sh`.
+  - When choosing `DEPLOY_CERT_MANAGER=FALSE`, ensure your ingress is configured and deployed with your own TLS secret(s) as described at [TLS and Certificates](tls-certificates.md).
+  - When choosing `DEPLOY_CERT_MANAGER=TRUE`, ensure if further network configuration is required by following [cert-manager behaviour in NAT / bridge environments](#cert-manager-behaviour-in-nat--bridge-environments).
 
 **Charts deployed by the script:**
 - External datastores and helpers: `cassandra-external`, `elasticsearch-external`, `minio-external`, `rabbitmq-external`, `postgresql-external`, `databases-ephemeral`, `reaper`, `fake-aws`, `demo-smtp`.
@@ -217,8 +231,6 @@ d sh -c 'TARGET_SYSTEM="example.dev" CERT_MASTER_EMAIL="certmaster@example.dev" 
 **Values and secrets generation:**
 - Creates `values.yaml` and `secrets.yaml` from `prod-values.example.yaml` and `prod-secrets.example.yaml` for each chart under `values/`.
 - Backs up any existing `values.yaml`/`secrets.yaml` before replacing them.
-
-*Note: The `bin/helm-operations.sh` script above deploys these charts; you do not need to run the Helm commands manually unless you want to customize or debug.*
 
 ## Network Traffic Configuration
 

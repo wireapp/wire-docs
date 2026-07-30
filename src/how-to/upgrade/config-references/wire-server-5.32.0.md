@@ -26,7 +26,7 @@ The duplicates to drop:
 
 ## For users of the full wire-server-deploy-static deployment package
 
-1NOTE: Each upgrade in this series re-runs `setup-offline-sources`, which copies the new release's binaries, container images, and debs into `/opt/assets` on the assethost. After a few versions, the assethost runs out of space and the playbook fails with `no space left on device`.
+NOTE: Each upgrade in this series re-runs `setup-offline-sources`, which copies the new release's binaries, container images, and debs into `/opt/assets` on the assethost. After a few versions, the assethost runs out of space and the playbook fails with `no space left on device`.
 
 When that happens, SSH into the **assethost** (not the adminhost) and clear it:
 

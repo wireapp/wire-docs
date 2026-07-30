@@ -17,3 +17,5 @@ Complete documentation for upgrading `wire-server` deployments.
   - [Wire Server 5.27.0](config-references/wire-server-5.27.0.md)
   - [Wire Server 5.28.0](config-references/wire-server-5.28.0.md)
   - [Wire Server 5.29.0](config-references/wire-server-5.29.0.md)
+  - [Wire Server 5.30.0](config-references/wire-server-5.30.0.md)
+  - [Wire Server 5.32.0](config-references/wire-server-5.32.0.md)

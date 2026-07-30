@@ -175,7 +175,7 @@ Placing calling in your main kubernetes cluster is heavily discouraged by Wire. 
 ### Calling in your DMZ:
 ![image](img/calling-DMZ.svg)
 
-In the above diagram, we have routed and labeled the calling traffic into a non-federated Wire calling cluster. A Wire Calling Cluster is typically placed in an DMZ, where the users can reach it, but the Mire Messaging Cluster cannot. Wire As you can see, placing calling in it's own kubernetes cluster is much safer, as the cluster does not have access to any of the Wire databases. For most configurations, the calling cluster and the Wire backend do not need to speak at all.
+In the above diagram, we have routed and labeled the calling traffic into a non-federated Wire calling cluster. A Wire Calling Cluster is typically placed in an DMZ, where the users can reach it, but the Wire Messaging Cluster cannot. Wire As you can see, placing calling in it's own kubernetes cluster is much safer, as the cluster does not have access to any of the Wire databases. For most configurations, the calling cluster and the Wire backend do not need to speak at all.
 
 ### Federated Calling
 ![image](img/federated_calling.svg)

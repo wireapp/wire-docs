@@ -48,6 +48,7 @@ nav:
           - Wire Server 5.28: how-to/upgrade/config-references/wire-server-5.28.0.md
           - Wire Server 5.29: how-to/upgrade/config-references/wire-server-5.29.0.md
           - Wire Server 5.30: how-to/upgrade/config-references/wire-server-5.30.0.md
+          - Wire Server 5.30: how-to/upgrade/config-references/wire-server-5.32.0.md
   - Administration:
       - Overview: how-to/administrate/README.md
       - kubernetes: how-to/administrate/kubernetes/README.md

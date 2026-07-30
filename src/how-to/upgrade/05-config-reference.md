@@ -39,6 +39,8 @@ Apply each configuration change to your templates as applicable to your model.
 - [Wire Server 5.27.0](config-references/wire-server-5.27.0.md)
 - [Wire Server 5.28.0](config-references/wire-server-5.28.0.md)
 - [Wire Server 5.29.0](config-references/wire-server-5.29.0.md)
+- [Wire Server 5.29.0](config-references/wire-server-5.30.0.md)
+- [Wire Server 5.29.0](config-references/wire-server-5.32.0.md)
 
 ## Contributing
 

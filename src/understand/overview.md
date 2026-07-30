@@ -163,15 +163,19 @@ Brig uses Elasticsearch Cassandra, Postgres and RabbitMQ. Additionally, it will 
 
 Cargohold only needs to speak to your S3 hosting service.
 
-### Calling in your main cluster:
+### Calling in your Wire Messaging Cluster:
 ![image](img/calling-in_cluster.svg)
 
-Placing calling in your main kubernetes cluster is heavily discouraged by wire. If a calling component is broken into in the above scenario, other critical databases your wire cluster uses would be at risk. For this reason, Wire always recommends using a separate kubernetes cluster for calling services.
+The above diagram shows calling deployed in the Wire Messaging cluster, along side your Wire services. Not shown are the Wire services themselves.
+
+Depending on customer resources, security stance, and threat models, some customers will opt to place calling into the same kubernetes cluster as their messaging components.
+
+Placing calling in your main kubernetes cluster is heavily discouraged by Wire. If a calling component is broken into in the above scenario, other critical databases your Wire cluster uses would be at risk. For this reason, Wire always recommends using a separate kubernetes cluster for calling services.
 
 ### Calling in your DMZ:
 ![image](img/calling-DMZ.svg)
 
-In the above diagram, we have routed and labeled the calling traffic into a non-federated Wire calling cluster. As you can see, placing calling in it's own kubernetes cluster is much safer, as the cluster does not have access to any of the wire databases. For most configurations, the calling cluster and the wire backend do not need to speak at all.
+In the above diagram, we have routed and labeled the calling traffic into a non-federated Wire calling cluster. A Wire Calling Cluster is typically placed in an DMZ, where the users can reach it, but the Mire Messaging Cluster cannot. Wire As you can see, placing calling in it's own kubernetes cluster is much safer, as the cluster does not have access to any of the Wire databases. For most configurations, the calling cluster and the Wire backend do not need to speak at all.
 
 ### Federated Calling
 ![image](img/federated_calling.svg)
@@ -179,7 +183,7 @@ In the above diagram, we have routed and labeled the calling traffic into a non-
 In a calling environment that also has federation, many different styles of calling may be happening. 
 
 #### Normal Calling
-Users such as Alice and Bob may are participating in a one-to-one call by their wire clients connecting directly to each other across a flat corporate network. No interaction with the calling servers is necessary for this to occur.
+Users such as Alice and Bob may are participating in a one-to-one call by their Wire clients connecting directly to each other across a flat corporate network. No interaction with the calling servers is necessary for this to occur.
 
 Users like Charlie and David may be at home, or otherwise on separate networks, that do not allow them to connect to each other. In this case, for a one-to-one call, they use the Coturn server to relay their conversation back and forth.
 
@@ -194,7 +198,7 @@ In the above diagram, Edith, Fred, Gary, and Henry are all in the same conferenc
 For Gary, the call is "remote", so not held on any calling infrastructure on his end. He uses the local Coturn server on his network to connect across the DTLS connection, to the Coturn that handles the DTLS connection in the remote datacenter. That remone Coturn then connects Gary to the conference on the SFT server.
 
 ##### Henry
-Henry has a different thing happening. For Henry, the call is on the SFT server in his datacenter, but for some reason, the network he is on cannot connect to the conference call on it's UDP port. Henry's wire client uses coturn to relay.. into the SFT call! This is yet another nice fallover capability of the wire clients when networks are 'adverse'.
+Henry has a different thing happening. For Henry, the call is on the SFT server in his datacenter, but for some reason, the network he is on cannot connect to the conference call on it's UDP port. Henry's Wire client uses coturn to relay.. into the SFT call! This is yet another nice fallover capability of the Wire clients when networks are 'adverse'.
 
 ### Focus on internet protocols
 

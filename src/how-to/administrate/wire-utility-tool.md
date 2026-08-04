@@ -456,6 +456,19 @@ curl -X GET http://api.example.com
 curl -X POST -d '{"key": "value"}' http://api.example.com
 ```
 
+#### Database-Specific APIs
+
+```bash
+# PostgreSQL: Check replication status
+psql -c "SELECT * FROM pg_stat_replication;"
+
+# Cassandra: System tables via CQL
+cqlsh -e "SELECT * FROM system.schema_keyspaces;"
+
+# Elasticsearch: Index statistics
+curl -s $ES_SERVICE_NAME:$ES_PORT/_stats | jq '.indices'
+```
+
 #### Internal API Access
 
 Since the pod is deployed within the Kubernetes cluster, you can directly access internal APIs of wire components such as `brig`, `galley`.
@@ -653,18 +666,5 @@ d kubectl logs wire-utility-0 | grep -c "is reachable\|connection successful\|is
 
 # Monitor specific service
 d kubectl logs -f wire-utility-0 | grep "Cassandra"
-```
-
-#### Database-Specific APIs
-
-```bash
-# PostgreSQL: Check replication status
-psql -c "SELECT * FROM pg_stat_replication;"
-
-# Cassandra: System tables via CQL
-cqlsh -e "SELECT * FROM system.schema_keyspaces;"
-
-# Elasticsearch: Index statistics
-curl -s $ES_SERVICE_NAME:$ES_PORT/_stats | jq '.indices'
 ```
 

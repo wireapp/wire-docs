@@ -87,6 +87,21 @@ The following components need to be re-configured for multi domain awareness:
 
 Wire-server backend values can be found at: [https://github.com/wireapp/wire-server-deploy/blob/master/values/wire-server/prod-values.example.yaml](https://github.com/wireapp/wire-server-deploy/blob/master/values/wire-server/prod-values.example.yaml). Apart from already configured values for domain `green.example.org`, the following changes will be required:
 
+### Brig (optional)
+
+```yaml
+brig:
+  config:
+    optSettings:
+      setRestrictUserCreation: true
+```
+
+This complements the `FEATURE_ENABLE_ACCOUNT_REGISTRATION: false` setting for
+the webapp (see [Instructions for required changes in webapp
+values](#instructions-for-required-changes-in-webapp-values)).
+`setRestrictUserCreation` prohibits public account creation via API. Creating
+users via SCIM or team invitations still works.
+
 ### Galley
 
 ```yaml
@@ -191,7 +206,7 @@ envVars:
   ENFORCE_HTTPS: "true"
   ENABLE_DYNAMIC_HOSTNAME: "true"
   FEATURE_CHECK_CONSENT: "false"
-  FEATURE_ENABLE_ACCOUNT_REGISTRATION: "true"
+  FEATURE_ENABLE_ACCOUNT_REGISTRATION: "false"
   FEATURE_ENABLE_DEBUG: "false"
   FEATURE_ENABLE_PHONE_LOGIN: "false"
   FEATURE_ENABLE_SSO: "false"
@@ -220,6 +235,12 @@ envVars:
 ```
 
 Also ensure that the above environment variables are in sync with [https://github.com/wireapp/wire-server-deploy/blob/master/values/webapp/prod-values.example.yaml](https://github.com/wireapp/wire-server-deploy/blob/master/values/webapp/prod-values.example.yaml) in terms of names.
+
+`FEATURE_ENABLE_ACCOUNT_REGISTRATION` would allow public account registration
+for *everyone*. This is usually not desirable for on-prems. Also, this feature
+depends on the team settings app, which isn't capable to be used via multiple
+ingresses, yet. (It's fine to use it to manage teams via the main-ingress,
+through.)
 
 ### Deploy webapp helm chart
 

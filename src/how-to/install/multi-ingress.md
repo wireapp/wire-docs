@@ -94,6 +94,25 @@ Multi-ingress configuration settings are discussed in detail in the
 
 Apart from already configured values for domain `green.example.org`, the following changes will be required:
 
+### Brig (optional)
+
+```yaml
+brig:
+  config:
+    optSettings:
+      setRestrictUserCreation: true
+```
+
+This complements the `FEATURE_ENABLE_ACCOUNT_REGISTRATION: false` setting for
+the webapp (see [Instructions for required changes in webapp
+values](#instructions-for-required-changes-in-webapp-values)).
+`setRestrictUserCreation` prohibits public account creation via API. Creating
+users via SCIM or team invitations still works.
+
+N.B. *team owners* are users as well. So, initial team owners must be created
+before this setting is activated or these users need to be created via internal
+endpoints.
+
 ### Galley
 
 ```yaml
@@ -298,7 +317,7 @@ envVars:
   ENFORCE_HTTPS: "true"
   ENABLE_DYNAMIC_HOSTNAME: "true"
   FEATURE_CHECK_CONSENT: "false"
-  FEATURE_ENABLE_ACCOUNT_REGISTRATION: "true"
+  FEATURE_ENABLE_ACCOUNT_REGISTRATION: "false"
   FEATURE_ENABLE_DEBUG: "false"
   FEATURE_ENABLE_FEDERATION: "false" # multi-ingress is not compatible with federation
   FEATURE_ENABLE_SSO: "true" # set to "false" if SSO is not used
@@ -325,6 +344,12 @@ envVars:
 ```
 
 Also ensure that the above environment variables are in sync with [https://github.com/wireapp/wire-server-deploy/blob/master/values/webapp/prod-values.example.yaml](https://github.com/wireapp/wire-server-deploy/blob/master/values/webapp/prod-values.example.yaml) in terms of names.
+
+`FEATURE_ENABLE_ACCOUNT_REGISTRATION` would allow public account registration
+for *everyone*. This is usually not desirable for on-prems. Also, this feature
+depends on the team settings app, which isn't capable to be used via multiple
+ingresses, yet. (It's fine to use it to manage teams via the main-ingress,
+though.)
 
 ### Deploy webapp helm chart
 

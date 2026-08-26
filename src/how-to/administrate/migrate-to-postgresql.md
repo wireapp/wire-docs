@@ -6,11 +6,11 @@ The PostgreSQL tables used by these migrations, including `collaborators`, `sche
 
 ## Feature Availability
 
-| Feature | Available from |
-| --- | --- |
-| `conversation` migration | `5.24.0` |
-| `conversationCodes` migration | `5.26.0` |
-| `teamFeatures` migration | `5.27.0` |
+| Feature                       | Available from |
+|-------------------------------|----------------|
+| `conversation` migration      | `5.24.0`       |
+| `conversationCodes` migration | `5.26.0`       |
+| `teamFeatures` migration      | `5.27.0`       |
 
 
 This guide covers these data categories:

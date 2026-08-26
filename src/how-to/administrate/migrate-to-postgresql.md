@@ -6,11 +6,12 @@ The PostgreSQL tables used by these migrations, including `collaborators`, `sche
 
 ## Feature Availability
 
-| Feature | Available from |
-| --- | --- |
-| `conversation` migration | `5.24.0` |
-| `conversationCodes` migration | `5.26.0` |
-| `teamFeatures` migration | `5.27.0` |
+| Feature                        | Available from |
+|--------------------------------|----------------|
+| `conversation` migration       | `5.24.0`       |
+| `conversationCodes` migration  | `5.26.0`       |
+| `teamFeatures` migration       | `5.27.0`       |
+| `domainRegistration` migration | `5.32.0`       |
 
 
 This guide covers these data categories:
@@ -18,6 +19,7 @@ This guide covers these data categories:
 - Conversations
 - Conversation codes
 - Team features
+- Domain Registration
 
 After the migration is complete, PostgreSQL becomes the authoritative store for the migrated domains.
 
@@ -27,7 +29,7 @@ Make sure all of the following are true before changing any migration settings:
 
 - You are running a `wire-server` release that supports the domain you want to migrate. See [Feature Availability](#feature-availability).
 - PostgreSQL is deployed and reachable from the cluster. If you still need to set it up on your on-prem environment with our custom postgresql cluster, see [PostgreSQL High Availability Cluster - Quick Setup](postgresql-cluster.md).
-- `galley` and `background-worker` both have PostgreSQL host, database, user, and password configured.
+- `brig`, `galley` and `background-worker` both have PostgreSQL host, database, user, and password configured.
 - The `cassandra-migrations` job for your Wire upgrade has already completed successfully.
 - You have enough PostgreSQL connections available for the temporary migration workload.
 
@@ -46,6 +48,7 @@ Migrate domains in this order:
 1. Conversations
 2. Conversation codes
 3. Team features
+4. Domain Registration
 
 This keeps the largest and most operationally sensitive migration first, when your rollback options are still best for the remaining domains.
 
@@ -97,6 +100,7 @@ galley:
       conversation: cassandra
       conversationCodes: cassandra
       teamFeatures: cassandra
+      domainRegistration: cassandra
 
 background-worker:
   config:
@@ -114,9 +118,11 @@ background-worker:
       conversation: cassandra
       conversationCodes: cassandra
       teamFeatures: cassandra
+      domainRegistration: cassandra
     migrateConversations: false
     migrateConversationCodes: false
     migrateTeamFeatures: false
+    migrateDomainRegistration: false
 ```
 
 Deploy this first and verify both services are healthy.
@@ -298,6 +304,7 @@ galley:
       conversation: postgresql
       conversationCodes: postgresql
       teamFeatures: postgresql
+      domainRegistration: postgresql
 
 background-worker:
   config:
@@ -315,9 +322,11 @@ background-worker:
       conversation: postgresql
       conversationCodes: postgresql
       teamFeatures: postgresql
+      domainRegistration: postgresql
     migrateConversations: false
     migrateConversationCodes: false
     migrateTeamFeatures: false
+    migrateDomainRegistration: false
 ```
 
 ## Post-Migration Checks

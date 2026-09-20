@@ -1,0 +1,32 @@
+# Wire-Server `5.33.0` release
+
+For details, see the [release changelog](https://github.com/wireapp/wire-server/releases) on the wire-server repo.
+
+Artifact:
+[`wire-server-deploy-static-4a7c9ee5d6f0cd7bf5ef76b72324b61028176f52.tgz`](https://s3-eu-west-1.amazonaws.com/public.wire.com/artifacts/wire-server-deploy-static-4a7c9ee5d6f0cd7bf5ef76b72324b61028176f52.tgz)
+
+## Heads up
+
+Coming from `5.32.0`.
+
+No known bugs at this release.
+
+## What must change
+
+No changes are required for this release.
+
+## Recommended cleanup (not strictly required)
+
+If your custom values still contain duplicate `postgresMigration` entries in Brig or background-worker, remove them. Galley is the single source of truth for these settings.
+
+## For users of the full wire-server-deploy-static deployment package
+
+NOTE: Each upgrade in this series re-runs `setup-offline-sources`, which copies the new release's binaries, container images, and debs into `/opt/assets` on the assethost. After a few versions, the assethost runs out of space and the playbook fails with `no space left on device`.
+
+When that happens, SSH into the **assethost** (not the adminhost) and clear it:
+
+```bash
+sudo rm -rvf /opt/assets
+```
+
+Then re-run `setup-offline-sources` from the adminhost.

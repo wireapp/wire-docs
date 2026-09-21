@@ -49,11 +49,15 @@ nav:
           - Wire Server 5.29: how-to/upgrade/config-references/wire-server-5.29.0.md
           - Wire Server 5.30: how-to/upgrade/config-references/wire-server-5.30.0.md
           - Wire Server 5.32: how-to/upgrade/config-references/wire-server-5.32.0.md
+          - Wire Server 5.33: how-to/upgrade/config-references/wire-server-5.33.0.md
+          - Wire Server 5.34: how-to/upgrade/config-references/wire-server-5.34.0.md
+          - Wire Server 5.35: how-to/upgrade/config-references/wire-server-5.35.0.md
   - Administration:
       - Overview: how-to/administrate/README.md
       - kubernetes: how-to/administrate/kubernetes/README.md
       - Backup and disaster recovery: how-to/administrate/backup-disaster-recovery.md
       - Cassandra: how-to/administrate/cassandra.md
+      - PostgreSQL: how-to/administrate/postgresql.md
       - Elasticsearch: how-to/administrate/elasticsearch.md
       - Etcd: how-to/administrate/etcd.md
       - General - Linux: how-to/administrate/general-linux.md

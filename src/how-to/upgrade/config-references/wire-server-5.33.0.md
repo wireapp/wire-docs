@@ -22,15 +22,3 @@ No changes are required for this release.
 ## Recommended cleanup (not strictly required)
 
 If your custom values still contain duplicate `postgresMigration` entries in Brig or background-worker, remove them. Galley is the single source of truth for these settings.
-
-## For users of the full wire-server-deploy-static deployment package
-
-NOTE: Each upgrade in this series re-runs `setup-offline-sources`, which copies the new release's binaries, container images, and debs into `/opt/assets` on the assethost. After a few versions, the assethost runs out of space and the playbook fails with `no space left on device`.
-
-When that happens, SSH into the **assethost** (not the adminhost) and clear it:
-
-```bash
-sudo rm -rvf /opt/assets
-```
-
-Then re-run `setup-offline-sources` from the adminhost.

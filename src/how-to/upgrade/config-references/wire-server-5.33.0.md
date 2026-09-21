@@ -1,13 +1,17 @@
 # Wire-Server `5.33.0` release
 
-For details, see the [release changelog](https://github.com/wireapp/wire-server/releases) on the wire-server repo.
+For details, see the [release changelog](https://github.com/wireapp/wire-server/releases/tag/v2026-06-12) on the wire-server repo.
 
 Artifact:
 [`wire-server-deploy-static-4a7c9ee5d6f0cd7bf5ef76b72324b61028176f52.tgz`](https://s3-eu-west-1.amazonaws.com/public.wire.com/artifacts/wire-server-deploy-static-4a7c9ee5d6f0cd7bf5ef76b72324b61028176f52.tgz)
 
+Build manifest: [build.json](https://github.com/wireapp/wire-builds/blob/pinned-offline-5.33.0/build.json)
+
 ## Heads up
 
 Coming from `5.32.0`.
+
+The background-worker migration timeout configuration was renamed from migrateConversationsOptions to migrationOptions. The old key is no longer read, so update any custom Helm overrides to the new name to avoid unexpected defaults.
 
 No known bugs at this release.
 

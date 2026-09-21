@@ -5,6 +5,8 @@ For details, see the [release changelog](https://github.com/wireapp/wire-server/
 Artifact:
 [`wire-server-deploy-static-c1f882e49d9240374a57e1cae0ee28a9d93e7fe4.tgz`](https://s3-eu-west-1.amazonaws.com/public.wire.com/artifacts/wire-server-deploy-static-c1f882e49d9240374a57e1cae0ee28a9d93e7fe4.tgz)
 
+Build manifest: [build.json](https://github.com/wireapp/wire-builds/blob/pinned-offline-5.34.0/build.json)
+
 ## Heads up
 
 Coming from `5.33.0`.

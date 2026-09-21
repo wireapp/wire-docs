@@ -54,6 +54,7 @@ nav:
       - kubernetes: how-to/administrate/kubernetes/README.md
       - Backup and disaster recovery: how-to/administrate/backup-disaster-recovery.md
       - Cassandra: how-to/administrate/cassandra.md
+      - PostgreSQL: how-to/administrate/postgresql.md
       - Elasticsearch: how-to/administrate/elasticsearch.md
       - Etcd: how-to/administrate/etcd.md
       - General - Linux: how-to/administrate/general-linux.md

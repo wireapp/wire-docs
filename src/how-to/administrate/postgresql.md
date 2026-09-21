@@ -6,6 +6,10 @@ This section covers PostgreSQL administration for Wire deployments.
 
 - [PostgreSQL High Availability Cluster - Quick Setup](postgresql-cluster.md) — deploy and manage a three-node on-prem HA cluster with automatic failover.
 
+## Using PostgreSQL as default instead of Cassandra
+
+- [Using PostgreSQL as default instead of Cassandra](postgresql-as-default.md) - use PostgreSQL as default database where applicable.
+
 ## Migration
 
 - [Migrate Galley Data from Cassandra to PostgreSQL](migrate-to-postgresql.md) — migrate conversation, conversation codes, and team features data from Cassandra to PostgreSQL.

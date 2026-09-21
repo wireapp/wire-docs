@@ -5,7 +5,7 @@ For details, see the [release changelog](https://github.com/wireapp/wire-server/
 Artifact:
 [`wire-server-deploy-static-9d7e52462edaaf8267cf8a34647dac18df3712c3.tgz`](https://s3-eu-west-1.amazonaws.com/public.wire.com/artifacts/wire-server-deploy-static-9d7e52462edaaf8267cf8a34647dac18df3712c3.tgz)
 
-Build manifest: [build.json](https://github.com/wireapp/wire-builds/blob/pinned-offline-5.35.0-teams-4.24.1/build.json)
+Build manifest: [build.json](https://raw.githubusercontent.com/wireapp/wire-builds/refs/heads/pinned-offline-5.35.0-teams-4.24.1/build.json)
 
 ## Head-ups
 

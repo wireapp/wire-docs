@@ -15,7 +15,7 @@ No known bugs at this release.
 
 ## What must change
 
-No changes are required for this release   
+The `meetings` team feature flag is now disabled and locked by default
 
 ## Security enforcement
 

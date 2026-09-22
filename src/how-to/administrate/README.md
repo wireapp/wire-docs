@@ -127,6 +127,7 @@
 ## 15. PostgreSQL
 
 - [PostgreSQL](postgresql.md)
+  - [PostgreSQL as default database](postgresql-as-default.md)
   - [PostgreSQL Connection Budget](postgresql.md#postgresql-connection-budget)
   - [PostgreSQL High Availability Cluster - Quick Setup](postgresql-cluster.md)
   - [Migrate Galley Data from Cassandra to PostgreSQL](migrate-to-postgresql.md)

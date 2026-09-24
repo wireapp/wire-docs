@@ -69,6 +69,7 @@ nav:
   - Support:
       - Triaging Issues: how-to/support/triaging_issues.md
       - Collecting information with the Web Inspector: how-to/support/inspector.md
+      - Troubleshooting Push Notifications: how-to/support/notification-troubleshooting.md
   - Reference:
       - Architecture Overview: understand/overview.md
       - Single Sign-On and User Provisioning: understand/single-sign-on/README.md

@@ -447,16 +447,3 @@ Please provide:
 * Screenshots from Google Play services diagnostics, if that diagnostic screen is available.
 
 Do not include AWS secret keys, passwords, or other credentials. Redact push tokens and other identifiers unless Wire Support specifically requires them for the investigation.
-
-## Items still requiring confirmation
-
-* `?` Is the `d` command prefix intended for customers?
-* `?` Exact Android menu label for re-registering the FCM token.
-* `?` Exact current iOS menu paths for resetting the APNs token and exporting logs.
-* `?` Android package name for every supported Wire build/flavor.
-* `?` Whether `GcmDiagnostics` is supported across the Google Play services versions Wire currently supports.
-* `?` Approved AWS CLI/debug-pod image for on-premises deployments.
-* `?` Whether an APNs device-side diagnostic command exists that Wire officially supports.
-* `?` Wire API command, if any, that should be documented for generating a controlled notification test.
-* `?` Whether `APNS_SANDBOX` deployments need a separate SNS example.
-

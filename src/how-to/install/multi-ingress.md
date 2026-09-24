@@ -52,10 +52,10 @@ flowchart LR
 
 - A Wire backend installation (> [5.14](https://github.com/wireapp/wire-server/releases/tag/v2025-04-07) to enable domain specific deeplinks)
 - DNS records for domains to be used with all the required [sub-domains](includes/helm_dns-ingress-troubleshooting.inc.md#how-to-set-up-dns-records). In the examples below, we demonstrate with **3 domains** (`green.example.org`, `red.example.com`, `blue.example.net`), but this setup can be **extended to as many domains as needed**:
-  - `green.example.org` (default domain)
-  - `red.example.com` (additional domain)
-  - `blue.example.net` (additional domain)
-  - *... (add more domains as required)*
+    - `green.example.org` (default domain)
+    - `red.example.com` (additional domain)
+    - `blue.example.net` (additional domain)
+    - *... (add more domains as required)*
 - Load Balancers for each domain to forward the domain specific traffic to the single Wire-backend
 - In order to further remove the connection between a domain configured to a wire-backend, the domain can have DNS records pointing to separate VPS (virtual private server) or network devices which can proxy the traffic for the backend. To have an effective proxy which can protect revealing the wire-backend details for other domains, we recommend setting up a HTTPS proxy at the VPS.
 

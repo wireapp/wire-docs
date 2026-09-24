@@ -91,13 +91,16 @@
 ## 13. Security and Messaging
 - [Messaging Layer Security (MLS)](mls.md)
 
-## 14. User Searchability
+## 14. Email OTP
+- [Email OTP](email-otp.md)
+
+## 15. User Searchability
 - [User Searchability](searchability.md)
   - [Searching users on the same backend](searchability.md#searching-users-on-the-same-backend)
   - [Searching users on another federated backend](searchability.md#searching-users-on-another-federated-backend)
   - [Changing the settings for a given team](searchability.md#changing-the-settings-for-a-given-team)
 
-## 15. Server and Team Settings
+## 16. Server and Team Settings
 - [Server and team feature settings](team-feature-settings.md)
   - [2nd factor password challenge](team-feature-settings.md#nd-factor-password-challenge)
   - [Rate limiting of code generation requests](team-feature-settings.md#rate-limiting-of-code-generation-requests)

@@ -97,6 +97,7 @@
   - [Instructions](multi-ingress.md#instructions)
   - [Instructions for required changes in wire-server values](multi-ingress.md#instructions-for-required-changes-in-wire-server-values)
   - [Instructions for required changes in webapp values](multi-ingress.md#instructions-for-required-changes-in-webapp-values)
+  - [Instructions for required changes in account-pages values](multi-ingress.md#instructions-for-required-changes-in-account-pages-values)
   - [Instructions for required changes in nginx-ingress-services values](multi-ingress.md#instructions-for-required-changes-in-nginx-ingress-services-values)
   - [Calling](multi-ingress.md#calling)
   - [How to setup VPS for each domain between a client and wire-backend](multi-ingress.md#how-to-setup-vps-for-each-domain-between-a-client-and-wire-backend)

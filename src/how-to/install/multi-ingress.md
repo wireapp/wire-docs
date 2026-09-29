@@ -46,11 +46,11 @@ flowchart LR
     class WB yellow
 ```
 
-**Note**: These backend domains are *DNS domains* only, not to be confused of the "backend domain" term used for federation (see [Federation](../../understand/configure-federation.md#configure-federation)). In single-ingress setups the backend DNS domain and federation backend domain is usually the same, but this is not true for multi-ingress setups.
+**Note**: These backend domains are *DNS domains* only, not to be confused with the term "backend domain" used for federation (see [Federation](../../understand/configure-federation.md#configure-federation)). In single-ingress setups, the backend DNS domain and federation backend domain are usually the same, but this is not true for multi-ingress setups. Multi-ingress and federation are mutually exclusive: **federation must be disabled** on a multi-ingress backend.
 
 ## Requirements
 
-- A Wire backend installation (> [5.14](https://github.com/wireapp/wire-server/releases/tag/v2025-04-07) to enable domain specific deeplinks)
+- A Wire backend installation (> [5.14](https://github.com/wireapp/wire-server/releases/tag/v2025-04-07) to enable domain specific deeplinks, 5.37.0 for multi-ingress SSO)
 - DNS records for domains to be used with all the required [sub-domains](includes/helm_dns-ingress-troubleshooting.inc.md#how-to-set-up-dns-records). In the examples below, we demonstrate with **3 domains** (`green.example.org`, `red.example.com`, `blue.example.net`), but this setup can be **extended to as many domains as needed**:
     - `green.example.org` (default domain)
     - `red.example.com` (additional domain)
@@ -58,6 +58,7 @@ flowchart LR
     - *... (add more domains as required)*
 - Load Balancers for each domain to forward the domain specific traffic to the single Wire-backend
 - In order to further remove the connection between a domain configured to a wire-backend, the domain can have DNS records pointing to separate VPS (virtual private server) or network devices which can proxy the traffic for the backend. To have an effective proxy which can protect revealing the wire-backend details for other domains, we recommend setting up a HTTPS proxy at the VPS.
+- Federation must be **disabled** — multi-ingress is not compatible with federation.
 
 ## Instructions
 
@@ -79,13 +80,19 @@ The following components need to be re-configured for multi domain awareness:
 - [cannon](../../developer/reference/config-options.md#cannon)
 - [cargohold](../../developer/reference/config-options.md#cargohold)
 - [galley](../../developer/reference/config-options.md#galley)
+- [spar](../../developer/reference/config-options.md#spar)
 - [webapp](../../developer/reference/config-options.md#webapp)
+- [account-pages](../../developer/reference/config-options.md#account-pages-wire-account)
 - [nginx-ingress-services](https://github.com/wireapp/wire-server/tree/develop/charts/nginx-ingress-services)
-- [spar](../../developer/reference/config-options.md#spar) (if SSO is used)
 
 ## Instructions for required changes in wire-server values
 
-Wire-server backend values can be found at: [https://github.com/wireapp/wire-server-deploy/blob/master/values/wire-server/prod-values.example.yaml](https://github.com/wireapp/wire-server-deploy/blob/master/values/wire-server/prod-values.example.yaml). Apart from already configured values for domain `green.example.org`, the following changes will be required:
+Wire-server backend values can be found at:
+[https://github.com/wireapp/wire-server-deploy/blob/master/values/wire-server/prod-values.example.yaml](https://github.com/wireapp/wire-server-deploy/blob/master/values/wire-server/prod-values.example.yaml).
+Multi-ingress configuration settings are discussed in detail in the
+[*Multi-ingress setup* section of the developers' config options reference](../../developer/reference/config-options.md#multi-ingress-setup).
+
+Apart from already configured values for domain `green.example.org`, the following changes will be required:
 
 ### Galley
 
@@ -162,6 +169,107 @@ nginz:
         title: "Production blue.example.net"
 ```
 
+### Spar
+
+To enable SSO via SAML in a multi-ingress setup, spar must act as a separate
+SAML *Service Provider* (SP) for each domain. This replaces the single-domain
+`appUri`/`ssoUri`/`contacts` values with a `domainConfigs` map keyed by the
+`nginz-https.<domain>` host (same key style as cargohold's `aws.multiIngress`
+above). `scimBaseUri` also becomes required, since it can no longer be
+derived from a single `ssoUri`:
+
+```yaml
+spar:
+  config:
+      scimBaseUri: https://nginz-https.green.example.org/scim/v2
+      domainConfigs:
+        nginz-https.green.example.org:
+          appUri: https://webapp.green.example.org
+          ssoUri: https://nginz-https.green.example.org/sso
+          contacts:
+            - type: ContactTechnical
+              email: admin@green.example.org
+        nginz-https.red.example.com:
+          appUri: https://webapp.red.example.com
+          ssoUri: https://nginz-https.red.example.com/sso
+          contacts:
+            - type: ContactTechnical
+              email: admin@red.example.com
+        nginz-https.blue.example.net:
+          appUri: https://webapp.blue.example.net
+          ssoUri: https://nginz-https.blue.example.net/sso
+          contacts:
+            - type: ContactTechnical
+              email: admin@blue.example.net
+      idpCertFingerprintAllowlist:
+        - "AA:BB:CC:DD:EE:FF:00:11:22:33:44:55:66:77:88:99:AA:BB:CC:DD"
+        - "F4:A2:73:D7:B7:2E:EA:66:E1:CB:81:E9:58:BC:1A:E9:CF:3C:95:C4"
+      # optional, see below
+      enableIdPByEmailDiscovery: true
+```
+
+`idpCertFingerprintAllowlist` is **required** for multi-ingress setups using
+SSO (spar refuses to create or update any IdP without it). It's a list of SHA-1
+fingerprints, one per IdP signing certificate used across all domains — not
+a per-domain setting.
+
+To get the fingerprint, download the IdP's SAML metadata for that domain.
+The download URL depends on the IdP; for example:
+
+- **Keycloak**: `<keycloak-root>/realms/<realm>/protocol/saml/descriptor` (see [Keycloak: SAML v2.0 Identity Providers](https://www.keycloak.org/docs/latest/server_admin/index.html#saml-v2-0-identity-providers))
+- **Microsoft Entra ID**: `https://login.microsoftonline.com/<tenant-id>/federationmetadata/2007-06/federationmetadata.xml?appid=<application-id>` (see [Microsoft Entra federation metadata](https://learn.microsoft.com/en-us/entra/identity-platform/federation-metadata))
+- **AD FS**: `https://<adfs-fqdn>/federationmetadata/2007-06/federationmetadata.xml` (see [Microsoft: AD FS endpoints reference](https://learn.microsoft.com/en-us/windows-server/identity/ad-fs/deployment/best-practices-securing-ad-fs#endpoints-enabled))
+- **Okta**: no fixed URL pattern — open your SAML app, go to the Sign On tab, and under SAML Signing Certificates select **View IdP metadata** to get the URL (see [Okta: How to download Okta identity provider metadata and SAML signing certificates](https://support.okta.com/help/s/article/how-to-download-okta-identity-provider-metadata-and-saml-signing-certificates))
+
+Once downloaded, extract the signing certificate from the metadata. Its
+base64 content is often wrapped across multiple lines in the file, so strip
+newlines before matching it:
+
+```bash
+curl https://<idp>/<metadata> -o idp-red.xml
+tr -d '\n' < idp-red.xml \
+  | grep -oP '<(?:\w+:)?X509Certificate>\K[^<]*(?=</(?:\w+:)?X509Certificate>)' \
+  | base64 -d | openssl x509 -noout -fingerprint -sha1
+```
+
+Some IdPs publish more than one signing certificate at once (e.g. during a
+certificate rotation), in which case the `grep` above prints more than one
+match and the pipeline needs to run once per match instead:
+
+```bash
+tr -d '\n' < idp-red.xml \
+  | grep -oP '<(?:\w+:)?X509Certificate>\K[^<]*(?=</(?:\w+:)?X509Certificate>)' \
+  | while read -r cert; do echo "$cert" | base64 -d | openssl x509 -noout -fingerprint -sha1; done
+```
+
+Repeat for each IdP and add every resulting fingerprint to the allowlist.
+
+Register each domain's IdP through that domain, not through the default one:
+call `POST <api-version>/identity-providers` via `nginz-https.red.example.com`
+for the IdP serving `red.example.com`, via `nginz-https.blue.example.net` for
+`blue.example.net`, and so on. Wire-server binds the new IdP to whichever
+domain you called it through. Only one IdP per domain/team is allowed —
+creating a second for the same domain and team fails.
+
+Setting `spar.config.enableIdPByEmailDiscovery: true` enables the
+`/sso/get-by-email` endpoint, which looks up the right SSO code (IdP ID) for an
+activated SSO user's email on that domain (the user can be SCIM- or
+auto-provisioned). It's optional but highly recommended for multi-ingress SSO
+setups as otherwise users (clients) would have to manually provide one IdP
+code per domain.
+
+**Security:** with multiple IdPs configured for one team, spar may migrate a
+user's SSO identity between IdPs based on a matching email `NameID` (see
+[Multi-ingress cross-IdP SSO
+(fallback)](../../developer/reference/config-options.md#multi-ingress-cross-idp-sso-fallback)).
+Email `NameID`s **must** be unique and consistent across every IdP configured
+for the team — a collision can log a user into another user's account, and
+compromising one IdP compromises the team across all its domains.
+
+See [Spar](../../developer/reference/config-options.md#spar) and [SAML
+IdPs](../../developer/reference/config-options.md#saml-idps) for full
+reference.
+
 ### Deploy wire-server chart
 
 After making the above changes in `values/wire-server/values.yaml`, the wire-server helm chart should be **re-deployed** as:
@@ -182,8 +290,6 @@ config:
   externalUrls:
     backendRest: "nginz-https.[[hostname]]"
     backendWebsocket: "nginz-ssl.[[hostname]]"
-    backendDomain: "[[hostname]]"
-    backendTeamSettings: "teams.[[hostname]]"
     appHost: "webapp.[[hostname]]"
 # See full list of available environment variables: https://github.com/wireapp/wire-webapp/blob/dev/server/config.ts
 envVars:
@@ -193,13 +299,12 @@ envVars:
   FEATURE_CHECK_CONSENT: "false"
   FEATURE_ENABLE_ACCOUNT_REGISTRATION: "true"
   FEATURE_ENABLE_DEBUG: "false"
-  FEATURE_ENABLE_PHONE_LOGIN: "false"
-  FEATURE_ENABLE_SSO: "false"
+  FEATURE_ENABLE_FEDERATION: "false" # multi-ingress is not compatible with federation
+  FEATURE_ENABLE_SSO: "true" # set to "false" if SSO is not used
   FEATURE_SHOW_LOADING_INFORMATION: "false"
   URL_ACCOUNT_BASE: "https://account.[[hostname]]"
-  #URL_MOBILE_BASE: "https://wire-pwa-staging.zinfra.io" # TODO: is this needed?
+  #URL_MOBILE_BASE: "https://wire-pwa-staging.zinfra.io" # enable if a mobile download page should be linked
   URL_PRIVACY_POLICY: "https://www.[[hostname]]/terms-conditions"
-  URL_SUPPORT_BASE: "https://www.[[hostname]]/support"
   URL_TEAMS_BASE: "https://teams.[[hostname]]"
   URL_TEAMS_CREATE: "https://teams.[[hostname]]"
   URL_TERMS_OF_USE_PERSONAL: "https://www.[[hostname]]/terms-conditions"
@@ -214,7 +319,6 @@ envVars:
   CSP_EXTRA_MANIFEST_SRC: "https://*.[[hostname]]"
   CSP_EXTRA_OBJECT_SRC: "https://*.[[hostname]]"
   CSP_EXTRA_MEDIA_SRC: "https://*.[[hostname]]"
-  CSP_EXTRA_PREFETCH_SRC: "https://*.[[hostname]]"
   CSP_EXTRA_STYLE_SRC: "https://*.[[hostname]]"
   CSP_EXTRA_WORKER_SRC: "https://*.[[hostname]]"
 ```
@@ -227,6 +331,48 @@ Also ensure that the above environment variables are in sync with [https://githu
 
 ```bash
 helm upgrade --install webapp ./charts/webapp --timeout=15m0s --values ./values/webapp/values.yaml
+```
+
+## Instructions for required changes in account-pages values
+
+Account-pages values can be found in the [wire-account chart](https://github.com/wireapp/wire-account/tree/main/charts/account-pages).
+
+Unlike webapp, account-pages has no `backendWebsocket`/`backendDomain` env vars and no federation flag — only `backendRest` and `appHost` are consumed. `[[hostname]]` is a literal placeholder string, resolved server-side at request time (based on the incoming request's hostname) when `ENABLE_DYNAMIC_HOSTNAME` is `true` — same mechanism used by webapp.
+
+Override the whole file with following:
+
+```yaml
+replicaCount: 1
+config:
+  externalUrls:
+    backendRest: "nginz-https.[[hostname]]"
+    appHost: "account.[[hostname]]"
+envVars:
+  APP_NAME: "Account Pages"
+  ENABLE_DYNAMIC_HOSTNAME: "true"
+  FEATURE_ENABLE_DEBUG: "false"
+  URL_TEAMS_BASE: "https://teams.[[hostname]]"
+  URL_WEBAPP_BASE: "https://webapp.[[hostname]]"
+  URL_WEBSITE_BASE: "https://wire.link"
+  CSP_EXTRA_CONNECT_SRC: "https://*.[[hostname]], wss://*.[[hostname]]"
+  CSP_EXTRA_IMG_SRC: "https://*.[[hostname]]"
+  CSP_EXTRA_SCRIPT_SRC: "https://*.[[hostname]]"
+  CSP_EXTRA_DEFAULT_SRC: "https://*.[[hostname]]"
+  CSP_EXTRA_FONT_SRC: "https://*.[[hostname]]"
+  CSP_EXTRA_FRAME_SRC: "https://*.[[hostname]]"
+  CSP_EXTRA_MANIFEST_SRC: "https://*.[[hostname]]"
+  CSP_EXTRA_OBJECT_SRC: "https://*.[[hostname]]"
+  CSP_EXTRA_MEDIA_SRC: "https://*.[[hostname]]"
+  CSP_EXTRA_STYLE_SRC: "https://*.[[hostname]]"
+  CSP_EXTRA_WORKER_SRC: "https://*.[[hostname]]"
+```
+
+### Deploy account-pages helm chart
+
+**Re-deploy** the account-pages helm chart as following:
+
+```bash
+helm upgrade --install account-pages ./charts/account-pages --timeout=15m0s --values ./values/account-pages/values.yaml
 ```
 
 ## Instructions for required changes in nginx-ingress-services values
@@ -276,6 +422,8 @@ certManager:
 
 config:
   dns:
+    # required whenever renderCSPInIngress is true, used to build the CSP header
+    base: red.example.com
     https: nginz-https.red.example.com
     ssl: nginz-ssl.red.example.com
     webapp: webapp.red.example.com
@@ -335,6 +483,8 @@ certManager:
 
 config:
   dns:
+    # required whenever renderCSPInIngress is true, used to build the CSP header
+    base: blue.example.net
     https: nginz-https.blue.example.net
     ssl: nginz-ssl.blue.example.net
     webapp: webapp.blue.example.net

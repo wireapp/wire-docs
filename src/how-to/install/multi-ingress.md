@@ -92,8 +92,8 @@ Wire-server backend values can be found at: [https://github.com/wireapp/wire-ser
 ```yaml
 galley:
   config:
-      settings:
-          conversationCodeURI: https://account.green.example.org/conversation-join/
+    settings:
+      conversationCodeURI: https://account.green.example.org/conversation-join/
       multiIngress:
         red.example.com: https://account.red.example.com/conversation-join/
         blue.example.net: https://account.blue.example.net/conversation-join/

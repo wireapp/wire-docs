@@ -346,6 +346,8 @@ helm upgrade --install nginx-ingress-services-blue charts/nginx-ingress-services
 
 ### Patch the CSP (Content security policy) for each multi-ingress domain
 
+**Note:** If you are on backend version 5.37 or higher then CSP configuration can be directly configured in the helm chart [nginx-ingress-services](https://github.com/wireapp/wire-server/blob/v2026-10-05/charts/nginx-ingress-services/values.yaml#L182) at `.cspExtraConnectSrc`.
+
 When the Webapp is used with multi-ingress calling, the ingress CSP configuration must explicitly allow the corresponding Calling endpoint (SFT_DOMAIN).
 This update ensures that the browser accepts resources and connections required for calling functionality. The same need to be repeated for each multi-ingress domain. To find out which `SFT_DOMAIN` can be used, continue reading the [Calling](#calling) section.
 

@@ -347,7 +347,7 @@ Also ensure that the above environment variables are in sync with [https://githu
 
 `FEATURE_ENABLE_ACCOUNT_REGISTRATION` would allow public account registration
 for *everyone*. This is usually not desirable for on-prems. Also, this feature
-depends on the team settings app, which isn't capable to be used via multiple
+depends on the team settings app, which isn't capable of being used via multiple
 ingresses, yet. (It's fine to use it to manage teams via the main-ingress,
 though.)
 

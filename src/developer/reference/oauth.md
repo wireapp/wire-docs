@@ -115,7 +115,7 @@ Example request:
 
 ```default
 GET /authorize?
-  scope=read%3Aself%20write%3Aconversation&
+  scope=read%3Aself%20write-only%3Aconversations&
   response_type=code&
   client_id=b9e65569-aa61-462d-915d-94c8d6ef17a7&
   redirect_uri=https%3A%2F%2Fclient.example.com&
@@ -185,6 +185,8 @@ The expiration time in the response (`expires_in`) refers to the expiration time
 ### Accessing a resource
 
 The access token, presented as `Bearer <token>` in the `Authorization` header, can now be used by the 3rd party app to access resources on behalf of the user (9.-11. in diagram above).
+
+If the token is missing or invalid, the answer is 401. If the token is good, but its scopes are not enough for the endpoint, the answer is 403. See [Scopes](#scopes) below.
 
 ### Refresh access token
 
@@ -387,7 +389,7 @@ Example token payload:
   "iat": 1311280970,
   "sub": "7cf24b6c-8c7e-4788-a532-2c998d20ce4a",
   "exp": 1311281970,
-  "scope": "write:conversations write:conversations_code"
+  "scope": "write-only:conversations write-only:meetings delete-only:meetings"
 }
 ```
 
@@ -414,29 +416,41 @@ Example token payload:
 
 ### Scopes
 
-Endpoints that support OAuth have the required scope listed in the swagger documentation.
+A scope is one permission. Endpoints that support OAuth have the required scope listed in the swagger documentation.
 
 #### Scope implementation details
 
-To enable OAuth access for a resource a scope has to be defined in the nginx location config that matches the endpoint’s path.
+A scope is a tier and a base, separated by a colon, e.g. `read:conversations_code`.
 
-The current convention is that scope names should match the resource’s paths separated by an underscore. E.g. `/conversations/:cid/code` becomes `conversations_code` (path parameters are omitted).
+The base names the resource. The convention is the resource’s path with underscores instead of slashes, and without path parameters. E.g. `/conversations/:cid/code` becomes `conversations_code`.
 
-Furthermore, the scope must be prefixed (separated by a colon) with
+The tier says what may be done with the resource. Which tier a request needs follows from its method:
 
-- `admin`, `write`, or `read` for endpoints with HTTP method `GET`
-- `admin`, or `write` for endpoints with HTTP methods `POST` or `PUT`
-- and `admin` for endpoints with HTTP method `DELETE`
+| method        | tier          |
+|---------------|---------------|
+| `GET`         | `read`        |
+| `POST`, `PUT` | `write-only`  |
+| `DELETE`      | `delete-only` |
 
-E.g. the required scope for `POST /conversations/:cid/code` is `write:conversations_code`.
+E.g. the required scope for `POST /conversations/:cid/code` is `write-only:conversations_code`.
+
+The tiers are independent of each other. `write-only:conversations_code` gets an app into the `POST`, but not into the `GET`; an app that needs both has to ask for both.
+
+`nginz` does the checking. Every route that is open to OAuth lists its scopes in the nginx location config that matches the endpoint’s path. A token gets in if the list holds a scope of the tier the method needs, and the token carries that scope. If the list holds no scope of that tier, or the route lists no scopes at all, no OAuth token gets in.
+
+#### Deprecated: cumulative scopes
+
+Scopes used to build on one another. There were three tiers, and each one included the ones below it: `write:` included `read:`, and `admin:` included `write:`. A `GET` passed with any of the three, a `POST` or `PUT` with `write:` or `admin:`, and a `DELETE` with `admin:`.
+
+Tokens that were handed out with these scopes still work, and are worth what they were worth before: `write:conversations_code` counts as `read:conversations_code` and `write-only:conversations_code`, and `admin:conversations_code` counts as those two and `delete-only:conversations_code` as well. New tokens are never given these scopes any more.
 
 ### Steps for adding a new scope (making an endpoint accessible via OAuth)
 
-- Add a new constructor to the type `OAuthScope` in `/home/leif/Repositories/wire-server/libs/wire-api/src/Wire/API/OAuth.hs`
+- Add a new constructor to the data type `OAuthScope` in `libs/wire-api/src/Wire/API/OAuth.hs`, if there is none yet
 - Implement `IsOAuthScope`
-- Update `ToByteString` and `FromByteString` instances and verify that the roundtrip tests run successfully
+- Update the `ToByteString` instance and verify that the roundtrip tests run successfully (`FromByteString` is implemented in terms of `ToByteString`)
 - Add the servant combinator `DescriptionOAuthScope` to the endpoint in question which will render the correct swagger description
-- Finally assign the scope name (without the prefix) to the location config via the `charts/nginz/values.yaml` file to the `oauth_scope` as shown in the example below
+- Finally add the scope to the location config via the `charts/nginz/values.yaml` file to the `oauth_scopes` as shown in the example below
 
 Example:
 
@@ -452,21 +466,39 @@ type SelfAPI =
     )
 ```
 
-```nginx
+```yaml
     - path: /self$ # Matches exactly /self
-      oauth_scope: self
+      oauth_scopes: ["read:self"]
       envs:
 ```
+
+The two have to say the same thing. A unit test in `wire-api` compares the swagger docs with `charts/nginz/values.yaml` and fails if they disagree.
 
 For local development and integration tests, add the scope to `services/nginz/integration-test/conf/nginz/nginx.conf` as follows
 
 ```nginx
     location ~* ^(/v[0-9]+)?/self$ {
       include common_response_with_zauth.conf;
-      oauth_scope self;
+      oauth_scopes read:self;
       proxy_pass http://brig;
     }
 ```
+
+#### Deprecated: `oauth_scope`
+
+Older location configs give the base only, and leave the tier to `nginz`:
+
+```yaml
+    - path: /self$ # Matches exactly /self
+      oauth_scope: self
+      envs:
+```
+
+```nginx
+      oauth_scope self;
+```
+
+These still work, with the cumulative tiers described above. Where a route has both, `oauth_scopes` is used and `oauth_scope` is ignored.
 
 ### Public/private keys
 

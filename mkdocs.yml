@@ -57,6 +57,7 @@ nav:
       - Overview: how-to/administrate/README.md
       - kubernetes: how-to/administrate/kubernetes/README.md
       - Backup and disaster recovery: how-to/administrate/backup-disaster-recovery.md
+      - Wire in a Box maintenance - controlled shutdown and startup: how-to/administrate/maintenance-manual.md
       - Cassandra: how-to/administrate/cassandra.md
       - PostgreSQL: how-to/administrate/postgresql.md
       - Elasticsearch: how-to/administrate/elasticsearch.md

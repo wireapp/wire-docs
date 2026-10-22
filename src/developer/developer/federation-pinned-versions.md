@@ -1,0 +1,1 @@
+../../../wire-server/docs/src/developer/developer/federation-pinned-versions.md

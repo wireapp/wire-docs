@@ -82,12 +82,6 @@
   - [Applying all configuration changes](configure-federation.md#applying-all-configuration-changes)
   - [Manually test that your configurations work as expected](configure-federation.md#manually-test-that-your-configurations-work-as-expected)
 
-## 12. Legal Hold Setup
-- [Installing and setting up Legal Hold](legalhold.md)
-  - [Introduction](legalhold.md#introduction)
-  - [Installing Legal Hold](legalhold.md#installing-legal-hold)
-  - [Configuring Team Settings to use Legal Hold](legalhold.md#configuring-team-settings-to-use-legal-hold)
-
 ## 13. Security and Messaging
 - [Messaging Layer Security (MLS)](mls.md)
 

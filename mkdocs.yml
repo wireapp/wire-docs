@@ -84,7 +84,6 @@ nav:
       - Block personal user creation: understand/block-user-creation.md
       - Classified Domains: understand/classified-domains.md
       - Federation: understand/configure-federation.md
-      - Installing and setting up Legal Hold: understand/legalhold.md
       - Messaging Layer Security (MLS): understand/mls.md
       - User Searchability: understand/searchability.md
       - Server and team feature settings: understand/team-feature-settings.md
@@ -121,7 +120,6 @@ nav:
           - SCIM tokens: developer/reference/provisioning/scim-token.md
           - RabbitMQ Consumer: developer/reference/rabbitmq-consumer.md
           - Spar braindump: developer/reference/spar-braindump.md
-          - Legal hold: developer/reference/team/legalhold.md
           - User Activation: developer/reference/user/activation.md
           - Connection: developer/reference/user/connection.md
           - User Registration: developer/reference/user/registration.md

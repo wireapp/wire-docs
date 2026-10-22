@@ -41,7 +41,6 @@ help you.
   - [SCIM tokens](reference/provisioning/scim-token.md)
   - [RabbitMQ Consumer](reference/rabbitmq-consumer.md)
   - [Spar braindump](reference/spar-braindump.md)
-  - [Legal hold](reference/team/legalhold.md)
   - [User Activation](reference/user/activation.md)
   - [Connection](reference/user/connection.md)
   - [Connection backend internals](reference/user/connection.md#connection-backend-internals)

@@ -10,7 +10,6 @@
   - [SCIM tokens](provisioning/scim-token.md)
   - [RabbitMQ Consumer](rabbitmq-consumer.md)
   - [Spar braindump](spar-braindump.md)
-  - [Legal hold](team/legalhold.md)
   - [User Activation](user/activation.md)
   - [Connection](user/connection.md)
   - [Connection backend internals](user/connection.md#connection-backend-internals)

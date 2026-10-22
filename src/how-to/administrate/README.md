@@ -109,6 +109,7 @@
    - [Reset session cookies](users.md#reset-session-cookies)
    - [Identify all users using SSO](users.md#identify-sso-users)
    - [Create a team using the SCIM API](users.md#create-a-team-using-the-scim-api)
+   - [Suspending users](suspend-users.md)
 
 ## 12. Manuals
 

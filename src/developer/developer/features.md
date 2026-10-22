@@ -2,7 +2,7 @@
 
 Wire has multiple features (or feature flags) that affect the behaviour of
 backend and clients, e.g. `sso`, `searchVisibility`, `digitalSignatures`,
-`appLock`, `legalhold`, `fileSharing`.
+`appLock`, `fileSharing`.
 
 Features cannot by configured by the users themselves, which distinguishes
 features from user properties. Who can configure a feature depends on the

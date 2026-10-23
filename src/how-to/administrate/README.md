@@ -14,6 +14,7 @@
   - [Introduction](backup-disaster-recovery.md#introduction)
   - [Backing up](backup-disaster-recovery.md#backing-up)
   - [Recovery procedure](backup-disaster-recovery.md#recovery-procedure)
+  - [Wire in a Box maintenance - controlled shutdown and startup](maintenance-manual.md)
 
 ## 3. Cassandra
 

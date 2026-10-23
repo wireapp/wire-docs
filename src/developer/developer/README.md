@@ -2,6 +2,7 @@
 
 ## Contents
   - [API versioning](api-versioning.md)
+  - [Federation pinned versions](federation-pinned-versions.md)
   - [How to build wire-server](building.md)
   - [Writing code interacting with cassandra](cassandra-interaction.md)
   - [Changelog](changelog.md)

@@ -91,6 +91,7 @@ nav:
       - Overview: developer/README.md
       - Developer:
           - API versioning: developer/developer/api-versioning.md
+          - Federation pinned versions: developer/developer/federation-pinned-versions.md
           - How to build wire-server: developer/developer/building.md
           - Writing code interacting with cassandra: developer/developer/cassandra-interaction.md
           - Changelog: developer/developer/changelog.md

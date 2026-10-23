@@ -11,6 +11,7 @@ help you.
 
 ## [Developer](developer/README.md)
   - [API versioning](developer/api-versioning.md)
+  - [Federation pinned versions](developer/federation-pinned-versions.md)
   - [How to build wire-server](developer/building.md)
   - [Writing code interacting with cassandra](developer/cassandra-interaction.md)
   - [Changelog](developer/changelog.md)

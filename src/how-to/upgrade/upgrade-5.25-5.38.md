@@ -529,10 +529,16 @@ cp old-values/nginx-ingress-services/red-cert.pem values/nginx-ingress-services/
 cp old-values/nginx-ingress-services/red-key.pem values/nginx-ingress-services/red-key.pem
 ```
 
-Generate or validate nginx values for a domain.
+Generate nginx values for a domain.
 
 ```bash
-d bash bin/multi_ingress_verify.sh --check-nginx -m example.com -d red.example.com --nginx-values values/nginx-ingress-services/red-values.yaml --create-nginx-values
+d bash bin/multi_ingress_verify.sh -m example.com  -f values/wire-server/values.yaml -d red.example.com --nginx-values values/nginx-ingress-services/red-values.yaml --create-nginx-values
+```
+
+Validate
+
+```bash
+d bash bin/multi_ingress_verify.sh --check-nginx -m example.com  -f values/wire-server/values.yaml -d red.example.com --nginx-values values/nginx-ingress-services/red-values.yaml
 ```
 
 Compare old and new domain-specific nginx values.
@@ -572,6 +578,12 @@ Check disk usage first.
 
 ```bash
 d ansible kube-node -i ansible/inventory/offline/inventory.yml -m shell -a "df -h | head -5"
+```
+
+Copy new images to asset host
+
+```bash
+d ansible-playbook -i ansible/inventory/offline/inventory.yml ansible/setup-offline-sources.yml --tags containers-helm
 ```
 
 Seed offline Helm container images.
@@ -628,15 +640,23 @@ for chart in elasticsearch-external minio-external rabbitmq-external cassandra-e
 done
 ```
 
-5.25-5.38 important changes
+You can reuse old values files in 5.38
 
-|Chart | 5.25 vs 5.38 | changes |
-|-|-|-|
-|cassandra-external| no change||
-|postgresql-external||requires non-empty RWIPS and ROIPs|
-|rabbitmq-external|no change||
-|elasticsearch-external|no change||
-|minio-external|no change||
+```bash
+  cp old-values/elasticsearch-external/values.yaml  values/elasticsearch-external/
+  cp old-values/minio-external/values.yaml values/minio-external/
+  cp old-values/rabbitmq-external/values.yaml values/rabbitmq-external/
+  cp old-values/cassandra-external/values.yaml values/cassandra-external/
+  cp old-values/postgresql-external/values.yaml values/postgresql-external/
+```
+
+```bash
+  helm upgrade --install  elasticsearch-external charts/elasticsearch-external/ -f values/elasticsearch-external/prod-values.example.yaml
+  helm upgrade --install minio-external charts/minio-external/ -f values/minio-external/values.yaml
+  helm upgrade --install rabbitmq-external charts/rabbitmq-external/ -f values/rabbitmq-external/values.yaml
+  helm upgrade --install cassandra-external charts/cassandra-external/ -f values/cassandra-external/values.yaml
+  helm upgrade --install postgresql-external charts/postgresql-external/ -f values/postgresql-external/values.yaml
+```
 
 ### Upgrade Other Charts
 
@@ -743,6 +763,23 @@ Migration versions:
 | Gundeck | 12 | 12 | None |
 | Spar | 21 | 23 | V22, V23 |
 
+Check Postgresql migration
+The application migration ledger should contain the 13 scripts available in the 5.25. 
+
+```bash
+
+SELECT count(*) AS applied_5_25_scripts
+FROM public.schema_migrations
+WHERE filename BETWEEN '20250423103417-create-user-group-table.sql'
+                    AND '20251127115917-app-fields-category-description-creator.sql';
+
+SELECT filename, checksum, executed_at
+FROM public.schema_migrations
+WHERE filename BETWEEN '20250423103417-create-user-group-table.sql'
+                    AND '20251127115917-app-fields-category-description-creator.sql'
+ORDER BY filename;
+```
+
 ### Scale Down Wire Services
 
 Maintenance window starts here. Scaling these services to 0 replicas causes Wire client traffic to fail or become unavailable until the backend is upgraded and services are running again.
@@ -828,14 +865,12 @@ d kubectl exec -t wire-utility-0 -- /usr/local/bin/cqlsh -e "SELECT version FROM
 
 Expected target versions:
 
-- `brig`: 91
+- `brig`: 94
 - `gundeck`: 12
-- `galley`: 101
-- `spar`: 21
+- `galley`: 102
+- `spar`: 23
 
 At the end, confirm that all pods should be up and running.
-
-Send a message in the test group conversation and record the result before proceeding to the next main chart upgrade.
 
 ### Bring Back Reaper
 
@@ -911,26 +946,6 @@ d helm list
 d helm diff upgrade nginx-ingress-services-red charts/nginx-ingress-services --values values/nginx-ingress-services/red-values.yaml --set-file secrets.tlsWildcardCert=values/nginx-ingress-services/red-cert.pem --set-file secrets.tlsWildcardKey=values/nginx-ingress-services/red-key.pem
 d helm upgrade --install nginx-ingress-services-red charts/nginx-ingress-services --values values/nginx-ingress-services/red-values.yaml --set-file secrets.tlsWildcardCert=values/nginx-ingress-services/red-cert.pem --set-file secrets.tlsWildcardKey=values/nginx-ingress-services/red-key.pem
 ```
-After upgrading, patch the CSP for each multi-ingress domain's ingress.
-
-Verify the pods post upgrading the helm charts.
-
-Reference:
-https://github.com/wireapp/wire-docs/blob/WPB-25750-multi-ingress-fix/src/how-to/install/multi-ingress.md#patch-the-csp-content-security-policy-for-each-multi-ingress-domain
-
-### Expected Deeplink Changes (in a Multi-Ingress env)
-
-After `nginx-ingress-services` is upgraded, the deeplink structure changes:
-
-- You no longer need to host your own deeplink service.
-- Deeplinks should be available from `nginz`.
-
-```bash
-# It will respond with the deeplink for red.example.com
-curl https://nginz-https.red.example.com/deeplink.json
-# It will respond with the deeplink for example.com
-curl https://nginz-https.example.com/deeplink.json
-```
 
 ## Phase 6: Post-Upgrade Validation
 
@@ -956,10 +971,26 @@ Check Cassandra schema versions again if needed.
 d kubectl exec -t wire-utility-0 -- /usr/local/bin/cqlsh -e "SELECT version FROM brig.meta WHERE id=1 ORDER BY version DESC LIMIT 1;SELECT version FROM gundeck.meta WHERE id=1 ORDER BY version DESC LIMIT 1;SELECT version FROM galley.meta WHERE id=1 ORDER BY version DESC LIMIT 1;SELECT version FROM spar.meta WHERE id=1 ORDER BY version DESC LIMIT 1;"
 ```
 
-Check team feature migration state.
+Check postgresql schema migration. After Brig and Galley have started successfully on 5.38, the baseline plus all 21 scripts added since 5.25 should be recorded, for **34 scripts total**
 
-```bash
-d kubectl exec -it wire-utility-0 -- cqlsh -e "SELECT team, migration_state FROM galley.team_features LIMIT 5;"
+```sql
+wire-server=> SELECT count(*) AS scripts_added_since_5_25
+FROM public.schema_migrations
+WHERE filename BETWEEN '20251213223355-create-meetings-table.sql'
+                    AND '20261022130000-create-pending-scim-user-index.sql';
+ scripts_added_since_5_25
+--------------------------
+                       21
+(1 row)
+
+wire-server=> SELECT count(*) AS total_application_scripts
+FROM public.schema_migrations
+WHERE filename BETWEEN '20250423103417-create-user-group-table.sql'
+                    AND '20261022130000-create-pending-scim-user-index.sql';
+ total_application_scripts
+---------------------------
+                        34
+(1 row)
 ```
 
 ### Client Checks
@@ -980,18 +1011,30 @@ Test with all clients to confirm functionality after the upgrade.
 
 Webapps may log users out. Log back in and confirm that conversations are present.
 
-## Follow-Up: Upgrade Webapp to 2026-06-08-production.0
+## Follow-Up: Upgrade Webapp to 2026-10-06.1-production
+
 
 Before continuing, make sure that the following docker image is present on all the k8s nodes:
-- `quay.io/wire/webapp:2026-06-08-production.0`
 
-After the main upgrade has stabilized, upgrade Webapp to `2026-06-08-production.0` by updating `.image.tag = 2026-06-08-production.0` `values/webapp/values.yaml`.
+Export the image using `docker save`
+
+```bash
+docker save -o wire-webapp-2026-10-06.1-production.tar \
+  quay.io/wire/webapp:2026-10-06.1-production
+```
+
+Copy the image then import it into containerd in all nodes
+```bash
+sudo ctr -n k8s.io images import wire-webapp-2026-10-06.1-production.tar
+```
+
+After the main upgrade has stabilized, upgrade Webapp to `2026-10-06.1-production` by updating `.image.tag = 2026-10-06.1-production` `values/webapp/values.yaml`.
 
 - Comment/remove the the `MAX_API_VERSION` and `FEATURE_USE_CORE_CRYPTO` from envVars.
 - Add `BRAND_NAME: "Wire"` as envVars.
 ```bash
 d yq eval '{"image": .image.tag, "MAX_API_VERSION": .envVars.MAX_API_VERSION, "FEATURE_USE_CORE_CRYPTO": .envVars.FEATURE_USE_CORE_CRYPTO, "BRAND_NAME": .envVars.BRAND_NAME }' values/webapp/values.yaml
-# image: 2026-06-08-production.0
+# image: 2026-10-06.1-production
 # MAX_API_VERSION: null
 # FEATURE_USE_CORE_CRYPTO: null
 # BRAND_NAME: Wire
@@ -1006,10 +1049,6 @@ d kubectl get pods
 ```
 
 Observe the change for some time with users.
-
-## Follow-Up: Cassandra to PostgreSQL
-
-Make sure to backup Cassandra before starting the migration to Postgresql. Post-upgrade, plan the Cassandra to PostgreSQL migration separately as explained at https://docs.wire.com/latest/how-to/administrate/migrate-to-postgresql.html. 
 
 ## Rollback and Stop Conditions
 

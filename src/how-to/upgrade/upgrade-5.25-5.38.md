@@ -58,6 +58,8 @@ For production, do not assume that `datanodes` is the correct group for every An
   - multi-ingress SSO configuration
   - Proteus-MLS migration
   - LDAP Scim bridge configuration
+  - Kubernetes update
+  - Kubespray update
 
 ## Operating Notes
 
@@ -413,7 +415,7 @@ Confirm snapshots after backup.
 d ansible -i ansible/inventory/offline/inventory.yml cassandra -b -m shell -a 'nodetool listsnapshots | grep backup_'
 ```
 
-### Take Postgres Backups
+### Take Postgresql Backups
 
 Please visit [this link](https://github.com/wireapp/wire-docs/blob/WPB-28803-maintenance-docs/src/how-to/administrate/maintenance-manual.md#24-postgresql-identification-and-backup)
 
@@ -821,6 +823,10 @@ Confirm that backup snapshots were created for the current date.
 ```bash
 d ansible -i ansible/inventory/offline/inventory.yml cassandra -b -m shell -a 'nodetool listsnapshots | grep backup_$(date +%F)'
 ```
+
+Backup Postgresql
+
+Please visit [this link](https://github.com/wireapp/wire-docs/blob/WPB-28803-maintenance-docs/src/how-to/administrate/maintenance-manual.md#24-postgresql-identification-and-backup)
 
 ### Upgrade Wire-Service Dependent Charts
 

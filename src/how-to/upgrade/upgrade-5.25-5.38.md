@@ -415,7 +415,7 @@ d ansible -i ansible/inventory/offline/inventory.yml cassandra -b -m shell -a 'n
 
 ### Take Postgres Backups
 
-TODO
+Please visit [this link](https://github.com/wireapp/wire-docs/blob/WPB-28803-maintenance-docs/src/how-to/administrate/maintenance-manual.md#24-postgresql-identification-and-backup)
 
 ### Prepare Helm Chart Values for 5.38
 

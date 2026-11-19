@@ -5,6 +5,7 @@
 <!-- comment: The toctree directive below takes a list of the pages you want to appear in order,
  and '*' is used to include any other pages in the federation directory in alphabetical order -->
 
+* [2026-11-19 - NGINX HTTP/2 vulnerabilities (CVE-2026-123633 and CVE-2026-123007)](2026-11-19_nginx_http2.md)
 * [2023-01-19 - Security Advisory: HTML Injection in wire.com](2023-01-19_html_injection.md)
 * [2023-01-04 - Outage of wire.com caused by a DoS attack](2023-01-04_website_outage.md)
 * [2022-11-01 - High Severity Vulnerability in OpenSSL](2022-11-01_openssl.md)

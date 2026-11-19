@@ -212,6 +212,13 @@ RM_CONF="/etc/repmgr/${PG_INSTANCE}/repmgr.conf"
 sudo -u postgres psql -p "$PG_PORT" -X -d postgres \
   -c 'SELECT pg_is_in_recovery();'
 
+# STOP all active terminal/session recordings before running this command.
+# For section 1.1's asciinema recording: exit the Data VM SSH session,
+# then run exit in the recorded Host shell to finish recording.
+# Reconnect without recording and reinitialize the PostgreSQL variables above
+# (and the Host environment if its shell changed).
+# Keep recording disabled for the rest of this procedure, including startup
+# cluster show commands. Do not redirect or capture unredacted output.
 sudo -u postgres repmgr -f "$RM_CONF" cluster show
 ```
 
@@ -755,15 +762,27 @@ record_check after-startup/cassandra \
 
 ### 6.2 PostgreSQL
 
-Start the **recorded primary first**, then both recorded replicas:
+**On the recorded primary VM**, start PostgreSQL first:
 
-```bash
-release_units "$PG_UNIT"
-sudo systemctl start "$PG_UNIT"
+    release_units "$PG_UNIT"
+    sudo systemctl start "$PG_UNIT"
 
-sudo -u postgres psql -p "$PG_PORT" -X -d postgres \
-  -c 'SELECT pg_is_in_recovery();'
-```
+    sudo -u postgres pg_isready -p "$PG_PORT"
+    sudo -u postgres psql -p "$PG_PORT" -X -d postgres \
+      -c 'SELECT pg_is_in_recovery();'
+
+Wait until the primary accepts connections and the query succeeds with `f` before continuing.
+
+Then, **on each of the two recorded replica VMs**, using that VM's recorded PostgreSQL variables and `release_units` function:
+
+    release_units "$PG_UNIT"
+    sudo systemctl start "$PG_UNIT"
+
+    sudo -u postgres pg_isready -p "$PG_PORT"
+    sudo -u postgres psql -p "$PG_PORT" -X -d postgres \
+      -c 'SELECT pg_is_in_recovery();'
+
+Wait until both replicas accept connections and the query succeeds with `t` on each. Keep `repmgrd` and rogue-primary monitoring stopped with their maintenance holds intact until the topology gate below passes.
 
 Require exactly one primary and two replicas. On the primary, repeat the replication query from section 4.2 and require both replicas to be streaming.
 
@@ -911,6 +930,7 @@ Initialize the deployment client from the `wire-server-deploy/` working root. Re
 ```bash
 cd wire-server-deploy/
 source bin/offline-env.sh
+I=ansible/inventory/offline/inventory.yml
 B=maintenance/<recorded-directory>
 umask 077
 PG_PRIMARY='<recorded primary inventory name>'

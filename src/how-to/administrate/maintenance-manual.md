@@ -167,6 +167,13 @@ Apply this only to the reviewed Wire DaemonSets in `default`, not Kubernetes net
 ### 2.2 Scale down applications, temporarily retaining `wire-utility`
 
 ```bash
+retention_policies=$(k get statefulsets -o \
+  jsonpath='{.items[*].spec.persistentVolumeClaimRetentionPolicy.whenScaled}') || exit 1
+if [[ "$retention_policies" == *Delete* ]]; then
+  echo 'STOP: a StatefulSet has whenScaled: Delete; do not scale down.' >&2
+  exit 1
+fi
+
 while IFS=$'\t' read -r kind name replicas; do
   if [[ "$kind/$name" != "statefulset/wire-utility" ]]; then
     k scale "$kind/$name" --replicas=0

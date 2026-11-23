@@ -320,6 +320,8 @@ export CURL_HOST_HEADER=nginz-https.domain1.com
 ./provisioning-idp/idp-provisioner.sh set teamadmin@ssotest.local PASSWORD domain1.com ./provisioning-idp/idps/domain1.com.xml
 ```
 
+> IMPORTANT: `idp-provisioner.sh set` will call 
+
 Example output:
 
 ```text
@@ -331,7 +333,7 @@ IdP 1   nginz-https.domain1.com     https://keycloak.domain1.com/realms/master
 
 `./provisioning-idp/idps/domain1.com.xml` is the IdP metadata file.
 
-> **CAUTION:** Set `CURL_HOST_HEADER` to the ingress domain that matches the domain passed to `idp-provisioner.sh`.
+> **CAUTION:** If you are using `NGINZ_HOST=https://localhost`, set `CURL_HOST_HEADER` to the ingress domain that matches the domain passed to `idp-provisioner.sh`.
 
 #### 4. Verify login through Team Settings
 

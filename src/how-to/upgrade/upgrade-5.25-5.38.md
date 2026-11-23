@@ -718,8 +718,6 @@ d helm upgrade --install ingress-nginx-controller charts/ingress-nginx-controlle
 ```
 Verify the pods post upgrading the helm charts.
 
-Install `smtp` and `databases-ephemeral` after scaling down Wire services.
-
 Before starting the Wire Server upgrade, run a quick diff check for the core user-facing charts. Make sure you understand the changes proposed for each chart and it aligns with your environment.
 
 Run the rest of this block inside the `d bash` shell.
@@ -831,14 +829,6 @@ Please visit [this link](https://github.com/wireapp/wire-docs/blob/WPB-28803-mai
 ### Upgrade Wire-Service Dependent Charts
 
 Upgrade dependent charts after scale-down (all pods of the above wire services have terminated successfully) and before the main Wire Server migration.
-
-Replace `demo-smtp` with `smtp`.
-
-```bash
-# demo-smtp won't be required and it would be updated with smtp
-d helm uninstall demo-smtp
-d helm install smtp charts/smtp --values values/smtp/values.yaml
-```
 
 Uninstall the old `databases-ephemeral` release and install the new one.
 

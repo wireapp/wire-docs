@@ -182,7 +182,7 @@ Set the following variables:
 - `CURL_INSECURE=true`: Enables certificate verification bypass for local test environments. Do not use this setting outside a controlled environment.
 - `CURL_HOST_HEADER`: Routes an HTTP request to a specific Nginx ingress when the local endpoint does not use the target hostname.
 
-For example, run the scripts from an administration host:
+For example, run the scripts from admin host:
 
 ```bash
 kubectl port-forward svc/ingress-nginx-controller-controller 443:443
@@ -335,7 +335,20 @@ IdP 1   nginz-https.domain1.com     https://keycloak.domain1.com/realms/master
 
 > **CAUTION:** If you are using `NGINZ_HOST=https://localhost`, set `CURL_HOST_HEADER` to the ingress domain that matches the domain passed to `idp-provisioner.sh`.
 
-#### 4. Verify login through Team Settings
+#### 4. Register the SAML SP in the IdP
+
+After configuring the IdP in Wire, register the corresponding SAML Service Provider for the team and domain in the external IdP.
+
+Use the following values:
+
+- **SP metadata:** `https://nginz-https.domain1.com/sso/metadata/{team-uuid}`
+- **SP entity ID:** `https://nginz-https.domain1.com/sso/finalize-login/{team-uuid}`
+
+Registration details vary by IdP implementation and may require the administrator to upload the metadata or enter the entity ID manually.
+
+#### 5. Verify login through Team Settings
+
+After the SP is registered successfully in the IdP, test SSO authentication through Team Settings.
 
 1. Open `https://teams.domain1.com` and log in with the team administrator credentials.
 2. Open **Customization > Single Sign-On (SSO)** in Team Settings.
@@ -345,12 +358,12 @@ IdP 1   nginz-https.domain1.com     https://keycloak.domain1.com/realms/master
 6. Complete authentication at the IdP login page. After successful authentication, Wire redirects you back to the Webapp.
 7. Confirm the requested handle and verify that you can open the app.
 
-#### 5. Verify email-address login
+#### 6. Verify email-address login
 
-After the test in step 4 succeeds, SSO discovery should resolve the IdP from the user's email address.
+After the test in step 5 succeeds, SSO discovery should resolve the IdP from the user's email address.
 
 Open the Webapp, enter the user's email address, and click **Login**. Wire should redirect the browser directly to the correct IdP login page without requiring the SSO login code.
 
-#### 6. Verify login through another domain
+#### 7. Verify login through another domain
 
 Log in with the same user through another configured domain and IdP. Verify that the user can authenticate successfully and access the same Wire account.

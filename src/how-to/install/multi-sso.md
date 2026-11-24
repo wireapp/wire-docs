@@ -174,7 +174,7 @@ The wrapper scripts call `idp-provisioner.sh` for multiple domains or teams.
 
 #### Environment variables
 
-The scripts can run from a laptop, a Wire administration host, or a Wire utility container.
+The scripts can run from a laptop, a Wire admin host, or a Wire utility container.
 
 Set the following variables:
 
@@ -306,7 +306,7 @@ spar:
 
 #### 3. Add the IdP to the team
 
-Use [idp-provisioner.sh](https://github.com/wireapp/wire-scripts/blob/multi-ingress-idp-provisioning/multi-ingress-idp-provisioning/idp-provisioner.sh) to add the IdP to the test team. Run these commands from the administration host:
+Use [idp-provisioner.sh](https://github.com/wireapp/wire-scripts/blob/multi-ingress-idp-provisioning/multi-ingress-idp-provisioning/idp-provisioner.sh) to add the IdP to the test team. Run these commands from the admin host:
 
 ```bash
 d kubectl port-forward svc/ingress-nginx-controller-controller 443:443

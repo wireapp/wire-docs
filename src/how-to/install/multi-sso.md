@@ -320,8 +320,6 @@ export CURL_HOST_HEADER=nginz-https.domain1.com
 ./provisioning-idp/idp-provisioner.sh set teamadmin@ssotest.local PASSWORD domain1.com ./provisioning-idp/idps/domain1.com.xml
 ```
 
-> IMPORTANT: `idp-provisioner.sh set` will call 
-
 Example output:
 
 ```text

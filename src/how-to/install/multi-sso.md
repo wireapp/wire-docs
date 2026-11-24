@@ -167,6 +167,7 @@ Use `idp-provisioner.sh` to automate the IdP configuration for teams:
 - Repository: https://github.com/wireapp/wire-scripts/tree/multi-ingress-idp-provisioning/multi-ingress-idp-provisioning
 - Main script: `idp-provisioner.sh`
 - Wrapper scripts: `domain-wrapper.sh` and `team-wrapper.sh`
+- Documentation: https://github.com/wireapp/wire-scripts/blob/multi-ingress-idp-provisioning/multi-ingress-idp-provisioning/README.md
 
 The wrapper scripts call `idp-provisioner.sh` for multiple domains or teams.
 
@@ -317,7 +318,7 @@ Keep the port-forward running, then open another terminal and set the request va
 ```bash
 export NGINZ_HOST=https://localhost
 export CURL_HOST_HEADER=nginz-https.domain1.com
-./provisioning-idp/idp-provisioner.sh set teamadmin@ssotest.local PASSWORD domain1.com ./provisioning-idp/idps/domain1.com.xml
+./idp-provisioner.sh set teamadmin@ssotest.local PASSWORD domain1.com ./idps/domain1.com.xml
 ```
 
 Example output:

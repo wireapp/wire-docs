@@ -8,6 +8,8 @@ Build manifest: [build.json](https://raw.githubusercontent.com/wireapp/wire-buil
 
 Coming from `5.37.0`.
 
+You can also upgrade directly from `5.35.0`. Releases `5.36.0` and `5.37.0` have no mandatory intermediate step: the `cassandra-migrations` job applies all pending Cassandra schema versions, and the services apply all pending PostgreSQL migrations in order at startup. Read the [5.36.0](wire-server-5.36.0.md) and [5.37.0](wire-server-5.37.0.md) notes too, because their configuration changes also apply.
+
 No known bugs at this release.
 
 This release detects silent PostgreSQL connection failures and discards the broken connections. Before, a service such as `galley` could keep a dead connection after a PostgreSQL failover or restart.

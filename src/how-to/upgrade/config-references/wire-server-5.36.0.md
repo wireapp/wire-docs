@@ -35,7 +35,7 @@ The release adds one PostgreSQL migration (`20260625104559-add-user-migration-pe
               lockStatus: locked
   ```
 
-- The default `cells` storage limit `totalLimitBytes` changed from 1 TB (`"1000000000000"`) to unlimited (`"-1"`). Set an explicit value if you need a limit.
+- Wire Drive: the default storage limit (`galley.config.settings.featureFlags.cellsInternal.defaults.config.storage.totalLimitBytes`) changed from 1 TB (`"1000000000000"`) to unlimited (`"-1"`). Set an explicit value if you need a limit.
 
 ## Configuration changes
 

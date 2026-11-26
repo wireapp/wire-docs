@@ -44,6 +44,10 @@ Apply each configuration change to your templates as applicable to your model.
 - [Wire Server 5.33.0](config-references/wire-server-5.33.0.md)
 - [Wire Server 5.34.0](config-references/wire-server-5.34.0.md)
 - [Wire Server 5.35.0](config-references/wire-server-5.35.0.md)
+- [Wire Server 5.36.0](config-references/wire-server-5.36.0.md)
+- [Wire Server 5.37.0](config-references/wire-server-5.37.0.md)
+- [Wire Server 5.38.0](config-references/wire-server-5.38.0.md)
+- [SFTD 5.2.0](config-references/sftd-5.2.0.md)
 
 ## Contributing
 

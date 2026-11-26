@@ -25,6 +25,7 @@ Complete documentation for upgrading `wire-server` deployments.
   - [Wire Server 5.36.0](config-references/wire-server-5.36.0.md)
   - [Wire Server 5.37.0](config-references/wire-server-5.37.0.md)
   - [Wire Server 5.38.0](config-references/wire-server-5.38.0.md)
+  - [Wire Server 5.39.0](config-references/wire-server-5.39.0.md)
   - [SFTD 5.2.0](config-references/sftd-5.2.0.md)
 
 ## 6. [Wire Server Upgrade: 5.5 to 5.25](upgrade-5.5-5.25.md)

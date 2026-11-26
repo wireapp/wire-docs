@@ -45,7 +45,7 @@ The release adds one PostgreSQL migration (`20260625104559-add-user-migration-pe
 
 ## Optional: migrate user data to PostgreSQL
 
-This release adds the migration of user data from Cassandra to PostgreSQL. The migration is disabled by default. It uses the same three-step procedure as the other stores. See [Migration for existing installations](../../../developer/reference/config-options.md#migration-for-existing-installations) in the configuration options reference.
+This release adds the migration of user data from Cassandra to PostgreSQL. The migration is disabled by default. You do not have to run it as part of the upgrade. You can start it at any later time, at your own discretion, on `5.36.0` or any later release. It uses the same three-step procedure as the other stores. See [Migration for existing installations](../../../developer/reference/config-options.md#migration-for-existing-installations) in the configuration options reference.
 
 | Setting | `background-worker` flag | Metric when complete |
 |---|---|---|

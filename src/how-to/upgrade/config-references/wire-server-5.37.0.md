@@ -26,7 +26,7 @@ There is no new Cassandra schema migration.
 
 ## New migration settings
 
-This release adds two new Cassandra-to-PostgreSQL migrations. Both are disabled by default. The chart defaults are:
+This release adds two new Cassandra-to-PostgreSQL migrations. Both are disabled by default. You do not have to run them as part of the upgrade. You can start each of them at any later time, at your own discretion, on `5.37.0` or any later release. The chart defaults are:
 
 ```yaml
 galley:
